@@ -2,6 +2,7 @@ package com.fraggeil.ticketator
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
@@ -11,8 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +54,7 @@ import com.fraggeil.ticketator.core.theme.AppTheme
 import com.fraggeil.ticketator.core.theme.BG_White
 import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.BlueDark
+import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.presentation.Route
 import com.fraggeil.ticketator.presentation.screen.HomeScreenRoot
 import com.fraggeil.ticketator.presentation.screen.HomeViewModel
@@ -90,10 +95,12 @@ fun App() {
             containerColor = BG_White,
             bottomBar = {
                 if ( navBackStackEntry?.destination?.route in listOf(Route.Home.route)){
-                    Column(modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                        colors = CardDefaults.cardColors().copy(containerColor = White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
                     ){
-                        HorizontalDivider()
                         NavigationBar(
                             modifier = Modifier.widthIn(max = 480.dp),
                             containerColor = Color.Transparent,

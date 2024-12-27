@@ -199,7 +199,11 @@ object DateTimeUtil {
     }
 }
 
-fun Long.toFormattedDate(hoursEnabled: Boolean = false):String{
+enum class FormattedDateStyle{
+    Digital, // 26.11.1973 16:08
+    Words, // Thu, 28 May 2024 at 16:08
+}
+fun Long.toFormattedDate(hoursEnabled: Boolean = false, style: FormattedDateStyle = FormattedDateStyle.Digital):String{
     val dateTime = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.currentSystemDefault())
     val month = if (dateTime.monthNumber <10) "0${dateTime.monthNumber}" else dateTime.monthNumber
     val day = if (dateTime.dayOfMonth < 10) "0${dateTime.dayOfMonth}" else dateTime.dayOfMonth
@@ -207,7 +211,12 @@ fun Long.toFormattedDate(hoursEnabled: Boolean = false):String{
     val hour = if (dateTime.hour < 10) "0${dateTime.hour}" else dateTime.hour
     val minute = if (dateTime.minute < 10) "0${dateTime.minute}" else dateTime.minute
 
-    return if (hoursEnabled) "$day.$month.$year $hour:$minute" else "$day.$month.$year"
+    val dayOfWeek = dateTime.dayOfWeek.name.uppercase()
+
+    return when(style){
+        FormattedDateStyle.Digital -> if (hoursEnabled) "$day.$month.$year $hour:$minute" else "$day.$month.$year"
+        FormattedDateStyle.Words -> if (hoursEnabled) "$dayOfWeek, $day ${dateTime.month.name} $year" else "$dayOfWeek, $day ${dateTime.month.name} $year $hour:$minute"
+    }
 }
 
 fun Long.getMonthNameAndYearByDate(): Pair<StringItem, Int> {

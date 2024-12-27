@@ -3,8 +3,14 @@ import androidx.compose.ui.graphics.Color
 
 val Blue = Color(0xFF2f3bab)
 val BlueDark = Color(0xFF141948)
+val BlueDarkSecondary = Color(0xFF2d2a52)
+val BlueDarkOnSecondary = Color(0xFF58587b)
 val Yellow = Color(0xFFFBF02)
 val BG_White = Color(0xFFF2F4F7)
+val White = Color(0xFFFFFFFF)
+val LightGray = Color(0xFFebebee)
+val TextColorLight = Color(0xFF757c8d)
+val TextColor = Color(0xff0e1422)
 
 val primaryLight = Blue
 val onPrimaryLight = BG_White

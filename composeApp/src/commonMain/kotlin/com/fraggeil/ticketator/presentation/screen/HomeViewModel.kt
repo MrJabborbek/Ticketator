@@ -43,10 +43,10 @@ class HomeViewModel: ViewModel() {
         when(action){
             HomeAction.OnBackClicked -> {}
             is HomeAction.OnDistrictFromSelected -> {
-                _state.update { it.copy(filter = it.filter.copy(from = action.district)) }
+                _state.update { it.copy(filter = it.filter.copy(fromDistrict = action.district)) }
             }
             is HomeAction.OnDistrictToSelected -> {
-                _state.update { it.copy(filter = it.filter.copy(to = action.district)) }
+                _state.update { it.copy(filter = it.filter.copy(toDistrict = action.district)) }
             }
             HomeAction.OnNotificationClicked -> {}
             HomeAction.OnOneWayClicked -> {
@@ -60,8 +60,10 @@ class HomeViewModel: ViewModel() {
                 _state.update {
                     it.copy(
                         filter = it.filter.copy(
-                            from = it.filter.to,
-                            to = it.filter.from
+                            fromDistrict = it.filter.toDistrict,
+                            fromRegion = it.filter.toRegion,
+                            toDistrict = it.filter.fromDistrict,
+                            toRegion = it.filter.fromRegion
                         )
                     )
                 }

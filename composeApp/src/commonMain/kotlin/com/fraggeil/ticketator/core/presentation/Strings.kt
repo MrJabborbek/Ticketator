@@ -208,6 +208,7 @@ object Strings{
     data object UsefulDocuments: StringItem(valueUz = "Foydali hujjatlar", valueEn = "Useful documents")
     data object LawsAndRegulations: StringItem(valueUz = "Qonun va qoidalar", valueEn = "Laws and regulations")
     data object Home: StringItem(valueUz = "Asosiy", valueEn = "Home")
+    data object Location: StringItem(valueUz = "Joylashuv", valueEn = "Location")
     data object Profile: StringItem(valueUz = "Profil", valueEn = "Profile")
     data object ProductDetails: StringItem(valueUz = "Mahsulot tavsifi", valueEn = "Product details")
     data object OtpSentText1: StringItem(

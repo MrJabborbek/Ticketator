@@ -40,7 +40,9 @@ object FakeData{
             districts = (1..13).map { num ->
                 District(
                     id = it * 10 + num,
-                    "District $num of region $it"
+                    "District $num of region $it",
+                    abbr = "D$num"
+
                 )
             }
         )
