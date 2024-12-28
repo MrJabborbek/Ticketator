@@ -125,7 +125,8 @@ fun App() {
         ) { paddings ->
             Box(
                 modifier = Modifier
-                    .padding(paddings)
+//                    .padding(paddings)
+                    .padding(bottom = 56.dp)
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {

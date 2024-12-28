@@ -81,6 +81,7 @@ object Strings{
     }
 
     data object AppName : StringItem(valueUz = "Ticketator", valueEn = "Ticketator", valueUzCyr = "Ticketator", valueRu = "Ticketator")
+    data object SelectDate: StringItem(valueUz = "Sanani tanlang", valueEn = "Select date", valueUzCyr = "Санани танланг", valueRu = "Выберите дату")
     data object Categories : StringItem(valueUz = "Kategoriyalar", valueEn = "Categories", valueUzCyr = "Категориялар", valueRu = "Категории")
     data object Cart : StringItem(valueUz = "Savat", valueEn = "Cart", valueUzCyr = "Сават", valueRu = "Корзина")
     data object ShowAll : StringItem(valueUz = "Hammasi", valueEn = "Show all", valueUzCyr = "Ҳаммаси", valueRu = "Показать все")
@@ -102,6 +103,13 @@ object Strings{
     data object October: StringItem(valueUz = "Oktabr", valueEn = "October", valueUzCyr = "Октябрь", valueRu = "Октябрь")
     data object November: StringItem(valueUz = "Noyabr", valueEn = "November", valueUzCyr = "Ноябрь", valueRu = "Ноябрь")
     data object December: StringItem(valueUz = "Dekabr", valueEn = "December", valueUzCyr = "Декабрь", valueRu = "Декабрь")
+    data object Monday: StringItem(valueUz = "Dushanba", valueEn = "Monday", valueUzCyr = "Душанба", valueRu = "Понедельник")
+    data object Tuesday: StringItem(valueUz = "Seshanba", valueEn = "Tuesday", valueUzCyr = "Сешанба", valueRu = "Вторник")
+    data object Wednesday: StringItem(valueUz = "Chorshanba", valueEn = "Wednesday", valueUzCyr = "Чоршанба", valueRu = "Среда")
+    data object Thursday: StringItem(valueUz = "Payshanba", valueEn = "Thursday", valueUzCyr = "Пятшанба", valueRu = "Четверг")
+    data object Friday: StringItem(valueUz = "Juma", valueEn = "Friday", valueUzCyr = "Жума", valueRu = "Пятница")
+    data object Saturday: StringItem(valueUz = "Shanba", valueEn = "Saturday", valueUzCyr = "Шанба", valueRu = "Суббота")
+    data object Sunday: StringItem(valueUz = "Yakshanba", valueEn = "Sunday", valueUzCyr = "Якшанба", valueRu = "Воскресенье")
     data object UnknownErrorOccurred: StringItem(valueUz = "Noma'lum xato yuz berdi", valueEn = "Unknown error occurred", valueUzCyr = "Номаълум хатолик содир бўлди", valueRu = "Произошла неизвестная ошибка")
     data object Unknown: StringItem(valueUz = "Noma'lum", valueEn = "Unknown", valueUzCyr = "Номаълум", valueRu = "Неизвестный")
     data object Favourites: StringItem(valueUz = "Sevimlilar", valueEn = "Favourites", valueUzCyr = "Севимлилар", valueRu = "Избранное")
@@ -235,8 +243,8 @@ object Strings{
     data object CheapestFirst: StringItem(valueUz = "Avval arzonlari", valueEn = "Cheapest first")
     data object ExpensiveFirst: StringItem(valueUz = "Avval qimmatlari", valueEn = "Expensive first")
     data object NewComers: StringItem(valueUz = "Yangi kelganlar", valueEn = "New comers")
-    data object From: StringItem(valueUz = "dan", valueEn = "from")
-    data object To: StringItem(valueUz = "gacha", valueEn = "to")
+    data object From: StringItem(valueUz = "Qayerdan", valueEn = "from")
+    data object To: StringItem(valueUz = "Qayerga", valueEn = "to")
     data object Sort: StringItem(valueUz = "Saralash", valueEn = "Sort")
     data object Price: StringItem(valueUz = "Narx", valueEn = "Price")
 

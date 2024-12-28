@@ -69,6 +69,19 @@ class HomeViewModel: ViewModel() {
                 }
             }
             HomeAction.OnSearchClicked -> {}
+            is HomeAction.OnRegionFromSelected -> {
+                _state.update { it.copy(filter = it.filter.copy(fromRegion = action.region)) }
+            }
+            is HomeAction.OnRegionToSelected -> {
+                _state.update { it.copy(filter = it.filter.copy(toRegion = action.region)) }
+            }
+
+            is HomeAction.OnDateFromSelected -> {
+                _state.update { it.copy(filter = it.filter.copy(dateGo = action.date)) }
+            }
+            is HomeAction.OnDateToSelected -> {
+                _state.update { it.copy(filter = it.filter.copy(dateBack = action.date)) }
+            }
         }
     }
 

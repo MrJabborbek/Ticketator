@@ -15,10 +15,10 @@ data class HomeState(
     val isThereNewNotifications: Boolean = false,
     val error: String? = null,
     val filter: Filter = Filter(
-        fromRegion = FakeData.regions.random(),
-        toRegion = FakeData.regions.random(),
-        fromDistrict = FakeData.regions.random().districts.random(),
-        toDistrict = FakeData.regions.random().districts.random(),
+        fromRegion = null,//FakeData.regions[0],
+        toRegion = null,//FakeData.regions[1],
+        fromDistrict = null,//FakeData.regions[0].districts.random(),
+        toDistrict = null,//FakeData.regions[1].districts.random(),
         dateGo = 123131321231,
         dateBack = 1213132132132,
         type = FilterType.ONE_WAY
@@ -27,3 +27,5 @@ data class HomeState(
     val posts: List<Post> = emptyList(),
     val currentLocation: Pair<Region, District>? = null
 )
+
+

@@ -2,11 +2,13 @@ package com.fraggeil.ticketator.core.domain
 
 import com.fraggeil.ticketator.core.presentation.StringItem
 import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.atTime
@@ -211,11 +213,40 @@ fun Long.toFormattedDate(hoursEnabled: Boolean = false, style: FormattedDateStyl
     val hour = if (dateTime.hour < 10) "0${dateTime.hour}" else dateTime.hour
     val minute = if (dateTime.minute < 10) "0${dateTime.minute}" else dateTime.minute
 
-    val dayOfWeek = dateTime.dayOfWeek.name.uppercase()
+//    val dayOfWeek = dateTime.dayOfWeek.name.uppercase().substring(0,3)
+//    val monthName = dateTime.month.name.uppercase().substring(0,3)
+    val dayOfWeek = when(dateTime.dayOfWeek){
+        DayOfWeek.MONDAY -> Strings.Monday.value()
+        DayOfWeek.TUESDAY -> Strings.Tuesday.value()
+        DayOfWeek.WEDNESDAY -> Strings.Wednesday.value()
+        DayOfWeek.THURSDAY -> Strings.Thursday.value()
+        DayOfWeek.FRIDAY -> Strings.Friday.value()
+        DayOfWeek.SATURDAY -> Strings.Saturday.value()
+        DayOfWeek.SUNDAY -> Strings.Sunday.value()
+        else -> ""
+    }
+
+    val monthName = when(dateTime.month){
+        Month.JANUARY -> Strings.January.value()
+        Month.FEBRUARY -> Strings.February.value()
+        Month.MARCH -> Strings.March.value()
+        Month.APRIL -> Strings.April.value()
+        Month.MAY -> Strings.May.value()
+        Month.JUNE -> Strings.June.value()
+        Month.JULY -> Strings.July.value()
+        Month.AUGUST -> Strings.August.value()
+        Month.SEPTEMBER -> Strings.September.value()
+        Month.OCTOBER -> Strings.October.value()
+        Month.NOVEMBER -> Strings.November.value()
+        Month.DECEMBER -> Strings.December.value()
+        else -> ""
+    }
+    val weekNameWords = dayOfWeek.substring(0,if (dayOfWeek.substring(2,4) == "sh") 4 else 3).replaceFirstChar { it.uppercase() }
+    val monthNameWords = monthName.substring(0,if (monthName.substring(2,4) == "sh") 4 else 3).replaceFirstChar { it.uppercase() }
 
     return when(style){
         FormattedDateStyle.Digital -> if (hoursEnabled) "$day.$month.$year $hour:$minute" else "$day.$month.$year"
-        FormattedDateStyle.Words -> if (hoursEnabled) "$dayOfWeek, $day ${dateTime.month.name} $year" else "$dayOfWeek, $day ${dateTime.month.name} $year $hour:$minute"
+        FormattedDateStyle.Words -> if (hoursEnabled) "$weekNameWords, $day $monthNameWords $year $hour:$minute" else "$weekNameWords, $day $monthNameWords $year"
     }
 }
 
