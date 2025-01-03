@@ -18,8 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fraggeil.ticketator.core.presentation.Sizes
-import com.fraggeil.ticketator.core.presentation.Strings
-import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.theme.AppTypography
 import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.TextColor
@@ -29,7 +27,7 @@ import com.fraggeil.ticketator.core.theme.TextColorLight
 fun MyInfoButton(
     modifier: Modifier = Modifier,
     label: String,
-    text: String,
+    text: String?,
     onClick: () -> Unit
 ) {
     Column(
@@ -47,15 +45,17 @@ fun MyInfoButton(
     ){
         Text(
             text = label,
-            style = AppTypography().bodyLarge,
+            style = if (text != null) AppTypography().bodyLarge else AppTypography().titleLarge,
             color = TextColorLight
         )
-        Text(
-            text = text,
-            style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.Bold),
-            color = TextColor,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
+        if (text != null) {
+            Text(
+                text = text,
+                style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.Bold),
+                color = TextColor,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }

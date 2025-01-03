@@ -1,11 +1,10 @@
-package com.fraggeil.ticketator.presentation.screen
+package com.fraggeil.ticketator.presentation.screens.home_screen
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,7 +39,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -65,6 +63,7 @@ import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyButtonStyle
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
+import com.fraggeil.ticketator.core.presentation.components.MyDepartureItem
 import com.fraggeil.ticketator.core.presentation.components.MyInfoButton
 import com.fraggeil.ticketator.core.presentation.components.PostsCarousel
 import com.fraggeil.ticketator.core.presentation.components.SelectItemAndSubItemDialog
@@ -74,13 +73,10 @@ import com.fraggeil.ticketator.core.theme.BG_White
 import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.BlueDarkSecondary
-import com.fraggeil.ticketator.core.theme.TextColor
-import com.fraggeil.ticketator.core.theme.TextColorLight
 import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.domain.FakeData
-import com.fraggeil.ticketator.domain.model.District
 import com.fraggeil.ticketator.domain.model.FilterType
-import com.fraggeil.ticketator.domain.model.Region
+import com.fraggeil.ticketator.domain.model.Post
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.uzbekistan
@@ -88,12 +84,20 @@ import ticketator.composeapp.generated.resources.uzbekistan
 @Composable
 fun HomeScreenRoot(
     viewModel: HomeViewModel,
-
-) {
+    navigateToPost: (Post) -> Unit
+    ) {
     val state by viewModel.state.collectAsState()
     HomeScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = {
+            when (it){
+                is HomeAction.OnPostClicked -> {
+                    navigateToPost(it.post)
+                }
+                else -> Unit
+            }
+            viewModel.onAction(it)
+        }
     )
 }
 
@@ -107,7 +111,6 @@ fun HomeScreen(
     val isSelectToVisible = remember { mutableStateOf(false) }
     val fromDatePickerState = remember { mutableStateOf(false) }
     val toDatePickerState = remember { mutableStateOf(false) }
-
     Box(modifier = Modifier.fillMaxSize().background(BG_White)) {
         Box(
             modifier = Modifier
@@ -215,111 +218,25 @@ fun HomeScreen(
                         Column(
                             modifier = Modifier.fillMaxWidth()
                         ){
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(IntrinsicSize.Max)
-                                    .clip(shape = RoundedCornerShape(Sizes.smallRoundCorner))
-                                    .clickable {
-                                        isSelectFromVisible.value = true
-                                    }
-                                    .background(color = Blue.copy(alpha = 0.05f), shape = RoundedCornerShape(Sizes.smallRoundCorner))
-                                    .padding(Sizes.horizontal_inner_padding),
-                                verticalAlignment = Alignment.CenterVertically
-                            ){
-                                Column(
-                                    modifier = Modifier,
-                                    horizontalAlignment = Alignment.Start,
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Menu,
-                                        contentDescription = null,
-                                        tint = Blue,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-//                                    state.filter.fromDistrict?.let {
-                                        Text(
-                                            text = state.filter.fromDistrict?.abbr?.uppercase()?:"",
-                                            style = AppTypography().headlineLarge.copy(fontWeight = FontWeight.Bold),
-                                            color = TextColor,
-                                        )
-//                                    }
-                                }
-                                VerticalDivider(modifier = Modifier.padding(horizontal = Sizes.horizontal_inner_padding), color = TextColorLight)
-                                Column(
-                                    modifier = Modifier,
-                                    horizontalAlignment = Alignment.Start,
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ){
-                                    Text(
-                                        text = Strings.From.value(),
-                                        style = if (state.filter.fromDistrict == null) AppTypography().titleLarge else AppTypography().bodyLarge,
-                                        color = TextColorLight
-                                    )
-                                    state.filter.fromDistrict?.let {
-                                        Text(
-                                            text = "${state.filter.fromDistrict.name}, ${state.filter.fromRegion?.name}",
-                                            style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.Bold),
-                                            color = TextColor,
-                                            maxLines = 3,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                }
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .padding(top = 12.dp)
-                                    .fillMaxWidth()
-                                    .height(IntrinsicSize.Max)
-                                    .clip(shape = RoundedCornerShape(Sizes.smallRoundCorner))
-                                    .clickable {
-                                        isSelectToVisible.value = true
-                                    }
-                                    .background(color = Blue.copy(alpha = 0.05f), shape = RoundedCornerShape(Sizes.smallRoundCorner))
-                                    .padding(Sizes.horizontal_inner_padding),
-                                verticalAlignment = Alignment.CenterVertically
-                            ){
-                                Column(
-                                    modifier = Modifier,
-                                    horizontalAlignment = Alignment.Start,
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Home,
-                                        contentDescription = null,
-                                        tint = Blue,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                    Text(
-                                        text = state.filter.toDistrict?.abbr?.uppercase() ?:"",
-                                        style = AppTypography().headlineLarge.copy(fontWeight = FontWeight.Bold),
-                                        color = TextColor,
-                                    )
-                                }
-                                VerticalDivider(modifier = Modifier.padding(horizontal = Sizes.horizontal_inner_padding), color = TextColorLight)
-                                Column(
-                                    modifier = Modifier,
-                                    horizontalAlignment = Alignment.Start,
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ){
-                                    Text(
-                                        text = Strings.To.value(),
-                                        style = if (state.filter.toDistrict == null) AppTypography().titleLarge else AppTypography().bodyLarge,
-                                        color = TextColorLight
-                                    )
-                                    state.filter.toDistrict?.let {
-                                        Text(
-                                            text = "${state.filter.toDistrict.name}, ${state.filter.toRegion?.name}",
-                                            style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.Bold),
-                                            color = TextColor,
-                                            maxLines = 3,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                }
-                            }
+                            MyDepartureItem(
+                                icon = Icons.Default.Menu,
+                                label = Strings.From.value(),
+                                text = state.filter.fromDistrict?.name,
+                                abbr = state.filter.fromDistrict?.abbr,
+                                onClick = { isSelectFromVisible.value = true },
+                                isLoading = state.isLoadingFromRegions,
+                                isEnabled = true
+                            )
+                            MyDepartureItem(
+                                modifier = Modifier.padding(top = 12.dp),
+                                icon = Icons.Default.Home,
+                                label = Strings.To.value(),
+                                text = state.filter.toDistrict?.name,
+                                abbr = state.filter.toDistrict?.abbr,
+                                onClick = { isSelectToVisible.value = true },
+                                isLoading = state.isLoadingToRegions,
+                                isEnabled = state.filter.fromDistrict != null
+                            )
                         }
                         IconButton(
                             modifier = Modifier
@@ -329,8 +246,7 @@ fun HomeScreen(
                                 .background(
                                     color = Blue,
                                     shape = CircleShape
-                                )
-                            ,
+                                ),
                             onClick = {onAction(HomeAction.OnReverseDistrictsClicked)},
                         ){
                             Icon(
@@ -344,7 +260,7 @@ fun HomeScreen(
                     MyInfoButton(
                         modifier = Modifier.padding(top = Sizes.vertical_inner_padding).fillMaxWidth(),
                         label = "Departure",
-                        text = state.filter.dateGo?.toFormattedDate(style = FormattedDateStyle.Words) ?: "",
+                        text = state.filter.dateGo?.toFormattedDate(style = FormattedDateStyle.Words) ?: "Select",
                         onClick = {
                             fromDatePickerState.value = true
                         }
@@ -359,8 +275,10 @@ fun HomeScreen(
                             MyInfoButton(
                                 modifier = Modifier.padding(top = Sizes.vertical_inner_padding).fillMaxWidth(),
                                 label = "Return",
-                                text = state.filter.dateBack?.toFormattedDate(style = FormattedDateStyle.Words) ?: "",
-                                onClick = {}
+                                text = state.filter.dateBack?.toFormattedDate(style = FormattedDateStyle.Words) ?: "Select",
+                                onClick = {
+                                    toDatePickerState.value = true
+                                }
                             )
                         }
                     }
@@ -390,6 +308,7 @@ fun HomeScreen(
                 )
             }
             Spacer(modifier = Modifier.height(Sizes.default_bottom_padding))
+            Spacer(modifier = Modifier.height(Sizes.default_bottom_padding))
         }
     }
 
@@ -397,7 +316,7 @@ fun HomeScreen(
 
     SelectItemAndSubItemDialog(
         title = "From",
-        items = state.regions,
+        items = state.fromRegions,
         selectedItem = state.filter.fromRegion,
         selectedSubItem = state.filter.fromDistrict,
         getSubItems = {it.districts},
@@ -409,12 +328,12 @@ fun HomeScreen(
         onItemSelected = {
             onAction(HomeAction.OnRegionFromSelected(it))
         },
-        isLoading = state.isLoadingRegions,
+        isLoading = state.isLoadingFromRegions,
         isVisible = isSelectFromVisible
     )
     SelectItemAndSubItemDialog(
         title = "To",
-        items = state.regions,
+        items = state.toRegions,
         selectedItem = state.filter.toRegion,
         selectedSubItem = state.filter.toDistrict,
         getSubItems = {it.districts},
@@ -426,11 +345,11 @@ fun HomeScreen(
         onItemSelected = {
             onAction(HomeAction.OnRegionToSelected(it))
         },
-        isLoading = state.isLoadingRegions,
+        isLoading = state.isLoadingToRegions,
         isVisible = isSelectToVisible
     )
 
-    val selectableDates = remember {
+    val selectableFromDates = remember {
         object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean {
                 return utcTimeMillis >= DateTimeUtil.getToday().first
@@ -438,10 +357,18 @@ fun HomeScreen(
         }
     }
 
+    val selectableToDates = remember(state.filter.dateGo) {
+        object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                return utcTimeMillis >= (state.filter.dateGo ?:DateTimeUtil.getToday().first)
+            }
+        }
+    }
+
     if (fromDatePickerState.value){
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = state.filter.dateGo.takeIf { it != -1L }?.convertUtcToLocalMillis(),
-            selectableDates = selectableDates
+            selectableDates = selectableFromDates
         )
         DatePickerDialog(
             modifier = Modifier.wrapContentSize().padding(8.dp),
@@ -485,7 +412,64 @@ fun HomeScreen(
                 title = {
                     Text(
                         modifier = Modifier.padding(Sizes.horizontal_inner_padding),
-                        text = Strings.SelectDate.value() ,
+                        text = Strings.SelectDate.value(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 14.sp,
+                        color = Blue
+                    )
+                }
+            )
+        }
+    }
+    if (toDatePickerState.value && state.filter.type == FilterType.ROUND_TRIP && state.filter.dateGo != null){
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = state.filter.dateBack.takeIf { it != -1L }?.convertUtcToLocalMillis(),
+            selectableDates = selectableToDates
+        )
+        DatePickerDialog(
+            modifier = Modifier.wrapContentSize().padding(8.dp),
+            onDismissRequest = { toDatePickerState.value = false },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            onAction(HomeAction.OnDateToSelected(it))
+                            toDatePickerState.value = false
+                        }
+                    }
+                ){
+                    Text(text = Strings.Select.value())
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        toDatePickerState.value = false
+                    }
+                ){
+                    Text(text = Strings.Cancel.value())
+                }
+            },
+            colors = DatePickerDefaults.colors().copy(containerColor = White)
+        ) {
+            DatePicker(
+                colors = DatePickerDefaults.colors().copy(containerColor = White),
+                state =  datePickerState,
+                headline = {
+                    Text(
+                        modifier = Modifier.wrapContentWidth().padding(start = Sizes.horizontal_inner_padding),
+                        text = datePickerState.selectedDateMillis?.toFormattedDate()?: Strings.SelectDate.value(),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 18.sp,
+                        color = Blue
+                    )
+                },
+                title = {
+                    Text(
+                        modifier = Modifier.padding(Sizes.horizontal_inner_padding),
+                        text = Strings.SelectDate.value(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontSize = 14.sp,

@@ -86,7 +86,7 @@ fun <T, S>SelectItemAndSubItemDialog(
             content = {
                 Column(
                     modifier = Modifier
-                        .padding(Sizes.default_bottom_padding)
+                        .padding(32.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {

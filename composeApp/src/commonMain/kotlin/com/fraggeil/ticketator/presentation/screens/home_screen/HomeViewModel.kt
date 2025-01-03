@@ -1,10 +1,13 @@
-package com.fraggeil.ticketator.presentation.screen
+package com.fraggeil.ticketator.presentation.screens.home_screen
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.Constants
 import com.fraggeil.ticketator.domain.FakeData
+import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.model.FilterType
+import com.fraggeil.ticketator.domain.model.Region
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,8 +18,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class HomeViewModel: ViewModel() {
+class HomeViewModel(
+    private val snackbarHostState: SnackbarHostState
+): ViewModel() {
     private var fetchAllRegionsJob: Job? = null
+    private var fetchToRegionsJob: Job? = null
     private var fetchAllPostsJob: Job? = null
     private var observeCurrentLocationJob: Job? = null
     private var observeIsThereNewNotificationsJob: Job? = null
@@ -57,6 +63,8 @@ class HomeViewModel: ViewModel() {
             }
             is HomeAction.OnPostClicked -> {}
             HomeAction.OnReverseDistrictsClicked -> {
+                if (_state.value.filter.fromDistrict == null || _state.value.filter.fromRegion == null || _state.value.filter.toDistrict == null || _state.value.filter.toRegion == null) return
+
                 _state.update {
                     it.copy(
                         filter = it.filter.copy(
@@ -68,9 +76,32 @@ class HomeViewModel: ViewModel() {
                     )
                 }
             }
-            HomeAction.OnSearchClicked -> {}
+            HomeAction.OnSearchClicked -> viewModelScope.launch{
+                _state.value.filter.let { filter ->
+                    if (filter.fromDistrict == null){
+                        showSnackbar()
+                        return@let
+                    }
+                    if (filter.toDistrict == null){
+                        showSnackbar()
+                        return@let
+                    }
+                    if (filter.dateGo == null){
+                        showSnackbar()
+                        return@let
+                    }
+                    if (filter.type == FilterType.ROUND_TRIP && filter.dateBack == null){
+                        showSnackbar()
+                        return@let
+                    }
+                    search(filter)
+                }
+
+
+            }
             is HomeAction.OnRegionFromSelected -> {
                 _state.update { it.copy(filter = it.filter.copy(fromRegion = action.region)) }
+                fetchToRegions(action.region)
             }
             is HomeAction.OnRegionToSelected -> {
                 _state.update { it.copy(filter = it.filter.copy(toRegion = action.region)) }
@@ -78,7 +109,12 @@ class HomeViewModel: ViewModel() {
 
             is HomeAction.OnDateFromSelected -> {
                 _state.update { it.copy(filter = it.filter.copy(dateGo = action.date)) }
+
+                if (state.value.filter.dateBack == null) return
+                if (action.date <= state.value.filter.dateBack!!) return
+                _state.update { it.copy(filter = it.filter.copy(dateBack = null)) }
             }
+
             is HomeAction.OnDateToSelected -> {
                 _state.update { it.copy(filter = it.filter.copy(dateBack = action.date)) }
             }
@@ -87,10 +123,25 @@ class HomeViewModel: ViewModel() {
 
     private fun fetchAllRegions(){
         fetchAllRegionsJob?.cancel()
-        _state.update { it.copy(isLoadingRegions = true) }
+        _state.update { it.copy(isLoadingFromRegions = true) }
         fetchAllRegionsJob = viewModelScope.launch {
             delay(Constants.FAKE_DELAY_TO_TEST)
-            _state.update { it.copy(isLoadingRegions = false, regions = FakeData.regions) }
+            _state.update { it.copy(isLoadingFromRegions = false, fromRegions = FakeData.regions) }
+        }
+    }
+    private fun fetchToRegions(fromRegion: Region){
+        fetchToRegionsJob?.cancel()
+        _state.update { it.copy(isLoadingToRegions = true) }
+        fetchToRegionsJob = viewModelScope.launch {
+            delay(Constants.FAKE_DELAY_TO_TEST)
+            val regions = FakeData.regions.filter {d -> d != fromRegion }
+            _state.update { it.copy(
+                isLoadingToRegions = false,
+                toRegions = regions,
+                filter = it.filter.copy(
+                    toRegion = if (regions.contains(it.filter.toRegion)) it.filter.toRegion else null,
+                    toDistrict = if (regions.contains(it.filter.toRegion)) it.filter.toDistrict else null)
+            ) }
         }
     }
 
@@ -121,5 +172,13 @@ class HomeViewModel: ViewModel() {
             delay(Constants.FAKE_DELAY_TO_TEST)
             _state.update { it.copy(isThereNewNotifications = Random.nextBoolean()) }
         }
+    }
+
+    private suspend fun showSnackbar(){
+//        _state.value.snackbarHostState.showSnackbar("Fill all the fields")
+        snackbarHostState.showSnackbar("Fill all the fields")
+    }
+    private fun search(filter: Filter){
+        TODO()
     }
 }

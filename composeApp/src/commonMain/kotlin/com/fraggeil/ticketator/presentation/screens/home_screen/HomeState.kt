@@ -1,6 +1,6 @@
-package com.fraggeil.ticketator.presentation.screen
+package com.fraggeil.ticketator.presentation.screens.home_screen
 
-import com.fraggeil.ticketator.domain.FakeData
+import com.fraggeil.ticketator.core.domain.DateTimeUtil
 import com.fraggeil.ticketator.domain.model.District
 import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.model.FilterType
@@ -8,8 +8,10 @@ import com.fraggeil.ticketator.domain.model.Post
 import com.fraggeil.ticketator.domain.model.Region
 
 data class HomeState(
+//    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
     val isLoadingPosts: Boolean = true,
-    val isLoadingRegions: Boolean = true,
+    val isLoadingFromRegions: Boolean = true,
+    val isLoadingToRegions: Boolean = false,
     val isLoadingCurrentLocation: Boolean = true,
     val isSearching: Boolean = true,
     val isThereNewNotifications: Boolean = false,
@@ -19,11 +21,12 @@ data class HomeState(
         toRegion = null,//FakeData.regions[1],
         fromDistrict = null,//FakeData.regions[0].districts.random(),
         toDistrict = null,//FakeData.regions[1].districts.random(),
-        dateGo = 123131321231,
-        dateBack = 1213132132132,
+        dateGo = DateTimeUtil.nowMilliseconds(),
+        dateBack = null,
         type = FilterType.ONE_WAY
     ),
-    val regions: List<Region> = emptyList(),
+    val fromRegions: List<Region> = emptyList(),
+    val toRegions: List<Region> = emptyList(),
     val posts: List<Post> = emptyList(),
     val currentLocation: Pair<Region, District>? = null
 )

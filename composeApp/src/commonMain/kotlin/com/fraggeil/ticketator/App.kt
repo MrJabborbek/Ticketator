@@ -2,9 +2,7 @@ package com.fraggeil.ticketator
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,15 +15,16 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -56,10 +56,15 @@ import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.presentation.Route
-import com.fraggeil.ticketator.presentation.screen.HomeScreenRoot
-import com.fraggeil.ticketator.presentation.screen.HomeViewModel
+import com.fraggeil.ticketator.presentation.SelectedPostViewModel
+import com.fraggeil.ticketator.presentation.screens.home_screen.HomeScreenRoot
+import com.fraggeil.ticketator.presentation.screens.home_screen.HomeViewModel
+import com.fraggeil.ticketator.presentation.screens.post_screen.PostAction
+import com.fraggeil.ticketator.presentation.screens.post_screen.PostScreenRoot
+import com.fraggeil.ticketator.presentation.screens.post_screen.PostViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.compose_multiplatform
@@ -73,7 +78,7 @@ fun App() {
 
         fun navigate(route: Route, shouldSaveState: Boolean, restore: Boolean = false){
             if (shouldSaveState) {
-                navController.navigate(route) {
+                navController.navigate(route.route) {
                     popUpTo(navController.graph.findStartDestination().id) {
 //                    inclusive = false
                         saveState = true
@@ -82,7 +87,7 @@ fun App() {
                     restoreState = true
                 }
             }else{
-                navController.navigate(route){
+                navController.navigate(route.route){
                     if (restore){
                         popUpTo(navController.graph.findStartDestination().id)
                     }
@@ -91,8 +96,13 @@ fun App() {
         }
 
         Scaffold(
-            modifier = Modifier.fillMaxSize().statusBarsPadding(),
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding(),
             containerColor = BG_White,
+            snackbarHost = {
+                SnackbarHost(koinInject())
+            },
             bottomBar = {
                 if ( navBackStackEntry?.destination?.route in listOf(Route.Home.route)){
                     Card(
@@ -101,23 +111,28 @@ fun App() {
                         colors = CardDefaults.cardColors().copy(containerColor = White),
                         elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
                     ){
-                        NavigationBar(
-                            modifier = Modifier.widthIn(max = 480.dp),
-                            containerColor = Color.Transparent,
-                            contentColor = BlueDark,
-                            tonalElevation = 50.dp
-                        ) {
-                            MyNavigationBarItem(
-                                text = Strings.Home.value(),
-                                selectedPainter = painterResource(Res.drawable.compose_multiplatform), //TODO
-                                unselectedPainter = painterResource(Res.drawable.compose_multiplatform),
-                                onClick = {
-                                    if (navBackStackEntry?.destination?.route != Route.Home.route){
-                                        navigate(Route.Home,true)
-                                    }
-                                },
-                                isSelected = navBackStackEntry?.destination?.route == Route.Home.route
-                            )
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ){
+                            NavigationBar(
+                                modifier = Modifier.widthIn(max = 480.dp),
+                                containerColor = Color.Transparent,
+                                contentColor = BlueDark,
+                                tonalElevation = 50.dp
+                            ) {
+                                MyNavigationBarItem(
+                                    text = Strings.Home.value(),
+                                    selectedPainter = painterResource(Res.drawable.compose_multiplatform), //TODO
+                                    unselectedPainter = painterResource(Res.drawable.compose_multiplatform),
+                                    onClick = {
+                                        if (navBackStackEntry?.destination?.route != Route.Home.route){
+                                            navigate(Route.Home,true)
+                                        }
+                                    },
+                                    isSelected = navBackStackEntry?.destination?.route == Route.Home.route
+                                )
+                            }
                         }
                     }
                 }
@@ -126,7 +141,7 @@ fun App() {
             Box(
                 modifier = Modifier
 //                    .padding(paddings)
-                    .padding(bottom = 56.dp)
+//                    .padding(bottom = 56.dp)
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
@@ -154,18 +169,39 @@ fun App() {
 
                             val viewModel = koinViewModel<HomeViewModel>()
 
-//                            val selectedPostViewModel =
-//                                it.sharedKoinViewModel<SelectedPostViewModel>(navController)
-//                            LaunchedEffect(true) {
-//                                selectedPostViewModel.onSelectItem(null)
-//                            }
+                            val selectedPostViewModel =
+                                it.sharedKoinViewModel<SelectedPostViewModel>(navController)
+                            LaunchedEffect(true) {
+                                selectedPostViewModel.onSelectItem(null)
+                            }
 
                             HomeScreenRoot(
                                 viewModel = viewModel,
-//                                navigateToPost = { post ->
-//                                    selectedPostViewModel.onSelectItem(post)
-//                                    navigate(Route.Post.routeName, false)
-//                                },
+                                navigateToPost = { post ->
+                                    selectedPostViewModel.onSelectItem(post)
+                                    navigate(Route.Post, false)
+                                },
+                            )
+                        }
+                        composable(
+                            route = Route.Post.route
+                        ){
+
+                            val viewModel = koinViewModel<PostViewModel>()
+                            val selectedPostViewModel = it.sharedKoinViewModel<SelectedPostViewModel>(navController)
+
+                            val selectedPost by selectedPostViewModel.state.collectAsStateWithLifecycle()
+                            LaunchedEffect(selectedPost){
+                                selectedPost?.let { post ->
+                                    viewModel.onAction(PostAction.OnSelectedPostChange(post))
+                                }
+                            }
+
+                            PostScreenRoot(
+                                viewModel = viewModel,
+                                onBackClicked = {
+                                    navController.navigateUp()
+                                }
                             )
                         }
                     }

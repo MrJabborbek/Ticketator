@@ -1,4 +1,4 @@
-package com.fraggeil.ticketator.presentation.screen
+package com.fraggeil.ticketator.presentation.screens.home_screen
 
 import com.fraggeil.ticketator.domain.model.District
 import com.fraggeil.ticketator.domain.model.Post
