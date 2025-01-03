@@ -5,6 +5,7 @@ import com.fraggeil.ticketator.core.domain.Platform
 import com.fraggeil.ticketator.presentation.SelectedPostViewModel
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeViewModel
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostViewModel
+import com.fraggeil.ticketator.presentation.screens.start_screen.StartViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -23,6 +24,7 @@ val sharedModule = module {
 
     viewModelOf(::HomeViewModel)
     viewModelOf(::PostViewModel)
+    viewModelOf(::StartViewModel)
 
 
     viewModelOf(::SelectedPostViewModel)

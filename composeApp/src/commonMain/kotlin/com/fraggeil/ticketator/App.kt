@@ -62,6 +62,8 @@ import com.fraggeil.ticketator.presentation.screens.home_screen.HomeViewModel
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostAction
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostScreenRoot
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostViewModel
+import com.fraggeil.ticketator.presentation.screens.start_screen.StartScreenRoot
+import com.fraggeil.ticketator.presentation.screens.start_screen.StartViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
@@ -158,7 +160,8 @@ fun App() {
                 ) {
                     navigation(
                         route = Route.TicketatorGraph.route,
-                        startDestination = Route.Home.route,
+//                        startDestination = Route.Home.route,
+                        startDestination = Route.Start.route,
                     ) {
 
                         composable(
@@ -201,6 +204,17 @@ fun App() {
                                 viewModel = viewModel,
                                 onBackClicked = {
                                     navController.navigateUp()
+                                }
+                            )
+                        }
+                        composable(
+                            route = Route.Start.route
+                        ){
+                            val viewModel: StartViewModel = koinViewModel()
+                            StartScreenRoot(
+                                viewModel = viewModel,
+                                navigateToHome = {
+                                    navigate(Route.Home, false)
                                 }
                             )
                         }

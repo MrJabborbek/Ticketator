@@ -19,4 +19,9 @@ sealed interface Route {
     data object Post : Route{
         override val route: String = "Post"
     }
+
+    @Serializable
+    data object Start : Route{
+        override val route: String = "Start"
+    }
 }
