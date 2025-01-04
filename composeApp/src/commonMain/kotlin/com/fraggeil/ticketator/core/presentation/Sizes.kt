@@ -9,6 +9,7 @@ object Sizes {
     val horizontal_out_padding = 18.dp
     val vertical_out_padding = 18.dp
     val default_bottom_padding = 56.dp
+    val default_bottom_padding_double = 112.dp
 
     val cardElevation = 3.dp
     val smallRoundCorner = 12.dp

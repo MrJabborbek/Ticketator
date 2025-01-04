@@ -82,6 +82,10 @@ object Strings{
 
     data object AppName : StringItem(valueUz = "Ticketator", valueEn = "Ticketator", valueUzCyr = "Ticketator", valueRu = "Ticketator")
     data object SelectDate: StringItem(valueUz = "Sanani tanlang", valueEn = "Select date", valueUzCyr = "Санани танланг", valueRu = "Выберите дату")
+    data object DayShort: StringItem(valueUz = "k.", valueEn = "d.", valueUzCyr = "к.", valueRu = "к.")
+    data object HourShort: StringItem(valueUz = "so.", valueEn = "h.", valueUzCyr = "с.", valueRu = "ч.")
+    data object MinuteShort: StringItem(valueUz = "daq.", valueEn = "min", valueUzCyr = "daq.", valueRu = "мин.")
+    data object SecondShort: StringItem(valueUz = "sek.", valueEn = "sec", valueUzCyr = "сек.", valueRu = "сек.")
     data object Categories : StringItem(valueUz = "Kategoriyalar", valueEn = "Categories", valueUzCyr = "Категориялар", valueRu = "Категории")
     data object Cart : StringItem(valueUz = "Savat", valueEn = "Cart", valueUzCyr = "Сават", valueRu = "Корзина")
     data object ShowAll : StringItem(valueUz = "Hammasi", valueEn = "Show all", valueUzCyr = "Ҳаммаси", valueRu = "Показать все")

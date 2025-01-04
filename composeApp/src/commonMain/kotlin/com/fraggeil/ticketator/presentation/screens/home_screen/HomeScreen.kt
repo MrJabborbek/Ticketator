@@ -41,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,6 +76,7 @@ import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.BlueDarkSecondary
 import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.domain.FakeData
+import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.model.FilterType
 import com.fraggeil.ticketator.domain.model.Post
 import org.jetbrains.compose.resources.painterResource
@@ -84,9 +86,18 @@ import ticketator.composeapp.generated.resources.uzbekistan
 @Composable
 fun HomeScreenRoot(
     viewModel: HomeViewModel,
-    navigateToPost: (Post) -> Unit
-    ) {
+    navigateToPost: (Post) -> Unit,
+    navigateToSearchResults: (Filter) -> Unit
+) {
     val state by viewModel.state.collectAsState()
+    LaunchedEffect(true){
+        viewModel.oneTimeState.collect{oneTimeState ->
+            when(oneTimeState){
+                is HomeOneTimeState.NavigateToSearchResults -> navigateToSearchResults(oneTimeState.filter)
+            }
+        }
+    }
+
     HomeScreen(
         state = state,
         onAction = {
@@ -307,8 +318,7 @@ fun HomeScreen(
                     onClick = { onAction(HomeAction.OnPostClicked(it)) }
                 )
             }
-            Spacer(modifier = Modifier.height(Sizes.default_bottom_padding))
-            Spacer(modifier = Modifier.height(Sizes.default_bottom_padding))
+            Spacer(modifier = Modifier.height(Sizes.default_bottom_padding_double))
         }
     }
 

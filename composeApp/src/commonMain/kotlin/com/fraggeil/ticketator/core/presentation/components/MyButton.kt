@@ -99,7 +99,7 @@ fun MyButton(
                 modifier = modifier,
                 onClick = onClick,
                 enabled = enabled && !isLoading,
-                colors = ButtonDefaults.buttonColors().copy(containerColor = if (isSelected) Blue else LightGray ),
+                colors = ButtonDefaults.buttonColors().copy(containerColor = if (isSelected) Blue else Blue.copy(0.2f) ),
                 contentPadding = PaddingValues(16.dp)
             ){
                 content()
@@ -112,7 +112,7 @@ fun MyButton(
                 onClick = onClick,
                 enabled = enabled && !isLoading,
                 colors = ButtonDefaults.outlinedButtonColors().copy(containerColor = BG_White, contentColor = BlueDark),
-                border = BorderStroke(width = 1.dp, color = if (isSelected) BlueDark else LightGray),
+                border = BorderStroke(width = 1.dp, color = if (isSelected) BlueDark else Blue.copy(0.2f)),
                 contentPadding = PaddingValues(16.dp)
             ){
                 content()
@@ -125,7 +125,7 @@ fun MyButton(
                 modifier = modifier,
                 onClick = onClick,
                 enabled = enabled && !isLoading,
-                colors = ButtonDefaults.buttonColors().copy(containerColor = if (isSelected) Blue else LightGray, contentColor = if (isSelected) White else BlueDark),
+                colors = ButtonDefaults.buttonColors().copy(containerColor = if (isSelected) Blue else Blue.copy(0.2f), contentColor = if (isSelected) White else BlueDark),
                 contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
             ){
                 content()

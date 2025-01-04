@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -56,12 +57,17 @@ import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.presentation.Route
+import com.fraggeil.ticketator.presentation.SelectedFilterViewModel
+import com.fraggeil.ticketator.presentation.SelectedJourneyViewModel
 import com.fraggeil.ticketator.presentation.SelectedPostViewModel
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeScreenRoot
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeViewModel
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostAction
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostScreenRoot
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostViewModel
+import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsAction
+import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsScreenRoot
+import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsViewModel
 import com.fraggeil.ticketator.presentation.screens.start_screen.StartScreenRoot
 import com.fraggeil.ticketator.presentation.screens.start_screen.StartViewModel
 import org.jetbrains.compose.resources.painterResource
@@ -99,8 +105,8 @@ fun App() {
 
         Scaffold(
             modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding(),
+                .fillMaxSize(),
+//                .statusBarsPadding(),
             containerColor = BG_White,
             snackbarHost = {
                 SnackbarHost(koinInject())
@@ -169,13 +175,12 @@ fun App() {
 //                        exitTransition = { slideOutHorizontally() },
 //                        popEnterTransition = { slideInHorizontally() }
                         ) {
-
                             val viewModel = koinViewModel<HomeViewModel>()
-
-                            val selectedPostViewModel =
-                                it.sharedKoinViewModel<SelectedPostViewModel>(navController)
+                            val selectedPostViewModel = it.sharedKoinViewModel<SelectedPostViewModel>(navController)
+                            val selectedFilterViewModel = it.sharedKoinViewModel<SelectedFilterViewModel>(navController)
                             LaunchedEffect(true) {
                                 selectedPostViewModel.onSelectItem(null)
+                                selectedFilterViewModel.onSelectItem(null)
                             }
 
                             HomeScreenRoot(
@@ -184,6 +189,10 @@ fun App() {
                                     selectedPostViewModel.onSelectItem(post)
                                     navigate(Route.Post, false)
                                 },
+                                navigateToSearchResults = {filter ->
+                                    selectedFilterViewModel.onSelectItem(filter)
+                                    navigate(Route.SearchResults, false)
+                                }
                             )
                         }
                         composable(
@@ -210,11 +219,38 @@ fun App() {
                         composable(
                             route = Route.Start.route
                         ){
-                            val viewModel: StartViewModel = koinViewModel()
+                            val viewModel = koinViewModel<StartViewModel>()
                             StartScreenRoot(
                                 viewModel = viewModel,
                                 navigateToHome = {
                                     navigate(Route.Home, false)
+                                }
+                            )
+                        }
+                        composable(
+                            route = Route.SearchResults.route
+                        ) {
+                            val viewModel = koinViewModel<SearchResultsViewModel>()
+                            val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
+                            val selectedFilterViewModel = it.sharedKoinViewModel<SelectedFilterViewModel>(navController)
+                            val filterState by selectedFilterViewModel.state.collectAsStateWithLifecycle()
+
+                            LaunchedEffect(filterState){
+                                filterState?.let {
+                                    viewModel.onAction(SearchResultsAction.OnFilterSelected(it))
+                                }
+                            }
+                            LaunchedEffect(true) {
+                                selectedJourneyViewModel.onSelectItem(null)
+                            }
+                            SearchResultsScreenRoot(
+                                viewModel = viewModel,
+                                navigateBack = {
+                                    navController.navigateUp()
+                                },
+                                navigateToJourneyDetails = { journey ->
+                                    selectedJourneyViewModel.onSelectItem(journey)
+                                    //TODO
                                 }
                             )
                         }

@@ -205,7 +205,7 @@ enum class FormattedDateStyle{
     Digital, // 26.11.1973 16:08
     Words, // Thu, 28 May 2024 at 16:08
 }
-fun Long.toFormattedDate(hoursEnabled: Boolean = false, style: FormattedDateStyle = FormattedDateStyle.Digital):String{
+fun Long.toFormattedDate(hoursEnabled: Boolean = false, yearEnabled: Boolean = true, style: FormattedDateStyle = FormattedDateStyle.Digital):String{
     val dateTime = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.currentSystemDefault())
     val month = if (dateTime.monthNumber <10) "0${dateTime.monthNumber}" else dateTime.monthNumber
     val day = if (dateTime.dayOfMonth < 10) "0${dateTime.dayOfMonth}" else dateTime.dayOfMonth
@@ -241,13 +241,41 @@ fun Long.toFormattedDate(hoursEnabled: Boolean = false, style: FormattedDateStyl
         Month.DECEMBER -> Strings.December.value()
         else -> ""
     }
-    val weekNameWords = dayOfWeek.substring(0,if (dayOfWeek.substring(2,4) == "sh") 4 else 3).replaceFirstChar { it.uppercase() }
-    val monthNameWords = monthName.substring(0,if (monthName.substring(2,4) == "sh") 4 else 3).replaceFirstChar { it.uppercase() }
+
+    val weekNameWords = dayOfWeek.substring(
+        0,
+        if (dayOfWeek.substring(0,4).contains("ch", ignoreCase = true) || dayOfWeek.substring(0,4).contains("sh", ignoreCase = true)) 4 else 3
+    ).replaceFirstChar { it.uppercase() }
+    val monthNameWords = monthName.substring(
+        0,
+        if (monthName.substring(0,4).contains("ch", ignoreCase = true) || monthName.substring(0,4).contains("sh", ignoreCase = true)) 4 else 3
+    ).replaceFirstChar { it.uppercase() }
 
     return when(style){
-        FormattedDateStyle.Digital -> if (hoursEnabled) "$day.$month.$year $hour:$minute" else "$day.$month.$year"
-        FormattedDateStyle.Words -> if (hoursEnabled) "$weekNameWords, $day $monthNameWords $year $hour:$minute" else "$weekNameWords, $day $monthNameWords $year"
+        FormattedDateStyle.Digital -> "$day.$month${if(yearEnabled) ".$year" else ""}${if (hoursEnabled) " $hour:$minute" else ""}"
+        FormattedDateStyle.Words -> "$weekNameWords, $day $monthNameWords${if(yearEnabled) " $year" else ""}${if (hoursEnabled) " $hour:$minute" else ""}"
     }
+}
+fun Long.getHours(secondsEnabled: Boolean = false):String{
+    val dateTime = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.currentSystemDefault())
+    val hour = if (dateTime.hour < 10) "0${dateTime.hour}" else dateTime.hour
+    val minute = if (dateTime.minute < 10) "0${dateTime.minute}" else dateTime.minute
+    val seconds = if (dateTime.second < 10) "0${dateTime.second}" else dateTime.second
+
+    return "$hour:$minute${if (secondsEnabled) ":$seconds" else ""}"
+}
+
+fun Long.millisecondsToFormattedString(isSecondsEnabled: Boolean = false): String {
+    val days = this / (24*60*60*1000)
+    val hours = (this % (24*60*60*1000)) / (60*60*1000)
+    val minutes = (this % (60*60*1000)) / (60*1000)
+    val seconds = (this % (60*1000)) / 1000
+
+    var result = "$minutes ${Strings.MinuteShort.value()}"
+    if (hours > 0) result = "$hours ${Strings.HourShort.value()} $result"
+    if (days > 0) result = "$days ${Strings.DayShort.value()} $result"
+    if (isSecondsEnabled && seconds > 0) result = "$seconds ${Strings.SecondShort.value()} $result"
+    return result
 }
 
 fun Long.getMonthNameAndYearByDate(): Pair<StringItem, Int> {

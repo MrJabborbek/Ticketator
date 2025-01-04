@@ -8,7 +8,7 @@ val BlueDarkOnSecondary = Color(0xFF58587b)
 val Yellow = Color(0xFFFBF02)
 val BG_White = Color(0xFFF2F4F7)
 val White = Color(0xFFFFFFFF)
-val LightGray = Color(0xFFebebee)
+val LightGray = Color(0xFFd1d5df)
 val TextColorLight = Color(0xFF757c8d)
 val TextColor = Color(0xff0e1422)
 

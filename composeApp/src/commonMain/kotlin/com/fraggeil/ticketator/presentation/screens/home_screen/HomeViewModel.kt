@@ -9,10 +9,12 @@ import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.model.FilterType
 import com.fraggeil.ticketator.domain.model.Region
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,6 +30,9 @@ class HomeViewModel(
     private var observeIsThereNewNotificationsJob: Job? = null
 
     private var isInitialized = false
+    private val _oneTimeState = Channel<HomeOneTimeState>()
+    val oneTimeState = _oneTimeState.receiveAsFlow()
+
     private val _state = MutableStateFlow(HomeState())
     val state = _state
         .onStart {
@@ -178,7 +183,8 @@ class HomeViewModel(
 //        _state.value.snackbarHostState.showSnackbar("Fill all the fields")
         snackbarHostState.showSnackbar("Fill all the fields")
     }
-    private fun search(filter: Filter){
-        TODO()
+
+    private suspend fun search(filter: Filter){
+        _oneTimeState.send(HomeOneTimeState.NavigateToSearchResults(filter))
     }
 }

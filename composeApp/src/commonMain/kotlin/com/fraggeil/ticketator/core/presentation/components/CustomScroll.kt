@@ -22,9 +22,8 @@ fun Modifier.changeScrollStateByMouse(
     scrollState : ScrollableState,
     isMouseDragEnabled: Boolean = koinInject<PlatformType>() == PlatformType.DESKTOP,
     isLoading: Boolean = false,
-    coroutineScope: CoroutineScope? = null
+    scope: CoroutineScope = rememberCoroutineScope()
 ): Modifier{
-    val scope = coroutineScope ?: rememberCoroutineScope()
     return this.then(
         if (isMouseDragEnabled && !isLoading){
             Modifier.pointerInput(Unit){
