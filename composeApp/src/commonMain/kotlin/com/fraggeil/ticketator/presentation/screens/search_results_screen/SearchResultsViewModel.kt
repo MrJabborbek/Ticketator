@@ -52,12 +52,12 @@ class SearchResultsViewModel: ViewModel() {
 
     private fun fetchResults(filter: Filter){
         fetchResultsJob?.cancel()
-        _state.update { it.copy(isLoading = true) }
+        _state.update { it.copy(isLoadingJourneys = true) }
         fetchResultsJob = viewModelScope.launch {
             delay(Constants.FAKE_DELAY_TO_TEST)
             _state.update { it ->
                 it.copy(
-                isLoading = false,
+                    isLoadingJourneys = false,
                 journeys = FakeData.fakeJourneys.filter { t-> t.timeStart.setFromTimeToBeginningOfTheDay() == filter.dateGo.setFromTimeToBeginningOfTheDay() }
             ) }
         }

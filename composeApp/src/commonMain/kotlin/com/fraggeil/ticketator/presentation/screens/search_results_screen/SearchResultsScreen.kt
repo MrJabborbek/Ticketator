@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -19,13 +20,17 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +50,7 @@ import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
 import com.fraggeil.ticketator.core.presentation.components.MyButton
+import com.fraggeil.ticketator.core.presentation.components.MyCalendarDateSelector
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.theme.AppTypography
@@ -52,6 +58,7 @@ import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.BlueDarkSecondary
 import com.fraggeil.ticketator.core.theme.White
+import com.fraggeil.ticketator.domain.FakeData
 import com.fraggeil.ticketator.domain.model.Journey
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.components.Dots
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.components.JourneyListItem
@@ -87,7 +94,7 @@ fun SearchResultsScreen(
     onAction: (SearchResultsAction) -> Unit
 ) {
     val uiType = rememberScreenSizeInfo().getUiType()
-
+    val calendarDateVisibility = remember { mutableStateOf(false) }
     Box(modifier = Modifier
         .fillMaxSize()
         .background(BlueDark)
@@ -202,7 +209,7 @@ fun SearchResultsScreen(
                 }
                 Text(
                     modifier = Modifier.padding(top = vertical_out_padding),
-                    text = "${state.journeys.size} Results Found",
+                    text = "${state.journeys.size} Results Found".takeIf { !state.isLoadingJourneys } ?: "Loading Results",
                     color = White,
                     style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.Normal),
                     textAlign = TextAlign.Center,
@@ -248,40 +255,85 @@ fun SearchResultsScreen(
                     }
                     Spacer(modifier = Modifier.width(Sizes.horizontal_out_padding))
                 }
-
-                val listState = rememberLazyGridState()
-                LazyVerticalGrid(
-                    modifier = Modifier
-                        .padding(top = vertical_inner_padding)
-                        .fillMaxWidth()
-                        .changeScrollStateByMouse(
-                            isVerticalScroll = true,
-                            scrollState = listState,
-                            isLoading = state.isLoading
-                        ),
-                    state = listState,
-                    columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else 2),
-                    contentPadding = PaddingValues(
-                        start = horizontal_inner_padding,
-                        end = horizontal_inner_padding,
-//                        top = vertical_inner_padding,
-                        bottom = default_bottom_padding
-                    ),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        12.dp,
-                        Alignment.CenterHorizontally
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-                ) {
-                    items(items = state.journeys) {
-                        JourneyListItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            journey = it,
-                            onClick = { onAction(SearchResultsAction.OnJourneyClicked(it)) }
+                if (!state.isLoadingJourneys && !!state.isLoading && state.journeys.isEmpty()){
+                    Column(
+                        modifier = Modifier
+                            .padding(top = vertical_inner_padding)
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ){
+                        Text(
+                            modifier = Modifier.padding(horizontal = Sizes.default_bottom_padding),
+                            text = "No Results Found :( Maybe you can try another date?",
+                            color = White,
+                            style = AppTypography().titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                            textAlign = TextAlign.Center,
+                            maxLines = 3,
                         )
+                        MyButton(
+                            modifier = Modifier.padding(top = vertical_out_padding),
+                            text = "Select Another Date",
+                            onClick = {
+                                calendarDateVisibility.value = true
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(Sizes.default_bottom_padding_double))
+                    }
+                }else{
+                    val listState = rememberLazyGridState()
+                    LazyVerticalGrid(
+                        modifier = Modifier
+                            .padding(top = vertical_inner_padding)
+                            .fillMaxWidth()
+                            .changeScrollStateByMouse(
+                                isVerticalScroll = true,
+                                scrollState = listState,
+                                isLoading = state.isLoading
+                            ),
+                        state = listState,
+                        columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else 2),
+                        contentPadding = PaddingValues(
+                            start = horizontal_inner_padding,
+                            end = horizontal_inner_padding,
+//                        top = vertical_inner_padding,
+                            bottom = default_bottom_padding
+                        ),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            12.dp,
+                            Alignment.CenterHorizontally
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+                    ) {
+                        if (state.isLoadingJourneys) {
+                            items(10) {
+                                JourneyListItem(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    isLoading = true,
+                                    journey = FakeData.fakeJourneys[0],
+                                    onClick = {}
+                                )
+                            }
+                        }else{
+                            items(items = state.journeys) {
+                                JourneyListItem(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    journey = it,
+                                    onClick = { onAction(SearchResultsAction.OnJourneyClicked(it)) }
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
     }
+    MyCalendarDateSelector(
+        minimalSelectableDate = DateTimeUtil.getToday().first,
+        onDateSelected = { onAction(SearchResultsAction.OnDateClicked(it))},
+        currentSelectedDate = state.filter?.dateGo,
+        isVisible = calendarDateVisibility
+    )
 }

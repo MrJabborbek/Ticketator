@@ -25,6 +25,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -68,6 +69,9 @@ import com.fraggeil.ticketator.presentation.screens.post_screen.PostViewModel
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsAction
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsScreenRoot
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsViewModel
+import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
+import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatScreenRoot
+import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatViewModel
 import com.fraggeil.ticketator.presentation.screens.start_screen.StartScreenRoot
 import com.fraggeil.ticketator.presentation.screens.start_screen.StartViewModel
 import org.jetbrains.compose.resources.painterResource
@@ -166,8 +170,8 @@ fun App() {
                 ) {
                     navigation(
                         route = Route.TicketatorGraph.route,
-//                        startDestination = Route.Home.route,
-                        startDestination = Route.Start.route,
+//                        startDestination = Route.Start.route,
+                        startDestination = Route.SelectSeat.route,
                     ) {
 
                         composable(
@@ -250,6 +254,27 @@ fun App() {
                                 },
                                 navigateToJourneyDetails = { journey ->
                                     selectedJourneyViewModel.onSelectItem(journey)
+                                    navigate(Route.SelectSeat, true)
+                                }
+                            )
+                        }
+                        composable(
+                            route = Route.SelectSeat.route
+                        ) {
+                            val viewModel = koinViewModel<SelectSeatViewModel>()
+                            val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
+                            val selectedJourney by selectedJourneyViewModel.state.collectAsState()
+                            LaunchedEffect(selectedJourney){
+                                selectedJourney?.let {
+                                    viewModel.onAction(SelectSeatAction.OnJourneySelected(selectedJourney!!))
+                                }
+                            }
+                            SelectSeatScreenRoot(
+                                viewModel = viewModel,
+                                navigateBack = {
+                                    navController.navigateUp()
+                                },
+                                navigateToPayment = {
                                     //TODO
                                 }
                             )

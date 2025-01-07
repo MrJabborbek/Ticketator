@@ -63,6 +63,7 @@ import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyButtonStyle
+import com.fraggeil.ticketator.core.presentation.components.MyCalendarDateSelector
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.presentation.components.MyDepartureItem
 import com.fraggeil.ticketator.core.presentation.components.MyInfoButton
@@ -359,134 +360,18 @@ fun HomeScreen(
         isVisible = isSelectToVisible
     )
 
-    val selectableFromDates = remember {
-        object : SelectableDates {
-            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                return utcTimeMillis >= DateTimeUtil.getToday().first
-            }
-        }
-    }
-
-    val selectableToDates = remember(state.filter.dateGo) {
-        object : SelectableDates {
-            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                return utcTimeMillis >= (state.filter.dateGo ?:DateTimeUtil.getToday().first)
-            }
-        }
-    }
-
-    if (fromDatePickerState.value){
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = state.filter.dateGo.takeIf { it != -1L }?.convertUtcToLocalMillis(),
-            selectableDates = selectableFromDates
+    MyCalendarDateSelector(
+        minimalSelectableDate = DateTimeUtil.getToday().first,
+        onDateSelected = { onAction(HomeAction.OnDateFromSelected(it)) },
+        currentSelectedDate = state.filter.dateGo,
+        isVisible = fromDatePickerState
+    )
+    if (state.filter.type == FilterType.ROUND_TRIP && state.filter.dateGo != null){
+        MyCalendarDateSelector(
+            minimalSelectableDate = state.filter.dateGo,
+            onDateSelected = { onAction(HomeAction.OnDateToSelected(it)) },
+            currentSelectedDate = state.filter.dateBack,
+            isVisible = toDatePickerState
         )
-        DatePickerDialog(
-            modifier = Modifier.wrapContentSize().padding(8.dp),
-            onDismissRequest = { fromDatePickerState.value = false },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let {
-                            onAction(HomeAction.OnDateFromSelected(it))
-                            fromDatePickerState.value = false
-                        }
-                    }
-                ){
-                    Text(text = Strings.Select.value())
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        fromDatePickerState.value = false
-                    }
-                ){
-                    Text(text = Strings.Cancel.value())
-                }
-            },
-            colors = DatePickerDefaults.colors().copy(containerColor = White)
-        ) {
-            DatePicker(
-                colors = DatePickerDefaults.colors().copy(containerColor = White),
-                state =  datePickerState,
-                headline = {
-                    Text(
-                        modifier = Modifier.wrapContentWidth().padding(start = Sizes.horizontal_inner_padding),
-                        text = datePickerState.selectedDateMillis?.toFormattedDate()?: Strings.SelectDate.value(),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 18.sp,
-                        color = Blue
-                    )
-                },
-                title = {
-                    Text(
-                        modifier = Modifier.padding(Sizes.horizontal_inner_padding),
-                        text = Strings.SelectDate.value(),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 14.sp,
-                        color = Blue
-                    )
-                }
-            )
-        }
-    }
-    if (toDatePickerState.value && state.filter.type == FilterType.ROUND_TRIP && state.filter.dateGo != null){
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = state.filter.dateBack.takeIf { it != -1L }?.convertUtcToLocalMillis(),
-            selectableDates = selectableToDates
-        )
-        DatePickerDialog(
-            modifier = Modifier.wrapContentSize().padding(8.dp),
-            onDismissRequest = { toDatePickerState.value = false },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let {
-                            onAction(HomeAction.OnDateToSelected(it))
-                            toDatePickerState.value = false
-                        }
-                    }
-                ){
-                    Text(text = Strings.Select.value())
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        toDatePickerState.value = false
-                    }
-                ){
-                    Text(text = Strings.Cancel.value())
-                }
-            },
-            colors = DatePickerDefaults.colors().copy(containerColor = White)
-        ) {
-            DatePicker(
-                colors = DatePickerDefaults.colors().copy(containerColor = White),
-                state =  datePickerState,
-                headline = {
-                    Text(
-                        modifier = Modifier.wrapContentWidth().padding(start = Sizes.horizontal_inner_padding),
-                        text = datePickerState.selectedDateMillis?.toFormattedDate()?: Strings.SelectDate.value(),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 18.sp,
-                        color = Blue
-                    )
-                },
-                title = {
-                    Text(
-                        modifier = Modifier.padding(Sizes.horizontal_inner_padding),
-                        text = Strings.SelectDate.value(),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 14.sp,
-                        color = Blue
-                    )
-                }
-            )
-        }
     }
 }

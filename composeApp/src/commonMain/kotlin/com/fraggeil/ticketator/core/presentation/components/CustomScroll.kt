@@ -22,6 +22,7 @@ fun Modifier.changeScrollStateByMouse(
     scrollState : ScrollableState,
     isMouseDragEnabled: Boolean = koinInject<PlatformType>() == PlatformType.DESKTOP,
     isLoading: Boolean = false,
+    reverseScroll: Boolean = false,
     scope: CoroutineScope = rememberCoroutineScope()
 ): Modifier{
     return this.then(
@@ -30,7 +31,7 @@ fun Modifier.changeScrollStateByMouse(
                 detectDragGestures { _, dragAmount ->
                     scope.launch {
                         scrollState.scrollBy(
-                            if (isVerticalScroll) -dragAmount.y else -dragAmount.x)
+                            if (isVerticalScroll) if (reverseScroll) dragAmount.y else -dragAmount.y else if (reverseScroll) dragAmount.x else -dragAmount.x)
                     }
                 }
             }
