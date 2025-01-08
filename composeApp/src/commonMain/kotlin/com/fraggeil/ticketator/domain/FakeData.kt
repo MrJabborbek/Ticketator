@@ -91,7 +91,7 @@ object FakeData{
             timeArrival = timeArrival,
             from = Pair(fromRegion, fromDistrict),
             to = Pair(toRegion, toDistrict),
-            price = Random.nextInt(from = 100, until = 1000),
+            price = 139000,
             seats = 55,
             seatsReserved = listOf(1,2,3,4),
             seatsAvailable = (5..45).map { it },

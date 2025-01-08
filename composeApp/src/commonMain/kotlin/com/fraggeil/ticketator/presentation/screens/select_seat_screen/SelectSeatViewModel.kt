@@ -12,18 +12,20 @@ class SelectSeatViewModel: ViewModel() {
     fun onAction(action: SelectSeatAction){
         when(action){
             SelectSeatAction.OnBackClicked -> {}
-            SelectSeatAction.OnPayClicked -> {}
+            SelectSeatAction.OnNextClicked -> {}
             is SelectSeatAction.OnSeatClicked -> {
-                if (_state.value.selectedJourney?.seatsAvailable?.contains(action.seat) != true){
+                if (_state.value.selectedJourney?.seatsAvailable?.contains(action.seat) != true) {
                     return
                 }
-                val selectedSeats = _state.value.selectedSeats.toMutableList()
-                if (action.seat in selectedSeats){
-                    selectedSeats.remove(action.seat)
-                } else {
-                    selectedSeats.add(action.seat)
+                _state.value.selectedJourney?.let { selectedJourney ->
+                    val selectedSeats = selectedJourney.selectedSeats.toMutableList()
+                    if (action.seat in selectedSeats) {
+                        selectedSeats.remove(action.seat)
+                    } else {
+                        selectedSeats.add(action.seat)
+                    }
+                    _state.update { it.copy(selectedJourney = selectedJourney.copy(selectedSeats = selectedSeats.sortedBy { t -> t })) }
                 }
-                _state.update { it.copy(selectedSeats = selectedSeats) }
             }
 
             is SelectSeatAction.OnJourneySelected -> {

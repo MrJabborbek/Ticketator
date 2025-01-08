@@ -6,8 +6,8 @@ import com.fraggeil.ticketator.domain.model.Journey
 data class SelectSeatState(
     val isLoading: Boolean = true,
     val error: String? = null,
-    val selectedJourney: Journey? = FakeData.fakeJourneys[0],
-    val selectedSeats: List<Int> = emptyList(),
+    val selectedJourney: Journey? = null//FakeData.fakeJourneys[0],
+//    val selectedSeats: List<Int> = emptyList(),
 //    val availableSeats: List<Int> = emptyList(),
 //    val reservedSeats: List<Int> = emptyList(),
 //    val unAvailableSeats: List<Int> = emptyList(),

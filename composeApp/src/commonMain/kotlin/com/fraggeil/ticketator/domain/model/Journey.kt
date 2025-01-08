@@ -11,5 +11,7 @@ data class Journey(
     val seatsReserved: List<Int>,
     val seatsAvailable: List<Int>,
     val seatsUnavailable: List<Int>,
+    val selectedSeats: List<Int> = emptyList(),
+    val passengers: List<Passenger> = emptyList(),
     val stopAt: List<String>
 )

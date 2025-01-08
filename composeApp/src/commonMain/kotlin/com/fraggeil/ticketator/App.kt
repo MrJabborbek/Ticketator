@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
@@ -40,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -63,6 +60,9 @@ import com.fraggeil.ticketator.presentation.SelectedJourneyViewModel
 import com.fraggeil.ticketator.presentation.SelectedPostViewModel
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeScreenRoot
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeViewModel
+import com.fraggeil.ticketator.presentation.screens.passengers_info_screen.PassengersInfoAction
+import com.fraggeil.ticketator.presentation.screens.passengers_info_screen.PassengersInfoScreenRoot
+import com.fraggeil.ticketator.presentation.screens.passengers_info_screen.PassengersInfoViewModel
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostAction
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostScreenRoot
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostViewModel
@@ -170,8 +170,8 @@ fun App() {
                 ) {
                     navigation(
                         route = Route.TicketatorGraph.route,
-//                        startDestination = Route.Start.route,
-                        startDestination = Route.SelectSeat.route,
+                        startDestination = Route.Start.route,
+//                        startDestination = Route.SelectSeat.route,
                     ) {
 
                         composable(
@@ -274,11 +274,35 @@ fun App() {
                                 navigateBack = {
                                     navController.navigateUp()
                                 },
+                                navigateToPassengersInfo = { journey ->
+                                    selectedJourneyViewModel.onSelectItem(journey)
+                                    navigate(Route.PassengersInfo, true)
+                                }
+                            )
+                        }
+                        composable(
+                            route = Route.PassengersInfo.route
+                        ) {
+                            val viewModel = koinViewModel<PassengersInfoViewModel>()
+                            val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
+                            val selectedJourney by selectedJourneyViewModel.state.collectAsState()
+                            LaunchedEffect(selectedJourney){
+                                println("selectedJourney: $selectedJourney")
+                                selectedJourney?.let {
+                                    viewModel.onAction(PassengersInfoAction.OnJourneySelected(selectedJourney!!))
+                                }
+                            }
+                            PassengersInfoScreenRoot(
+                                viewModel = viewModel,
+                                navigateBack = {
+                                    navController.navigateUp()
+                                },
                                 navigateToPayment = {
                                     //TODO
                                 }
                             )
                         }
+
                     }
                 }
             }

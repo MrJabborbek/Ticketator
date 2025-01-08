@@ -6,6 +6,7 @@ import com.fraggeil.ticketator.presentation.SelectedFilterViewModel
 import com.fraggeil.ticketator.presentation.SelectedJourneyViewModel
 import com.fraggeil.ticketator.presentation.SelectedPostViewModel
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeViewModel
+import com.fraggeil.ticketator.presentation.screens.passengers_info_screen.PassengersInfoViewModel
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostViewModel
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsViewModel
 import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatViewModel
@@ -31,9 +32,11 @@ val sharedModule = module {
     viewModelOf(::StartViewModel)
     viewModelOf(::SearchResultsViewModel)
     viewModelOf(::SelectSeatViewModel)
+    viewModelOf(::PassengersInfoViewModel)
 
 
     viewModelOf(::SelectedPostViewModel)
     viewModelOf(::SelectedFilterViewModel)
     viewModelOf(::SelectedJourneyViewModel)
+
 }

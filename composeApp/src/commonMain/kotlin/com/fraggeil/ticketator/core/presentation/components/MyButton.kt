@@ -28,6 +28,7 @@ import com.fraggeil.ticketator.core.theme.BG_White
 import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.LightGray
+import com.fraggeil.ticketator.core.theme.TextColorLight
 import com.fraggeil.ticketator.core.theme.White
 
 enum class MyButtonStyle{ OUTLINED, FILLED, SMALL }
@@ -99,7 +100,10 @@ fun MyButton(
                 modifier = modifier,
                 onClick = onClick,
                 enabled = enabled && !isLoading,
-                colors = ButtonDefaults.buttonColors().copy(containerColor = if (isSelected) Blue else Blue.copy(0.2f) ),
+                colors = ButtonDefaults.buttonColors().copy(
+                    containerColor = if (isSelected) Blue else Blue.copy(0.2f) ,
+                    disabledContentColor = TextColorLight
+                ),
                 contentPadding = PaddingValues(16.dp)
             ){
                 content()

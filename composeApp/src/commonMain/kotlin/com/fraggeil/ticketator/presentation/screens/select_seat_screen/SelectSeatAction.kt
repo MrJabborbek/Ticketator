@@ -4,7 +4,7 @@ import com.fraggeil.ticketator.domain.model.Journey
 
 sealed interface SelectSeatAction {
     data object OnBackClicked : SelectSeatAction
-    data object OnPayClicked : SelectSeatAction
+    data object OnNextClicked : SelectSeatAction
     data class OnSeatClicked(val seat: Int) : SelectSeatAction
     data class OnJourneySelected(val journey: Journey) : SelectSeatAction
 }

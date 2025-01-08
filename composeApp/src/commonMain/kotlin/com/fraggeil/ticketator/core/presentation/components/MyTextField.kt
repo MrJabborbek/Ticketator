@@ -1,0 +1,322 @@
+package com.fraggeil.ticketator.core.presentation.components
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.fraggeil.ticketator.core.domain.PlatformType
+import com.fraggeil.ticketator.core.domain.phoneNumberFormatting.PhoneNumberVisualTransformation
+import com.fraggeil.ticketator.core.theme.Blue
+import com.fraggeil.ticketator.core.theme.BlueDark
+import com.fraggeil.ticketator.core.theme.LightGray
+import com.fraggeil.ticketator.core.theme.TextColor
+import io.michaelrocks.libphonenumber.kotlin.PhoneNumberUtil
+import io.michaelrocks.libphonenumber.kotlin.metadata.defaultMetadataLoader
+import org.koin.compose.koinInject
+
+enum class InputStyle{
+    ANY, NUMBER, PHONE_NUMBER, PASSPORT,DESCRIPTION, MONEY
+}
+
+@Composable
+fun MyTextField(
+    isLoading: Boolean = false,
+    modifier: Modifier = Modifier,
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    prefix: String? = null,
+    keyboardType: KeyboardType? = null,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    trailingIcon: ImageVector? = null,
+    isEditable: Boolean = true,
+    onClicked: () -> Unit = {},
+//    isPhoneNumberField: Boolean = false,
+    inputStyle: InputStyle = InputStyle.ANY
+) {
+    val keyboardTypeLocal by remember {
+        if (keyboardType != null) return@remember mutableStateOf(keyboardType)
+        val type = when (inputStyle) {
+            InputStyle.ANY -> KeyboardType.Text
+            InputStyle.NUMBER -> KeyboardType.Number
+            InputStyle.PHONE_NUMBER -> KeyboardType.Phone
+            InputStyle.PASSPORT -> KeyboardType.Text
+            InputStyle.DESCRIPTION -> KeyboardType.Text
+            InputStyle.MONEY -> KeyboardType.Number
+        }
+        mutableStateOf(type)
+    }
+
+//    val phoneNumberUtil: PhoneNumberUtil by remember {
+//        mutableStateOf(PhoneNumberUtil.createInstance(defaultMetadataLoader()))
+//    }
+//    val region = remember {
+//        try {
+//            //Locale.current.region
+//            "UZ"
+//        } catch (e: Exception) {
+//            // as of compose 1.4.3, js fails to get the region so default to US
+//            "UZ"
+//        }
+//    }
+    val isAllCaps = remember {
+        if (inputStyle == InputStyle.PASSPORT) return@remember mutableStateOf(true)
+        mutableStateOf(false)
+    }
+    TextField(
+        enabled = isEditable,
+        trailingIcon = {
+            if (trailingIcon != null) Icon(
+                imageVector = trailingIcon,
+                contentDescription = null,
+                tint = BlueDark,
+                modifier = Modifier.size(24.dp)
+            )
+        },
+        modifier = modifier
+            .then(
+                if (inputStyle == InputStyle.DESCRIPTION) {
+                    Modifier.height(150.dp)
+                } else {
+                    Modifier
+                }
+            )
+            .then(
+                if (!isEditable) Modifier
+                    .clickable(
+                        onClick = {if (!isLoading) onClicked()},
+                        indication = null,
+                        interactionSource = MutableInteractionSource()
+                    ) else Modifier
+            )
+            .shimmerLoadingAnimation(
+                isLoadingCompleted = !isLoading,
+                shimmerStyle = ShimmerStyle.Custom,
+            ),
+        label = { Text(text = label.takeIf { !isLoading } ?: "") },
+        value = if (isLoading) "" else if (isAllCaps.value) value.uppercase() else value,
+        onValueChange = { text ->
+            if (isLoading) return@TextField
+
+            when (inputStyle) {
+                InputStyle.ANY -> onValueChange(text)
+                InputStyle.NUMBER -> {
+                    if (text.any { !it.isDigit() }) return@TextField
+                    onValueChange(text)
+                }
+
+                InputStyle.PHONE_NUMBER -> {
+                    if (text.length > 13) return@TextField// for uzbekistan
+                    if (!("^\\+?[1-9]\\d{1,14}\$".toRegex().matches(text))) return@TextField
+                    if (text.any { !it.isDigit() && it != '+' }) return@TextField
+                    if (text.indexOfLast { it == '+' } > 0) return@TextField
+                    if (text.length <= 3) {
+                        onValueChange("+998")
+                        return@TextField
+                    }
+                    onValueChange(text)
+                }
+
+                InputStyle.PASSPORT -> {
+                    if (text.length > 9) return@TextField
+                    if (!text.getOrElse(0, { 'a' }).isLetter()) return@TextField
+                    if (!text.getOrElse(1, { 'a' }).isLetter()) return@TextField
+                    if (!text.drop(2).all { it.isDigit() }) return@TextField
+
+                    onValueChange(text)
+                }
+
+                InputStyle.DESCRIPTION -> {
+                    onValueChange(text)
+                }
+                InputStyle.MONEY -> {
+                    if (text.any { !it.isDigit() }) return@TextField
+                    onValueChange(text)
+
+                }
+            }
+//            onValueChange(text)
+        },
+        shape = RoundedCornerShape(16.dp),
+        colors = TextFieldDefaults.colors().copy(
+            focusedContainerColor = Blue.copy(alpha = 0.2f),
+            unfocusedContainerColor = LightGray,
+            disabledContainerColor = LightGray,
+            focusedLabelColor = BlueDark,
+            unfocusedLabelColor = BlueDark,
+            disabledLabelColor = BlueDark,
+            cursorColor = BlueDark,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            focusedTextColor = TextColor,
+            unfocusedTextColor = TextColor,
+            disabledTextColor = TextColor,
+        ),
+        textStyle = if (!isEditable) MaterialTheme.typography.bodyLarge.copy(
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 0.sp
+        ) else MaterialTheme.typography.bodyLarge.copy(letterSpacing = 0.sp),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardTypeLocal,
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = keyboardActions,
+        singleLine = when (inputStyle) {
+            InputStyle.ANY -> true
+            InputStyle.NUMBER -> true
+            InputStyle.PHONE_NUMBER -> true
+            InputStyle.PASSPORT -> true
+            InputStyle.DESCRIPTION -> false
+            InputStyle.MONEY -> true
+        },
+        prefix = { if (prefix != null) Text(text = prefix) },
+        visualTransformation = when (inputStyle) {
+            InputStyle.PHONE_NUMBER -> {
+                when(koinInject<PlatformType>()){
+                    PlatformType.ANDROID, PlatformType.DESKTOP -> PhoneNumberVisualTransformation(PhoneNumberUtil.createInstance(defaultMetadataLoader()), "UZ")
+                    PlatformType.IOS -> VisualTransformation.None // TODO TODO
+                }
+            }
+            InputStyle.MONEY -> ThousandSeparatorTransformation()
+            else -> VisualTransformation.None
+        }
+    )
+}
+
+private class ThousandSeparatorTransformation : VisualTransformation { //TODO optimize
+    private var lastOriginalText: String? = null
+    private var lastFormattedText: String? = null
+    private var lastOffsetMapping: OffsetMapping? = null
+
+    override fun filter(text: AnnotatedString): TransformedText {
+        val originalText = text.text
+        // Check if we already calculated this transformation
+        if (originalText == lastOriginalText) {
+            return TransformedText(
+                text = AnnotatedString(lastFormattedText ?: originalText),
+                offsetMapping = lastOffsetMapping ?: OffsetMapping.Identity
+            )
+        }
+
+        // Perform the transformation
+        val formattedText = originalText.reversed()
+            .chunked(3)
+            .joinToString(" ") { it }
+            .reversed()
+
+        val offsetMapping = ThousandSeparatorOffsetMapping(formattedText)
+
+        // Cache the results
+        lastOriginalText = originalText
+        lastFormattedText = formattedText
+        lastOffsetMapping = offsetMapping
+
+        return TransformedText(
+            text = AnnotatedString(formattedText),
+            offsetMapping = offsetMapping
+        )
+    }
+}
+
+private class ThousandSeparatorOffsetMapping(
+    private val transformed: String
+) : OffsetMapping {
+    override fun originalToTransformed(offset: Int): Int {
+        var spacesCount = 0
+        var originalCharsCount = 0
+
+        for (i in transformed.indices) {
+            if (transformed[i] == ' ') spacesCount++
+            else originalCharsCount++
+
+            if (originalCharsCount == offset) return i + 1
+        }
+
+        return transformed.length
+    }
+
+    override fun transformedToOriginal(offset: Int): Int {
+        var originalCharsCount = 0
+
+        for (i in transformed.indices) {
+            if (transformed[i] != ' ') originalCharsCount++
+
+            if (i == offset) return originalCharsCount
+        }
+
+        return originalCharsCount
+    }
+}
+
+//
+//private class ThousandSeparatorTransformation : VisualTransformation {
+//    override fun filter(text: AnnotatedString): TransformedText {
+//        val originalText = text.text
+//        val formattedText = originalText.reversed()
+//            .chunked(3)
+//            .joinToString(" ") { it }
+//            .reversed()
+//
+//        return TransformedText(
+//            text = AnnotatedString(formattedText),
+//            offsetMapping = ThousandSeparatorOffsetMapping(formattedText)
+//        )
+//    }
+//}
+//
+//private class ThousandSeparatorOffsetMapping(
+//    private val transformed: String
+//) : OffsetMapping {
+//    override fun originalToTransformed(offset: Int): Int {
+//        println("CALLED 1")
+//        var spacesCount = 0
+//        var originalCharsCount = 0
+//
+//        for (i in transformed.indices) {
+//            if (transformed[i] == ' ') spacesCount++
+//            else originalCharsCount++
+//
+//            if (originalCharsCount == offset) return i + 1
+//        }
+//
+//        return transformed.length
+//    }
+//
+//    override fun transformedToOriginal(offset: Int): Int {
+//        println("CALLED 2")
+//        var originalCharsCount = 0
+//
+//        for (i in transformed.indices) {
+//            if (transformed[i] != ' ') originalCharsCount++
+//
+//            if (i == offset) return originalCharsCount
+//        }
+//
+//        return originalCharsCount
+//    }
+//}

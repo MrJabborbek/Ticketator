@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fraggeil.ticketator.core.domain.UiType
+import com.fraggeil.ticketator.core.domain.formatWithSpacesNumber
 import com.fraggeil.ticketator.core.domain.getHours
 import com.fraggeil.ticketator.core.domain.getUiType
 import com.fraggeil.ticketator.core.domain.millisecondsToFormattedString
@@ -31,6 +34,7 @@ import com.fraggeil.ticketator.core.domain.toFormattedDate
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
+import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.theme.AppTypography
 import com.fraggeil.ticketator.core.theme.BG_White
@@ -38,6 +42,7 @@ import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.BlueDarkSecondary
 import com.fraggeil.ticketator.core.theme.White
+import com.fraggeil.ticketator.domain.model.Journey
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.components.Dots
 import com.fraggeil.ticketator.presentation.screens.select_seat_screen.components.Seats
 import org.jetbrains.compose.resources.painterResource
@@ -50,7 +55,7 @@ import ticketator.composeapp.generated.resources.uzbekistan
 fun SelectSeatScreenRoot(
     viewModel: SelectSeatViewModel,
     navigateBack: () -> Unit,
-    navigateToPayment: () -> Unit
+    navigateToPassengersInfo: (Journey) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     SelectSeatScreen(
@@ -58,10 +63,9 @@ fun SelectSeatScreenRoot(
         onAction = {
             when(it){
                 SelectSeatAction.OnBackClicked -> navigateBack()
-                SelectSeatAction.OnPayClicked -> navigateToPayment()
+                SelectSeatAction.OnNextClicked -> state.selectedJourney?.let { it1 -> navigateToPassengersInfo(it1) }
                 is SelectSeatAction.OnSeatClicked -> {}
                 is SelectSeatAction.OnJourneySelected -> {
-
                 }
             }
             viewModel.onAction(it)
@@ -118,8 +122,8 @@ fun SelectSeatScreen(
                         text = "Select Seats",
                         color = White,
                         style = AppTypography().headlineSmall.copy(fontWeight = FontWeight.Medium),
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = vertical_out_padding).weight(1f),
+                        textAlign = TextAlign.Start,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -132,7 +136,7 @@ fun SelectSeatScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Column(
-                        modifier = Modifier.weight(1f),
+//                        modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -158,7 +162,8 @@ fun SelectSeatScreen(
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Center,
                             maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.widthIn(max = 100.dp)
                         )
                     }
                     Dots(
@@ -174,7 +179,7 @@ fun SelectSeatScreen(
                         }"
                     )
                     Column(
-                        modifier = Modifier.weight(1f),
+//                        modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -200,9 +205,54 @@ fun SelectSeatScreen(
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Center,
                             maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.widthIn(max = 100.dp)
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = Sizes.horizontal_out_padding)
+                        .padding(top = vertical_out_padding).fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ){
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.Start
+                    ){
+                        Text(
+                            text = "1 ticket: ${selectedJourney.price.toString().formatWithSpacesNumber()} so‘m",
+                            color = White,
+                            style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
+                            textAlign = TextAlign.Start,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = "Additional: 0 so‘m",
+                            color = White,
+                            style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
+                            textAlign = TextAlign.Start,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = "Total: ${(selectedJourney.price*state.selectedJourney.selectedSeats.size).toString().formatWithSpacesNumber()} so‘m",
+                            color = White,
+                            style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                            textAlign = TextAlign.Start,
+                            maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
+                    MyButton(
+                        modifier = Modifier.width(160.dp),
+//                        modifier = Modifier.padding(top = vertical_out_padding, start = Sizes.horizontal_out_padding, end = Sizes.horizontal_out_padding).widthIn(max = 600.dp).fillMaxWidth(),
+                        text = "Next",
+                        onClick = { onAction(SelectSeatAction.OnNextClicked) },
+                        enabled = state.selectedJourney.selectedSeats.isNotEmpty()
+                    )
                 }
 
                 Column(
@@ -214,7 +264,7 @@ fun SelectSeatScreen(
                 ){
                     Seats(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
-                        selected = state.selectedSeats,
+                        selected = state.selectedJourney.selectedSeats,
                         available = selectedJourney.seatsAvailable,
                         reserved = selectedJourney.seatsReserved,
                         onClick = {
