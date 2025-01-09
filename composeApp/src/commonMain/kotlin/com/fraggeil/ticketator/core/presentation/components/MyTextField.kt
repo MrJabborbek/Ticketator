@@ -39,7 +39,8 @@ import io.michaelrocks.libphonenumber.kotlin.metadata.defaultMetadataLoader
 import org.koin.compose.koinInject
 
 enum class InputStyle{
-    ANY, NUMBER, PHONE_NUMBER, PASSPORT,DESCRIPTION, MONEY
+    ANY, NUMBER, PHONE_NUMBER, PASSPORT,DESCRIPTION, MONEY, PLASTIC_CARD,
+    PLASTIC_CARD_VALID_DATE,
 }
 
 @Composable
@@ -47,6 +48,7 @@ fun MyTextField(
     isLoading: Boolean = false,
     modifier: Modifier = Modifier,
     label: String,
+    hint: String? = null,
     value: String,
     onValueChange: (String) -> Unit,
     prefix: String? = null,
@@ -67,6 +69,8 @@ fun MyTextField(
             InputStyle.PASSPORT -> KeyboardType.Text
             InputStyle.DESCRIPTION -> KeyboardType.Text
             InputStyle.MONEY -> KeyboardType.Number
+            InputStyle.PLASTIC_CARD -> KeyboardType.Number
+            InputStyle.PLASTIC_CARD_VALID_DATE -> KeyboardType.Number
         }
         mutableStateOf(type)
     }
@@ -117,6 +121,7 @@ fun MyTextField(
                 isLoadingCompleted = !isLoading,
                 shimmerStyle = ShimmerStyle.Custom,
             ),
+        placeholder = { Text(text = hint?.takeIf { !isLoading } ?: "")},
         label = { Text(text = label.takeIf { !isLoading } ?: "") },
         value = if (isLoading) "" else if (isAllCaps.value) value.uppercase() else value,
         onValueChange = { text ->
@@ -156,7 +161,17 @@ fun MyTextField(
                 InputStyle.MONEY -> {
                     if (text.any { !it.isDigit() }) return@TextField
                     onValueChange(text)
-
+                }
+                InputStyle.PLASTIC_CARD -> {
+                    if (text.length > 16) return@TextField
+                    if (text.any { !it.isDigit() }) return@TextField
+                    onValueChange(text)
+                }
+                InputStyle.PLASTIC_CARD_VALID_DATE -> {
+                    if (text.length > 4) return@TextField
+                    if (text.any { !it.isDigit() }) return@TextField
+                    if (text.length >= 2){ if (text.substring(0,2).toInt() > 12) return@TextField }
+                    onValueChange(text)
                 }
             }
 //            onValueChange(text)
@@ -193,6 +208,8 @@ fun MyTextField(
             InputStyle.PASSPORT -> true
             InputStyle.DESCRIPTION -> false
             InputStyle.MONEY -> true
+            InputStyle.PLASTIC_CARD -> true
+            InputStyle.PLASTIC_CARD_VALID_DATE -> true
         },
         prefix = { if (prefix != null) Text(text = prefix) },
         visualTransformation = when (inputStyle) {
@@ -202,13 +219,16 @@ fun MyTextField(
                     PlatformType.IOS -> VisualTransformation.None // TODO TODO
                 }
             }
-            InputStyle.MONEY -> ThousandSeparatorTransformation()
+            InputStyle.MONEY -> SeparateEach()
+            InputStyle.PLASTIC_CARD -> SeparateEach(separateEach = 4, reverse = true)
+            InputStyle.PLASTIC_CARD_VALID_DATE -> SeparateEach(separateEach = 2, separator = '/', reverse = true)
+
             else -> VisualTransformation.None
         }
     )
 }
 
-private class ThousandSeparatorTransformation : VisualTransformation { //TODO optimize
+private class SeparateEach(private val separateEach: Int = 3, private val separator: Char = ' ', private val reverse: Boolean = false) : VisualTransformation { //TODO optimize
     private var lastOriginalText: String? = null
     private var lastFormattedText: String? = null
     private var lastOffsetMapping: OffsetMapping? = null
@@ -224,12 +244,19 @@ private class ThousandSeparatorTransformation : VisualTransformation { //TODO op
         }
 
         // Perform the transformation
-        val formattedText = originalText.reversed()
-            .chunked(3)
-            .joinToString(" ") { it }
-            .reversed()
+        val formattedText = if (reverse) {
+            originalText
+                .chunked(separateEach)
+                .joinToString(separator.toString()) { it }
+        } else{
+            originalText
+                .reversed()
+                .chunked(separateEach)
+                .joinToString(separator.toString()) { it }
+                .reversed()
+        }
 
-        val offsetMapping = ThousandSeparatorOffsetMapping(formattedText)
+        val offsetMapping = SeparateEachSeparatorOffsetMapping(formattedText, separator)
 
         // Cache the results
         lastOriginalText = originalText
@@ -243,15 +270,16 @@ private class ThousandSeparatorTransformation : VisualTransformation { //TODO op
     }
 }
 
-private class ThousandSeparatorOffsetMapping(
-    private val transformed: String
+private class SeparateEachSeparatorOffsetMapping(
+    private val transformed: String,
+    private val separator: Char,
 ) : OffsetMapping {
     override fun originalToTransformed(offset: Int): Int {
         var spacesCount = 0
         var originalCharsCount = 0
 
         for (i in transformed.indices) {
-            if (transformed[i] == ' ') spacesCount++
+            if (transformed[i] == separator) spacesCount++
             else originalCharsCount++
 
             if (originalCharsCount == offset) return i + 1
@@ -264,7 +292,7 @@ private class ThousandSeparatorOffsetMapping(
         var originalCharsCount = 0
 
         for (i in transformed.indices) {
-            if (transformed[i] != ' ') originalCharsCount++
+            if (transformed[i] != separator) originalCharsCount++
 
             if (i == offset) return originalCharsCount
         }

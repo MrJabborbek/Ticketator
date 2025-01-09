@@ -39,4 +39,14 @@ sealed interface Route {
     data object PassengersInfo : Route{
         override val route: String = "PassengersInfo"
     }
+
+    @Serializable
+    data object CardInfo : Route{
+        override val route: String = "CardInfo"
+    }
+
+    @Serializable
+    data object Otp : Route{
+        override val route: String = "Otp"
+    }
 }

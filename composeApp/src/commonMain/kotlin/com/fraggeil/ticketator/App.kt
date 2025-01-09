@@ -58,8 +58,13 @@ import com.fraggeil.ticketator.presentation.Route
 import com.fraggeil.ticketator.presentation.SelectedFilterViewModel
 import com.fraggeil.ticketator.presentation.SelectedJourneyViewModel
 import com.fraggeil.ticketator.presentation.SelectedPostViewModel
+import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoAction
+import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoScreenRoot
+import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoViewModel
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeScreenRoot
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeViewModel
+import com.fraggeil.ticketator.presentation.screens.otp_screen.OtpScreenRoot
+import com.fraggeil.ticketator.presentation.screens.otp_screen.OtpViewModel
 import com.fraggeil.ticketator.presentation.screens.passengers_info_screen.PassengersInfoAction
 import com.fraggeil.ticketator.presentation.screens.passengers_info_screen.PassengersInfoScreenRoot
 import com.fraggeil.ticketator.presentation.screens.passengers_info_screen.PassengersInfoViewModel
@@ -171,7 +176,7 @@ fun App() {
                     navigation(
                         route = Route.TicketatorGraph.route,
                         startDestination = Route.Start.route,
-//                        startDestination = Route.SelectSeat.route,
+//                        startDestination = Route.Otp.route,
                     ) {
 
                         composable(
@@ -287,7 +292,6 @@ fun App() {
                             val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
                             val selectedJourney by selectedJourneyViewModel.state.collectAsState()
                             LaunchedEffect(selectedJourney){
-                                println("selectedJourney: $selectedJourney")
                                 selectedJourney?.let {
                                     viewModel.onAction(PassengersInfoAction.OnJourneySelected(selectedJourney!!))
                                 }
@@ -297,12 +301,47 @@ fun App() {
                                 navigateBack = {
                                     navController.navigateUp()
                                 },
-                                navigateToPayment = {
-                                    //TODO
+                                navigateToCardInfo = {
+                                    navigate(Route.CardInfo, true)
+                                }
+                            )
+                        }
+                        composable(
+                            route = Route.CardInfo.route
+                        ) {
+                            val viewModel = koinViewModel<CardInfoViewModel>()
+                            val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
+                            val selectedJourney by selectedJourneyViewModel.state.collectAsState()
+                            LaunchedEffect(selectedJourney){
+                                selectedJourney?.let {
+                                    viewModel.onAction(CardInfoAction.OnJourneySelected(selectedJourney!!))
+                                }
+                            }
+                            CardInfoScreenRoot(
+                                viewModel = viewModel,
+                                navigateBack = {
+                                    navController.navigateUp()
+                                },
+                                navigateToEnterCode = {
+                                    navigate(Route.Otp, true)
                                 }
                             )
                         }
 
+                        composable(
+                            route = Route.Otp.route
+                        ) {
+                            val viewModel = koinViewModel<OtpViewModel>()
+                            OtpScreenRoot(
+                                viewModel = viewModel,
+                                navigateBack = {
+                                    navController.navigateUp()
+                                },
+                                navigateToTickets = {
+                                    //TODO
+                                }
+                            )
+                        }
                     }
                 }
             }

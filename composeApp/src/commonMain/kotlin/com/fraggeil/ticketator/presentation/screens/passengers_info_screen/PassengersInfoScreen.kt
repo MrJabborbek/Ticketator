@@ -27,8 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.fraggeil.ticketator.core.domain.getUiType
-import com.fraggeil.ticketator.core.domain.rememberScreenSizeInfo
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
@@ -55,7 +53,7 @@ import ticketator.composeapp.generated.resources.uzbekistan
 fun PassengersInfoScreenRoot(
     viewModel: PassengersInfoViewModel,
     navigateBack: () -> Unit,
-    navigateToPayment: (Journey) -> Unit
+    navigateToCardInfo: (Journey) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     PassengersInfoScreen(
@@ -63,7 +61,7 @@ fun PassengersInfoScreenRoot(
         onAction = {
             when (it){
                 PassengersInfoAction.OnBackClicked -> navigateBack()
-                PassengersInfoAction.OnPaymentClicked -> state.selectedJourney?.let { it1 -> navigateToPayment(it1) }
+                PassengersInfoAction.OnPaymentClicked -> state.selectedJourney?.let { it1 -> navigateToCardInfo(it1) }
                 else -> Unit
             }
             viewModel.onAction(it)
@@ -76,11 +74,9 @@ fun PassengersInfoScreen(
     state: PassengersInfoState,
     onAction: (PassengersInfoAction) -> Unit
 ) {
-    val uiType = rememberScreenSizeInfo().getUiType()
     Column(
         modifier = Modifier.fillMaxSize()
-            .background(BlueDark)
-        ,
+            .background(BlueDark),
     ) {
         Box(
             modifier = Modifier

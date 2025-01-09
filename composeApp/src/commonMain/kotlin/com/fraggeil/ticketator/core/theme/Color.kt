@@ -11,6 +11,7 @@ val White = Color(0xFFFFFFFF)
 val LightGray = Color(0xFFd1d5df)
 val TextColorLight = Color(0xFF757c8d)
 val TextColor = Color(0xff0e1422)
+val ErrorColor = Color(0xFFF44336)
 
 val primaryLight = Blue
 val onPrimaryLight = BG_White
