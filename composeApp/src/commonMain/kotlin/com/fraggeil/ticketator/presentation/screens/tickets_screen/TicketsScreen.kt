@@ -117,7 +117,7 @@ fun TicketsScreen(
                             it.imageBitmapToByteArray().let { bytes ->
                                 shareManager.shareFile(
                                     ShareFileModel(
-                                        fileName = "ticket-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}",
+                                        fileName = "ticket-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}.png",
                                         bytes = bytes
                                     )
                                 )

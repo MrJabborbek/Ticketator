@@ -76,12 +76,7 @@ fun TicketItem(
         modifier = modifier,
     ){
         TicketShape(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight().drawWithContent {
-                graphicsLayer.record {
-                    this@drawWithContent.drawContent()
-                }
-                drawLayer(graphicsLayer)
-            },
+            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             onClick = onClick,
             isLoading = isLoading,
             contents = listOf(
@@ -253,7 +248,7 @@ fun TicketItem(
                             IconButton(
                                 onClick = {
                                     coroutineScope.launch {
-                                        onDownloadClick(graphicsLayer.toImageBitmap())
+                                        onShareClick(graphicsLayer.toImageBitmap())
                                     }
                                 }
                             ){
