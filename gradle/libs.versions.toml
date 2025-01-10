@@ -16,6 +16,7 @@ libphonenumber = "0.1.1"
 navigationCompose = "2.8.0-alpha10"
 ktor = "3.0.1"
 kotlinxDatetime = "0.6.1"
+qrKit = "1.0.8"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -46,6 +47,7 @@ ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 
 jetbrains-compose-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref= "navigationCompose"}
 libphonenumber = { module = "io.github.luca992.libphonenumber-kotlin:libphonenumber", version.ref = "libphonenumber" }
+qr-kit = { module = "network.chaintech:qr-kit", version.ref = "qrKit" }
 
 
 

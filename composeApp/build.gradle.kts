@@ -59,6 +59,8 @@ kotlin {
             implementation(libs.bundles.coil)
             implementation(libs.jetbrains.compose.navigation)
             implementation(libs.bundles.ktor)
+
+            implementation(libs.qr.kit)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

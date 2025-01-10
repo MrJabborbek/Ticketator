@@ -13,6 +13,7 @@ import com.fraggeil.ticketator.presentation.screens.post_screen.PostViewModel
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsViewModel
 import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatViewModel
 import com.fraggeil.ticketator.presentation.screens.start_screen.StartViewModel
+import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -37,7 +38,7 @@ val sharedModule = module {
     viewModelOf(::PassengersInfoViewModel)
     viewModelOf(::CardInfoViewModel)
     viewModelOf(::OtpViewModel)
-
+    viewModelOf(::TicketsViewModel)
 
     viewModelOf(::SelectedPostViewModel)
     viewModelOf(::SelectedFilterViewModel)

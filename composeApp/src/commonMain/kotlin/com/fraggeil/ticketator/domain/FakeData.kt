@@ -4,8 +4,10 @@ import com.fraggeil.ticketator.core.domain.DateTimeUtil
 import com.fraggeil.ticketator.core.domain.toFormattedDate
 import com.fraggeil.ticketator.domain.model.District
 import com.fraggeil.ticketator.domain.model.Journey
+import com.fraggeil.ticketator.domain.model.Passenger
 import com.fraggeil.ticketator.domain.model.Post
 import com.fraggeil.ticketator.domain.model.Region
+import com.fraggeil.ticketator.domain.model.Ticket
 import kotlin.random.Random
 
 object FakeData{
@@ -97,6 +99,17 @@ object FakeData{
             seatsAvailable = (5..45).map { it },
             seatsUnavailable = (46..55).map { it },
             stopAt = emptyList()
+        )
+    }
+
+    val fakeTickets = (1..3).map {
+        val journey = fakeJourneys.random()
+        Ticket(
+            ticketId = it.toLong(),
+            journey = journey,
+            buyTime = DateTimeUtil.nowMilliseconds(),
+            passenger = Passenger("Passenger $it", seat = journey.seatsAvailable.random(), phone = "+99890$it$it$it$it$it$it$it" ),
+            qrCodeLink = "https://medium.com/mobile-innovation-network/qrkit-qrcode-generator-in-compose-multiplatform-for-android-and-ios-858ec3e1e2b2"
         )
     }
 }

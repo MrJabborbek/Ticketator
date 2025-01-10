@@ -79,6 +79,8 @@ import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSea
 import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatViewModel
 import com.fraggeil.ticketator.presentation.screens.start_screen.StartScreenRoot
 import com.fraggeil.ticketator.presentation.screens.start_screen.StartViewModel
+import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsScreenRoot
+import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
@@ -175,8 +177,8 @@ fun App() {
                 ) {
                     navigation(
                         route = Route.TicketatorGraph.route,
-                        startDestination = Route.Start.route,
-//                        startDestination = Route.Otp.route,
+//                        startDestination = Route.Start.route,
+                        startDestination = Route.Tickets.route,
                     ) {
 
                         composable(
@@ -338,7 +340,18 @@ fun App() {
                                     navController.navigateUp()
                                 },
                                 navigateToTickets = {
-                                    //TODO
+                                    navigate(Route.Tickets, true)
+                                }
+                            )
+                        }
+                        composable(
+                            route = Route.Tickets.route
+                        ) {
+                            val viewModel = koinViewModel<TicketsViewModel>()
+                            TicketsScreenRoot(
+                                viewModel = viewModel,
+                                navigateBack = {
+                                    navController.navigate(Route.Home)
                                 }
                             )
                         }

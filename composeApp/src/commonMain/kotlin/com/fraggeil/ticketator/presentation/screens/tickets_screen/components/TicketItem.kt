@@ -1,15 +1,27 @@
 package com.fraggeil.ticketator.presentation.screens.tickets_screen.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,6 +42,7 @@ import com.fraggeil.ticketator.core.theme.TextColor
 import com.fraggeil.ticketator.core.theme.TextColorLight
 import com.fraggeil.ticketator.domain.model.Ticket
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.components.Dots
+import qrgenerator.QRCodeImage
 
 @Composable
 fun TicketItem(
@@ -192,7 +205,46 @@ fun TicketItem(
                 }
             },
             {
-
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(Sizes.vertical_inner_padding),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    QRCodeImage(
+                        modifier = Modifier
+                            .widthIn(max = 300.dp)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(Sizes.smallRoundCorner)),
+                        url = ticket.qrCodeLink,
+                        contentDescription = null
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.End)
+                    ){
+                        IconButton(
+                            onClick = onShareClick
+                        ){
+                            Icon(
+                                Icons.Default.Share,
+                                contentDescription = null,
+                                tint = Blue,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                        IconButton(
+                            onClick = onDownloadClick
+                        ){
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = null,
+                                tint = Blue,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                }
             }
         )
     )
