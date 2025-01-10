@@ -1,6 +1,5 @@
 package com.fraggeil.ticketator.presentation.screens.tickets_screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -35,9 +34,13 @@ import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fraggeil.ticketator.core.domain.ShareFileModel
 import com.fraggeil.ticketator.core.domain.UiType
 import com.fraggeil.ticketator.core.domain.getUiType
+import com.fraggeil.ticketator.core.domain.imageBitmapToByteArray
 import com.fraggeil.ticketator.core.domain.rememberScreenSizeInfo
+import com.fraggeil.ticketator.core.domain.rememberShareManager
+import com.fraggeil.ticketator.core.domain.toFormattedDate
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_out_padding
@@ -48,6 +51,7 @@ import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByM
 import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.presentation.screens.tickets_screen.components.TicketItem
+import io.github.vinceglb.filekit.compose.rememberFileSaverLauncher
 import kotlinx.coroutines.launch
 
 @Composable
@@ -73,46 +77,21 @@ fun TicketsScreen(
     state: TicketsState,
     onAction: (TicketsAction) -> Unit
 ) {
+    val saveFileToStorageLauncher = rememberFileSaverLauncher{}
+    val shareManager = rememberShareManager()
+
+
     val screenSizeInfo = rememberScreenSizeInfo()
     val uiType = screenSizeInfo.getUiType()
 
-    val graphicsLayer = rememberGraphicsLayer()
+//    val graphicsLayer = rememberGraphicsLayer()
     val coroutineScope = rememberCoroutineScope()
-    var bitmap by remember { mutableStateOf<ImageBitmap?>(null) }
-    Box(modifier = Modifier.fillMaxWidth().background(color = Color.Red)
-        .horizontalScroll(
-        rememberScrollState()
-    )){
-        TicketItem(
-            modifier = Modifier
-                .width(350.dp)
-//                .fillMaxWidth()
-                .wrapContentHeight()
-                .drawWithContent {
-                    graphicsLayer.record {
-                        this@drawWithContent.drawContent()
-                    }
-                    drawLayer(graphicsLayer)
-                },
-            ticket = state.tickets[0].copy(buyTime = 1000000),
-            onClick = {  },
-            onShareClick = { },
-            onDownloadClick = {
-            },
-        )
-    }
+//    var bitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+
     Column(
         modifier = Modifier.fillMaxSize()
             .background(BlueDark),
     ) {
-        bitmap?.let {
-            Image(
-                bitmap = it,
-                contentDescription = null
-            )
-        }
-
-
         val scrollState = rememberLazyGridState()
         LazyVerticalGrid(
             modifier = Modifier
@@ -130,22 +109,30 @@ fun TicketsScreen(
         ) {
             items(state.tickets){ ticket ->
                 TicketItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-//                        .drawWithContent {
-//                            graphicsLayer.record {
-//                                this@drawWithContent.drawContent()
-//                            }
-//                            drawLayer(graphicsLayer)
-//                    }
-                    ,
+                    modifier = Modifier.fillMaxWidth(),
                     ticket = ticket,
                     onClick = { onAction(TicketsAction.OnTicketClicked(ticket)) },
-                    onShareClick = { },
+                    onShareClick = {
+                        coroutineScope.launch {
+                            it.imageBitmapToByteArray().let { bytes ->
+                                shareManager.shareFile(
+                                    ShareFileModel(
+                                        fileName = "ticket-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}",
+                                        bytes = bytes
+                                    )
+                                )
+                            }
+                        }
+                    },
                     onDownloadClick = {
                         coroutineScope.launch {
-                            bitmap = graphicsLayer.toImageBitmap()
-                            println("Bitmap: ${bitmap?.width} x ${bitmap?.height}")
+                            it.imageBitmapToByteArray().let { bytes ->
+                                saveFileToStorageLauncher.launch(
+                                    baseName = "ticket-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}",
+                                    extension = "png",
+                                    bytes = bytes
+                                )
+                            }
                         }
                     },
                 )
@@ -165,7 +152,9 @@ fun TicketsScreen(
                         modifier = Modifier.align(Alignment.CenterVertically).widthIn(max = 400.dp).fillMaxWidth(),
 //                        modifier = Modifier.padding(top = vertical_out_padding, start = Sizes.horizontal_out_padding, end = Sizes.horizontal_out_padding).widthIn(max = 600.dp).fillMaxWidth(),
                         text = "Bosh sahifa",
-                        onClick = { onAction(TicketsAction.OnBackClicked) },
+                        onClick = {
+                            onAction(TicketsAction.OnBackClicked)
+                        },
                     )
                 }
             }

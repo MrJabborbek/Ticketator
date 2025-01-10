@@ -61,6 +61,12 @@ kotlin {
             implementation(libs.bundles.ktor)
 
             implementation(libs.qr.kit)
+            // Enables FileKit without Compose dependencies
+//            https://github.com/vinceglb/FileKit
+//            implementation("io.github.vinceglb:filekit-core:0.8.8")
+
+            // Enables FileKit with Composable utilities
+            implementation(libs.filekit.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

@@ -13,4 +13,5 @@ actual val platformModule: Module
         single { DialPhoneNumber(get()) }
         single { OpenUrlInBrowser(get()) }
         single { imageLoader(get()) }
+
     }
