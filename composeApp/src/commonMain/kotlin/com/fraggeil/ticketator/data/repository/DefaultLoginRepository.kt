@@ -9,14 +9,17 @@ import com.fraggeil.ticketator.domain.model.User
 import com.fraggeil.ticketator.domain.repository.LoginRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class DefaultLoginRepository : LoginRepository {
-    override suspend fun sendOtp(phoneNumber: String): Result<Boolean, Error> {
+    @OptIn(ExperimentalUuidApi::class)
+    override suspend fun sendOtp(phoneNumber: String): Result<String, Error> {
         delay(Constants.FAKE_DELAY_TO_TEST)
-        return Result.Success(true)
+        return Result.Success(Uuid.random().toString())
     }
 
-    override suspend fun verifyOtp(phoneNumber: String, otp: String): Result<String, Error> {
+    override suspend fun verifyOtp(token: String, phoneNumber: String, otp: String): Result<String, Error> {
         delay(2000)
         if (otp == "12345") {
             _testCurrentProfile.update {

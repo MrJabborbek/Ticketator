@@ -3,11 +3,9 @@ package com.fraggeil.ticketator.presentation.screens.passengers_info_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.isValidPhoneNumber
-import com.fraggeil.ticketator.domain.model.Journey
 import com.fraggeil.ticketator.domain.model.Passenger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn

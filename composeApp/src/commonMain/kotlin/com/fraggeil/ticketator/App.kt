@@ -57,7 +57,7 @@ import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.presentation.Route
 import com.fraggeil.ticketator.presentation.SelectedFilterViewModel
 import com.fraggeil.ticketator.presentation.SelectedJourneyViewModel
-import com.fraggeil.ticketator.presentation.SelectedPhoneNumberViewModel
+import com.fraggeil.ticketator.presentation.SelectedPhoneNumberAndTokenViewModel
 import com.fraggeil.ticketator.presentation.SelectedPostViewModel
 import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoAction
 import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoScreenRoot
@@ -66,6 +66,7 @@ import com.fraggeil.ticketator.presentation.screens.home_screen.HomeScreenRoot
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeViewModel
 import com.fraggeil.ticketator.presentation.screens.login_screen.LoginScreenRoot
 import com.fraggeil.ticketator.presentation.screens.login_screen.LoginViewModel
+import com.fraggeil.ticketator.presentation.screens.otp_payment_screen.OtpPaymentAction
 import com.fraggeil.ticketator.presentation.screens.otp_payment_screen.OtpPaymentScreenRoot
 import com.fraggeil.ticketator.presentation.screens.otp_payment_screen.OtpPaymentViewModel
 import com.fraggeil.ticketator.presentation.screens.otp_screen.OtpScreenRoot
@@ -344,18 +345,24 @@ fun App() {
                         ) {
                             val viewModel = koinViewModel<CardInfoViewModel>()
                             val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
+                            val selectedPhoneNumberAndTokenViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
                             val selectedJourney by selectedJourneyViewModel.state.collectAsState()
                             LaunchedEffect(selectedJourney){
                                 selectedJourney?.let {
                                     viewModel.onAction(CardInfoAction.OnJourneySelected(selectedJourney!!))
                                 }
                             }
+                            LaunchedEffect(true){
+                                selectedPhoneNumberAndTokenViewModel.onSelectItem(null)
+                            }
+
                             CardInfoScreenRoot(
                                 viewModel = viewModel,
                                 navigateBack = {
                                     navController.navigateUp()
                                 },
-                                navigateToEnterCode = {
+                                navigateToEnterCode = { token, phoneNumber ->
+                                    selectedPhoneNumberAndTokenViewModel.onSelectItem(Pair(token, phoneNumber))
                                     navigate(Route.OtpPayment, true)
                                 }
                             )
@@ -365,12 +372,20 @@ fun App() {
                             route = Route.OtpPayment.route
                         ) {
                             val viewModel = koinViewModel<OtpPaymentViewModel>()
+                            val selectedPhoneNumberAndTokenViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
+                            val selectedPhoneNumberAndToken by selectedPhoneNumberAndTokenViewModel.state.collectAsState()
+                            LaunchedEffect(selectedPhoneNumberAndToken){
+                                selectedPhoneNumberAndToken?.let {
+                                    viewModel.onAction(OtpPaymentAction.OnPhoneNumberChanged(token = selectedPhoneNumberAndToken!!.first, number = selectedPhoneNumberAndToken!!.second))
+                                }
+                            }
                             OtpPaymentScreenRoot(
                                 viewModel = viewModel,
                                 navigateBack = {
                                     navController.navigateUp()
                                 },
-                                navigateToTickets = {
+                                navigateToTickets = { tickets ->
+                                    //TODO
                                     navigate(Route.Tickets, true)
                                 }
                             )
@@ -379,6 +394,13 @@ fun App() {
                             route = Route.Otp.route
                         ) {
                             val viewModel = koinViewModel<OtpViewModel>()
+                            val selectedPhoneNumberAndTokenViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
+                            val selectedPhoneNumberAndToken by selectedPhoneNumberAndTokenViewModel.state.collectAsState()
+                            LaunchedEffect(selectedPhoneNumberAndToken){
+                                selectedPhoneNumberAndToken?.let {
+
+                                }
+                            }
                             OtpScreenRoot(
                                 viewModel = viewModel,
                                 navigateBack = {
@@ -429,7 +451,7 @@ fun App() {
                         ){
 
                             val viewModel = koinViewModel<LoginViewModel>()
-                            val selectedPhoneNumberViewModel = it.sharedKoinViewModel<SelectedPhoneNumberViewModel>(navController)
+                            val selectedPhoneNumberViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
                             LaunchedEffect(true){
                                 selectedPhoneNumberViewModel.onSelectItem(null)
                             }
@@ -438,8 +460,8 @@ fun App() {
                                 navigateBack = {
                                     navController.navigateUp()
                                 },
-                                navigateToOtp = {phoneNumber ->
-                                    selectedPhoneNumberViewModel.onSelectItem(phoneNumber)
+                                navigateToOtp = {phoneNumber, token ->
+                                    selectedPhoneNumberViewModel.onSelectItem(Pair(token, phoneNumber))
                                     navigate(Route.Otp, false)
                                 },
                                 navigateToTermsAndConditions = {
@@ -450,7 +472,6 @@ fun App() {
                         composable(
                             route = Route.ProfileEdit.route
                         ){
-
                             val viewModel = koinViewModel<ProfileEditViewModel>()
                             ProfileEditScreenRoot(
                                 viewModel = viewModel,

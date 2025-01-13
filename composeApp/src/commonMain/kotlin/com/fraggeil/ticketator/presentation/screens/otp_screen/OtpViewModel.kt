@@ -3,6 +3,9 @@ package com.fraggeil.ticketator.presentation.screens.otp_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.phoneNumberFormatting.formatPhoneNumber
+import com.fraggeil.ticketator.core.domain.result.onError
+import com.fraggeil.ticketator.core.domain.result.onSuccess
+import com.fraggeil.ticketator.domain.repository.LoginRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -14,7 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class OtpViewModel(
-//    private val loginRepository: LoginRepository
+    private val loginRepository: LoginRepository
 ): ViewModel() {
     private var checkOtpJob: Job? = null
 
@@ -35,16 +38,18 @@ class OtpViewModel(
             started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
             initialValue = OtpPaymentState()
         )
-    var phoneNumber = ""
+    private var phoneNumber = ""
+    private var token = ""
     
     fun onAction(action: OtpAction){
         when(action){
             OtpAction.OnBackClicked -> {}
             OtpAction.OnEnterButtonClicked -> {
-                checkOtp(phoneNumber, state.value.otp)
+                checkOtp(state.value.otp)
             }
             is OtpAction.OnPhoneNumberChanged -> {
                 phoneNumber = action.number
+                token = action.token
                 _state.update { it.copy(phoneNumber = action.number.formatPhoneNumber(isSecret = true)) }
             }
             OtpAction.OnResendButtonClicked -> viewModelScope.launch {
@@ -66,12 +71,12 @@ class OtpViewModel(
                     _state.update { it.copy(otp = action.otp, isErrorMode = false) }
                 }
                 if (action.otp.length == 5) {
-                    checkOtp(phoneNumber, action.otp)
+                    checkOtp(action.otp)
                 }
             }
         }
     }
-    private fun checkOtp(phoneNumber: String, otp: String){
+    private fun checkOtp(otp: String){
         checkOtpJob?.cancel()
         if (otp.length != 5) {
             _state.update { it.copy(isErrorMode = true) }
@@ -80,14 +85,14 @@ class OtpViewModel(
         checkOtpJob = viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             _oneTimeState.send(OtpOneTimeState.NavigateToHome)
-//            loginRepository.verifyOtp(phoneNumber, otp) TODO
-//                .onSuccess {
-//                    _state.update { it.copy(isLoading = false) }
-//                    _oneTimeState.send(OtpOneTimeState.NavigateToHomePage)
-//                }
-//                .onError {
-//                    _state.update { it.copy(isLoading = false, error = "Invalid OTP", isErrorMode = true) }
-//                }
+            loginRepository.verifyOtp(token, phoneNumber, otp)
+                .onSuccess {
+                    _state.update { it.copy(isLoading = false) }
+                    _oneTimeState.send(OtpOneTimeState.NavigateToHome)
+                }
+                .onError {
+                    _state.update { it.copy(isLoading = false, error = "Invalid OTP", isErrorMode = true) }
+                }
         }
     }
 

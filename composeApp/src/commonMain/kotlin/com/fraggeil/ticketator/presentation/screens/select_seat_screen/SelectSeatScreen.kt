@@ -36,6 +36,8 @@ import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
+import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
+import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
 import com.fraggeil.ticketator.core.theme.AppTypography
 import com.fraggeil.ticketator.core.theme.BG_White
 import com.fraggeil.ticketator.core.theme.Blue
@@ -106,7 +108,6 @@ fun SelectSeatScreen(
 //                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            state.selectedJourney?.let { selectedJourney ->
                 Row(
                     modifier = Modifier
                         .padding(horizontal = Sizes.horizontal_out_padding)
@@ -141,15 +142,26 @@ fun SelectSeatScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = selectedJourney.timeStart.toFormattedDate(hoursEnabled = false),
+                            text = state.selectedJourney?.timeStart?.toFormattedDate(hoursEnabled = false)?.takeIf { !state.isLoading } ?:"",
+                            modifier = Modifier.shimmerLoadingAnimation(
+                                isLoadingCompleted = !state.isLoading,
+                                modifier = Modifier.width(100.dp),
+                                shimmerStyle = ShimmerStyle.TextSmallLabel
+                            ),
                             color = White,
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Center,
                             maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+
                         )
                         Text(
-                            text = selectedJourney.timeStart.getHours(),
+                            text = state.selectedJourney?.timeStart?.getHours()?.takeIf { !state.isLoading } ?:"",
+                            modifier = Modifier.shimmerLoadingAnimation(
+                                isLoadingCompleted = !state.isLoading,
+                                modifier = Modifier.width(100.dp),
+                                shimmerStyle = ShimmerStyle.TextTitle
+                            ),
                             color = White,
                             style = AppTypography().headlineLarge.copy(fontWeight = FontWeight.SemiBold),
                             textAlign = TextAlign.Center,
@@ -157,23 +169,28 @@ fun SelectSeatScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "${selectedJourney.from.second.name}, ${selectedJourney.from.first.name}",
+                            text = "${state.selectedJourney?.from?.second?.name}, ${state.selectedJourney?.from?.first?.name}".takeIf { !state.isLoading } ?:"",
+                            modifier = Modifier.widthIn(max = 100.dp).shimmerLoadingAnimation(
+                                isLoadingCompleted = !state.isLoading,
+                                modifier = Modifier.width(100.dp),
+                                shimmerStyle = ShimmerStyle.TextSmallLabel
+                            ),
                             color = White,
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Center,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.widthIn(max = 100.dp)
                         )
                     }
                     Dots(
+                        isLoading = state.isLoading,
                         modifier = Modifier.weight(1.5f),
                         iconColor = White,
                         dotsColor = White,
                         pinColor = Blue,
-                        topText = (selectedJourney.timeArrival - selectedJourney.timeStart).millisecondsToFormattedString(),
-                        bottomText = if (selectedJourney.stopAt.isEmpty()) "Non-stop" else "Stop at: ${
-                            selectedJourney.stopAt.joinToString(
+                        topText = ((state.selectedJourney?.timeArrival?:0) - (state.selectedJourney?.timeStart ?: 0)).millisecondsToFormattedString(),
+                        bottomText = if (state.selectedJourney?.stopAt.isNullOrEmpty()) "Non-stop" else "Stop at: ${
+                            state.selectedJourney!!.stopAt.joinToString(
                                 ", "
                             )
                         }"
@@ -184,7 +201,12 @@ fun SelectSeatScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = selectedJourney.timeArrival.toFormattedDate(hoursEnabled = false),
+                            text = state.selectedJourney?.timeArrival?.toFormattedDate(hoursEnabled = false)?.takeIf { !state.isLoading } ?:"",
+                            modifier = Modifier.shimmerLoadingAnimation(
+                                isLoadingCompleted = !state.isLoading,
+                                modifier = Modifier.width(100.dp),
+                                shimmerStyle = ShimmerStyle.TextSmallLabel
+                            ),
                             color = White,
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Center,
@@ -192,7 +214,12 @@ fun SelectSeatScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = selectedJourney.timeArrival.getHours(),
+                            text = state.selectedJourney?.timeArrival?.getHours()?.takeIf { !state.isLoading } ?:"",
+                            modifier = Modifier.shimmerLoadingAnimation(
+                                isLoadingCompleted = !state.isLoading,
+                                modifier = Modifier.width(100.dp),
+                                shimmerStyle = ShimmerStyle.TextTitle
+                            ),
                             color = White,
                             style = AppTypography().headlineLarge.copy(fontWeight = FontWeight.SemiBold),
                             textAlign = TextAlign.Center,
@@ -200,13 +227,17 @@ fun SelectSeatScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "${selectedJourney.to.second.name}, ${selectedJourney.to.first.name}",
+                            text = "${state.selectedJourney?.to?.second?.name}, ${state.selectedJourney?.to?.first?.name}".takeIf { !state.isLoading } ?:"",
+                            modifier = Modifier.widthIn(max = 100.dp).shimmerLoadingAnimation(
+                                isLoadingCompleted = !state.isLoading,
+                                modifier = Modifier.width(100.dp),
+                                shimmerStyle = ShimmerStyle.TextTitle
+                            ),
                             color = White,
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Center,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.widthIn(max = 100.dp)
                         )
                     }
                 }
@@ -222,7 +253,11 @@ fun SelectSeatScreen(
                         horizontalAlignment = Alignment.Start
                     ){
                         Text(
-                            text = "1 ticket: ${selectedJourney.price.toString().formatWithSpacesNumber()} so‘m",
+                            text = "1 ticket: ${state.selectedJourney?.price.toString().formatWithSpacesNumber()} so‘m".takeIf { !state.isLoading } ?:"",
+                            modifier = Modifier.shimmerLoadingAnimation(
+                                isLoadingCompleted = !state.isLoading,
+                                shimmerStyle = ShimmerStyle.TextSmallLabel
+                            ),
                             color = White,
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Start,
@@ -230,7 +265,11 @@ fun SelectSeatScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "Additional: 0 so‘m",
+                            text = "Additional: 0 so‘m".takeIf { !state.isLoading } ?:"".takeIf { !state.isLoading } ?:"",
+                            modifier = Modifier.shimmerLoadingAnimation(
+                                isLoadingCompleted = !state.isLoading,
+                                shimmerStyle = ShimmerStyle.TextSmallLabel
+                            ),
                             color = White,
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Start,
@@ -238,7 +277,11 @@ fun SelectSeatScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "Total: ${(selectedJourney.price*state.selectedJourney.selectedSeats.size).toString().formatWithSpacesNumber()} so‘m",
+                            text = "Total: ${(state.selectedJourney?.price?.times(state.selectedJourney.selectedSeats.size) ?: 0).toString().formatWithSpacesNumber()} so‘m".takeIf { !state.isLoading } ?:"",
+                            modifier = Modifier.shimmerLoadingAnimation(
+                                isLoadingCompleted = !state.isLoading,
+                                shimmerStyle = ShimmerStyle.TextBody
+                            ),
                             color = White,
                             style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                             textAlign = TextAlign.Start,
@@ -247,11 +290,12 @@ fun SelectSeatScreen(
                         )
                     }
                     MyButton(
+                        isLoading = state.isLoading,
                         modifier = Modifier.width(160.dp),
 //                        modifier = Modifier.padding(top = vertical_out_padding, start = Sizes.horizontal_out_padding, end = Sizes.horizontal_out_padding).widthIn(max = 600.dp).fillMaxWidth(),
                         text = "Next",
                         onClick = { onAction(SelectSeatAction.OnNextClicked) },
-                        enabled = state.selectedJourney.selectedSeats.isNotEmpty()
+                        enabled = !state.selectedJourney?.selectedSeats.isNullOrEmpty()
                     )
                 }
 
@@ -259,21 +303,27 @@ fun SelectSeatScreen(
                     modifier = Modifier
                         .padding(horizontal = Sizes.horizontal_out_padding, vertical = vertical_out_padding)
                         .fillMaxWidth()
+                        .shimmerLoadingAnimation(
+                            isLoadingCompleted = !state.isLoading,
+                            shimmerStyle = ShimmerStyle.Custom
+                        )
                         .background(color = BG_White, shape = RoundedCornerShape(Sizes.smallRoundCorner)),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
-                    Seats(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        selected = state.selectedJourney.selectedSeats,
-                        available = selectedJourney.seatsAvailable,
-                        reserved = selectedJourney.seatsReserved,
-                        onClick = {
-                            onAction(SelectSeatAction.OnSeatClicked(it))
-                        },
-                        isHorizontal = uiType != UiType.COMPACT
-                    )
+                    if (!state.isLoading){
+                        Seats(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            selected = state.selectedJourney?.selectedSeats?: emptyList(),
+                            available = state.selectedJourney?.seatsAvailable?: emptyList(),
+                            reserved = state.selectedJourney?.seatsReserved?: emptyList(),
+                            onClick = {
+                                onAction(SelectSeatAction.OnSeatClicked(it))
+                            },
+                            isHorizontal = uiType != UiType.COMPACT
+                        )
+                    }
                 }
-            }
+
         }
     }
 }

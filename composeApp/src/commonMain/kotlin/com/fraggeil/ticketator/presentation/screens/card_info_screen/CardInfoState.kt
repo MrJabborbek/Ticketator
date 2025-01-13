@@ -4,6 +4,7 @@ import com.fraggeil.ticketator.domain.model.Journey
 
 data class CardInfoState(
     val isLoading: Boolean = true,
+    val isSendingData: Boolean = false,
     val error: String? = null,
     val isAllDataValid: Boolean = false,
     val isTimerEnd: Boolean = false,

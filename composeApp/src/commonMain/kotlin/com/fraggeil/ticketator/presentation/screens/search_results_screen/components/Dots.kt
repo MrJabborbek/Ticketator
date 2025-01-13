@@ -27,6 +27,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fraggeil.ticketator.core.presentation.components.DottedHorizontalDivider
+import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
+import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
 import com.fraggeil.ticketator.core.theme.AppTypography
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.White
@@ -41,7 +43,8 @@ fun Dots(
     dotsColor: Color,
     pinColor: Color,
     topText: String = "",
-    bottomText: String = ""
+    bottomText: String = "",
+    isLoading: Boolean = false
 ){
     Column(
         modifier = modifier,
@@ -49,33 +52,48 @@ fun Dots(
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ){
         Text(
-            text = topText,
+            text = topText.takeIf { !isLoading } ?:"",
+            modifier = Modifier.shimmerLoadingAnimation(
+                isLoadingCompleted = !isLoading,
+                modifier = Modifier.width(100.dp),
+                shimmerStyle = ShimmerStyle.TextSmallLabel
+            ),
             color = BlueDark,
             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Medium),
             maxLines = 1,
             textAlign = TextAlign.Center
         )
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .shimmerLoadingAnimation(
+                    isLoadingCompleted = !isLoading
+                ),
             verticalAlignment = Alignment.CenterVertically
         ){
-            Icon(
-                painter = painterResource(Res.drawable.bus),
-                contentDescription = null,
-                tint = iconColor,
-                modifier = Modifier.width(40.dp)
-            )
-            DottedHorizontalDivider(modifier = Modifier.weight(1f), color = dotsColor)
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .clip(shape = CircleShape)
-                    .background(color = pinColor, shape = CircleShape)
-                    .border(width = (1.5).dp, color = White, shape = CircleShape)
-            )
+            if (!isLoading){
+                Icon(
+                    painter = painterResource(Res.drawable.bus),
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.width(40.dp)
+                )
+                DottedHorizontalDivider(modifier = Modifier.weight(1f), color = dotsColor)
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .clip(shape = CircleShape)
+                        .background(color = pinColor, shape = CircleShape)
+                        .border(width = (1.5).dp, color = White, shape = CircleShape)
+                )
+            }
         }
         Text(
-            text = bottomText,
+            text = bottomText.takeIf { !isLoading } ?:"",
+            modifier = Modifier.shimmerLoadingAnimation(
+                isLoadingCompleted = !isLoading,
+                modifier = Modifier.width(100.dp),
+                shimmerStyle = ShimmerStyle.TextSmallLabel
+            ),
             color = BlueDark,
             style = AppTypography().bodySmall,
             maxLines = 2,

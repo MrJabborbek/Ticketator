@@ -58,6 +58,7 @@ import com.fraggeil.ticketator.core.theme.LightGray
 import com.fraggeil.ticketator.core.theme.TextColor
 import com.fraggeil.ticketator.core.theme.TextColorLight
 import com.fraggeil.ticketator.core.theme.White
+import com.fraggeil.ticketator.domain.model.Ticket
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.ic_close
@@ -67,15 +68,12 @@ import kotlin.math.sin
 fun OtpPaymentScreenRoot(
     viewModel: OtpPaymentViewModel,
     navigateBack: () -> Unit,
-    navigateToTickets: () -> Unit
+    navigateToTickets: (List<Ticket>) -> Unit
 ){
-
     LaunchedEffect(Unit){
         viewModel.oneTimeState.collect{oneTimeState ->
             when(oneTimeState){
-                OtpPaymentOneTimeState.NavigateToTickets -> {
-                    navigateToTickets()
-                }
+                is OtpPaymentOneTimeState.NavigateToTickets -> { navigateToTickets(oneTimeState.tickets) }
             }
         }
     }

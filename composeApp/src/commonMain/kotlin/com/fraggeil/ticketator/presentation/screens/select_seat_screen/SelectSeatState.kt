@@ -1,6 +1,5 @@
 package com.fraggeil.ticketator.presentation.screens.select_seat_screen
 
-import com.fraggeil.ticketator.domain.FakeData
 import com.fraggeil.ticketator.domain.model.Journey
 
 data class SelectSeatState(

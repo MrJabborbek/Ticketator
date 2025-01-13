@@ -4,17 +4,21 @@ import androidx.compose.material3.SnackbarHostState
 import com.fraggeil.ticketator.core.domain.Platform
 import com.fraggeil.ticketator.data.repository.DefaultHomeRepository
 import com.fraggeil.ticketator.data.repository.DefaultLoginRepository
+import com.fraggeil.ticketator.data.repository.DefaultOtpPaymentRepository
 import com.fraggeil.ticketator.data.repository.DefaultProfileRepository
 import com.fraggeil.ticketator.data.repository.DefaultSearchResultsRepository
 import com.fraggeil.ticketator.data.repository.DefaultSelectSeatRepository
+import com.fraggeil.ticketator.data.repository.DefaultSendDataToCheckRepository
 import com.fraggeil.ticketator.domain.repository.HomeRepository
 import com.fraggeil.ticketator.domain.repository.LoginRepository
+import com.fraggeil.ticketator.domain.repository.OtpPaymentRepository
 import com.fraggeil.ticketator.domain.repository.ProfileRepository
 import com.fraggeil.ticketator.domain.repository.SearchResultsRepository
 import com.fraggeil.ticketator.domain.repository.SelectSeatRepository
+import com.fraggeil.ticketator.domain.repository.SendDataToCheckRepository
 import com.fraggeil.ticketator.presentation.SelectedFilterViewModel
 import com.fraggeil.ticketator.presentation.SelectedJourneyViewModel
-import com.fraggeil.ticketator.presentation.SelectedPhoneNumberViewModel
+import com.fraggeil.ticketator.presentation.SelectedPhoneNumberAndTokenViewModel
 import com.fraggeil.ticketator.presentation.SelectedPostViewModel
 import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoViewModel
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeViewModel
@@ -48,6 +52,8 @@ val sharedModule = module {
     singleOf(::DefaultHomeRepository).bind<HomeRepository>()
     singleOf(::DefaultSearchResultsRepository).bind<SearchResultsRepository>()
     singleOf(::DefaultSelectSeatRepository).bind<SelectSeatRepository>()
+    singleOf(::DefaultSendDataToCheckRepository).bind<SendDataToCheckRepository>()
+    singleOf(::DefaultOtpPaymentRepository).bind<OtpPaymentRepository>()
 
 
     single { SnackbarHostState() }
@@ -69,7 +75,5 @@ val sharedModule = module {
     viewModelOf(::SelectedPostViewModel)
     viewModelOf(::SelectedFilterViewModel)
     viewModelOf(::SelectedJourneyViewModel)
-    viewModelOf(::SelectedPhoneNumberViewModel)
-
-
+    viewModelOf(::SelectedPhoneNumberAndTokenViewModel)
 }

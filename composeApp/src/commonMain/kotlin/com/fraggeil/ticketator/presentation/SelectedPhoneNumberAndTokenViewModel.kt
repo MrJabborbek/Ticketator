@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class SelectedPhoneNumberViewModel: ViewModel() {
-    private val _state = MutableStateFlow<String?>(null)
+class SelectedPhoneNumberAndTokenViewModel: ViewModel() {
+    private val _state = MutableStateFlow<Pair<String, String>?>(null)
     val state = _state.asStateFlow()
 
-    fun onSelectItem(item: String?) {
+    fun onSelectItem(item: Pair<String, String>?) {
         _state.value = item
     }
 

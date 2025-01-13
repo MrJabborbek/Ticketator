@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,15 +55,21 @@ import ticketator.composeapp.generated.resources.uzbekistan
 fun CardInfoScreenRoot(
     viewModel: CardInfoViewModel,
     navigateBack: () -> Unit,
-    navigateToEnterCode: () -> Unit,
+    navigateToEnterCode: (token: String, phoneNumber: String) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    LaunchedEffect(true){
+        viewModel.oneTimeState.collect{
+            when(it){
+                is CardInfoOneTimeState.NavigateToOtpPayment -> navigateToEnterCode(it.token, it.phoneNumber)
+            }
+        }
+    }
     CardInfoScreen(
         state = state,
         onAction = {
             when (it) {
                 CardInfoAction.OnBackClicked -> navigateBack()
-                CardInfoAction.OnNextClicked -> navigateToEnterCode()
                 else -> Unit
             }
             viewModel.onAction(it)

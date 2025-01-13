@@ -29,8 +29,8 @@ class LoginViewModel(
                 if (state.value.phoneNumber.isValidPhoneNumber()){
                     _state.update { it.copy(isLoading = true) }
                     loginRepository.sendOtp(_state.value.phoneNumber)
-                        .onSuccess {
-                            _oneTimeState.send(LoginOneTimeState.NavigateToOtpScreen(_state.value.phoneNumber))
+                        .onSuccess { token ->
+                            _oneTimeState.send(LoginOneTimeState.NavigateToOtpScreen(_state.value.phoneNumber, token))
                             _state.update { it.copy(isLoading = false) }
                         }
                         .onError {

@@ -3,6 +3,10 @@ package com.fraggeil.ticketator.presentation.screens.otp_payment_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.phoneNumberFormatting.formatPhoneNumber
+import com.fraggeil.ticketator.core.domain.result.onError
+import com.fraggeil.ticketator.core.domain.result.onSuccess
+import com.fraggeil.ticketator.domain.repository.OtpPaymentRepository
+import com.fraggeil.ticketator.presentation.screens.otp_screen.OtpOneTimeState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -14,9 +18,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class OtpPaymentViewModel(
-//    private val loginRepository: LoginRepository
+    private val repository: OtpPaymentRepository
 ): ViewModel() {
     private var checkOtpJob: Job? = null
+    private var token: String = ""
 
     private val _oneTimeState = Channel<OtpPaymentOneTimeState>()
     val oneTimeState = _oneTimeState.receiveAsFlow()
@@ -35,27 +40,26 @@ class OtpPaymentViewModel(
             started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
             initialValue = OtpPaymentState()
         )
-    var phoneNumber = ""
     
     fun onAction(action: OtpPaymentAction){
         when(action){
             OtpPaymentAction.OnBackClicked -> {}
             OtpPaymentAction.OnEnterButtonClicked -> {
-                checkOtp(phoneNumber, state.value.otp)
+                checkOtp(token, state.value.otp)
             }
             is OtpPaymentAction.OnPhoneNumberChanged -> {
-                phoneNumber = action.number
+                token = action.token
                 _state.update { it.copy(phoneNumber = action.number.formatPhoneNumber(isSecret = true)) }
             }
             OtpPaymentAction.OnResendButtonClicked -> viewModelScope.launch {
-//                loginRepository.sendOtp(phoneNumber) TODO
-//                    .onSuccess {
-//                        _state.update { it.copy(isResendEnabled = false) }
-//                        startTimer(240)
-//                    }
-//                    .onError {
-//                        _state.update { it.copy(error = "Error while sending otp") }//TODO
-//                    }
+                repository.resendOtp(token)
+                    .onSuccess {
+                        _state.update { it.copy(isResendEnabled = false) }
+                        startTimer(240)
+                    }
+                    .onError {
+                        _state.update { it.copy(error = "Error while sending otp") }//TODO
+                    }
             }
 
             is OtpPaymentAction.OnOtpChanged -> {
@@ -66,12 +70,12 @@ class OtpPaymentViewModel(
                     _state.update { it.copy(otp = action.otp, isErrorMode = false) }
                 }
                 if (action.otp.length == 5) {
-                    checkOtp(phoneNumber, action.otp)
+                    checkOtp(token, action.otp)
                 }
             }
         }
     }
-    private fun checkOtp(phoneNumber: String, otp: String){
+    private fun checkOtp(token: String, otp: String){
         checkOtpJob?.cancel()
         if (otp.length != 5) {
             _state.update { it.copy(isErrorMode = true) }
@@ -79,15 +83,14 @@ class OtpPaymentViewModel(
         }
         checkOtpJob = viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
-            _oneTimeState.send(OtpPaymentOneTimeState.NavigateToTickets)
-//            loginRepository.verifyOtp(phoneNumber, otp) TODO
-//                .onSuccess {
-//                    _state.update { it.copy(isLoading = false) }
-//                    _oneTimeState.send(OtpOneTimeState.NavigateToHomePage)
-//                }
-//                .onError {
-//                    _state.update { it.copy(isLoading = false, error = "Invalid OTP", isErrorMode = true) }
-//                }
+            repository.verifyOtp(token, otp)
+                .onSuccess { tickets ->
+                    _state.update { it.copy(isLoading = false) }
+                    _oneTimeState.send(OtpPaymentOneTimeState.NavigateToTickets(tickets))
+                }
+                .onError {
+                    _state.update { it.copy(isLoading = false, error = "Invalid OTP", isErrorMode = true) }
+                }
         }
     }
 

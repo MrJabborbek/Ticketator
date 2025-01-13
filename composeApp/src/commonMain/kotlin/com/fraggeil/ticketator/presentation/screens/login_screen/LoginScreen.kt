@@ -44,13 +44,13 @@ import org.jetbrains.compose.resources.painterResource
 fun LoginScreenRoot(
     viewModel: LoginViewModel,
     navigateBack: () -> Unit,
-    navigateToOtp: (string: String) -> Unit,
+    navigateToOtp: (phoneNumber: String, token: String) -> Unit,
     navigateToTermsAndConditions: () -> Unit
 ){
     LaunchedEffect(Unit){
         viewModel.oneTimeState.collect{oneTimeState ->
             when (oneTimeState){
-                is LoginOneTimeState.NavigateToOtpScreen -> navigateToOtp(oneTimeState.phoneNumber)
+                is LoginOneTimeState.NavigateToOtpScreen -> navigateToOtp(oneTimeState.phoneNumber, oneTimeState.token)
             }
         }
     }
