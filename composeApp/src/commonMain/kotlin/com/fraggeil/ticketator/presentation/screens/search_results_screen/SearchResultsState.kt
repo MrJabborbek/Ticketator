@@ -4,7 +4,7 @@ import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.model.Journey
 
 data class SearchResultsState(
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
     val isLoadingJourneys: Boolean = false,
     val error: String? = null,
     val filter: Filter? = null,

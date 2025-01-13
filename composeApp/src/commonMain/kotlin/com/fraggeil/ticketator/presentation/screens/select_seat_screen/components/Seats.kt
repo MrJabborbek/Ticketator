@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,6 +45,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.sp
@@ -78,6 +81,17 @@ fun Seats(
 //            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
+            if (available.isEmpty()){
+                item(span = { GridItemSpan(5) }) {
+                    Text(
+                        text = "No seats available",
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF818e98),
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+            }
             items(items) { item ->
                 val seatNumber = calculateSeatNumber(item)
                 Seat(
@@ -133,17 +147,28 @@ fun Seats(
         }
     } else{
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-
+            if (available.isEmpty()){
+                Text(
+                    text = "No seats available",
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF818e98),
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
             LazyHorizontalGrid(
                 rows = GridCells.Fixed(5), // 5 columns
-                modifier = modifier.heightIn(max = 350.dp) .changeScrollStateByMouse(
-                    isVerticalScroll = false,
-                    reverseScroll = true,
-                    scrollState = listState,
-                    isLoading = false
+                modifier = Modifier
+                    .heightIn(max = 350.dp)
+//                    .weight(1f)
+                    .changeScrollStateByMouse(
+                        isVerticalScroll = false,
+                        reverseScroll = true,
+                        scrollState = listState,
+                        isLoading = false
                 ),
                 state = listState,
                 contentPadding = PaddingValues(16.dp),

@@ -2,6 +2,7 @@ package com.fraggeil.ticketator.presentation.screens.search_results_screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -30,8 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -135,7 +137,7 @@ fun SearchResultsScreen(
                         onClick = { onAction(SearchResultsAction.OnBackClicked) }
                     )
                     Text(
-                        text = "Flight Results",
+                        text = "Journey Results",
                         color = White,
                         style = AppTypography().headlineSmall.copy(fontWeight = FontWeight.Medium),
                         modifier = Modifier.weight(1f),
@@ -162,7 +164,7 @@ fun SearchResultsScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = state.filter?.fromDistrict?.abbr?.uppercase() ?: "",
+                            text = state.filter.fromDistrict?.abbr?.uppercase() ?: "",
                             color = White,
                             style = AppTypography().headlineLarge.copy(fontWeight = FontWeight.SemiBold),
                             textAlign = TextAlign.Center,
@@ -170,7 +172,7 @@ fun SearchResultsScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "${state.filter?.fromDistrict?.name}, ${state.filter?.fromRegion?.name}",
+                            text = "${state.filter.fromDistrict?.name}, ${state.filter.fromRegion?.name}",
                             color = White,
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Center,
@@ -190,7 +192,7 @@ fun SearchResultsScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = state.filter?.toDistrict?.abbr?.uppercase() ?: "",
+                            text = state.filter.toDistrict?.abbr?.uppercase() ?: "",
                             color = White,
                             style = AppTypography().headlineLarge.copy(fontWeight = FontWeight.SemiBold),
                             textAlign = TextAlign.Center,
@@ -198,7 +200,7 @@ fun SearchResultsScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "${state.filter?.toDistrict?.name}, ${state.filter?.toRegion?.name}",
+                            text = "${state.filter.toDistrict?.name}, ${state.filter.toRegion?.name}",
                             color = White,
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Center,
@@ -209,7 +211,7 @@ fun SearchResultsScreen(
                 }
                 Text(
                     modifier = Modifier.padding(top = vertical_out_padding),
-                    text = "${state.journeys.size} Results Found".takeIf { !state.isLoadingJourneys } ?: "Loading Results",
+                    text = "${state.journeys.size} Results Found".takeIf { !state.isLoadingJourneys } ?: "Loading Results...",
                     color = White,
                     style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.Normal),
                     textAlign = TextAlign.Center,
@@ -239,7 +241,7 @@ fun SearchResultsScreen(
                 ) {
                     Spacer(modifier = Modifier.width(Sizes.horizontal_out_padding))
                     (-1..3).map {
-                        val date = state.filter!!.dateGo!!.setFromTimeToBeginningOfTheDay()!! + it * 24 * 60 * 60 * 1000L
+                        val date = state.filter.dateGo!!.setFromTimeToBeginningOfTheDay()!! + it * 24 * 60 * 60 * 1000L
                         if (date >= DateTimeUtil.getToday().first){
                             MyButton(
                                 text = date.toFormattedDate(
@@ -255,7 +257,7 @@ fun SearchResultsScreen(
                     }
                     Spacer(modifier = Modifier.width(Sizes.horizontal_out_padding))
                 }
-                if (!state.isLoadingJourneys && !!state.isLoading && state.journeys.isEmpty()){
+                if (!state.isLoadingJourneys && !state.isLoading && state.journeys.isEmpty()){
                     Column(
                         modifier = Modifier
                             .padding(top = vertical_inner_padding)
@@ -266,7 +268,7 @@ fun SearchResultsScreen(
                         verticalArrangement = Arrangement.Center
                     ){
                         Text(
-                            modifier = Modifier.padding(horizontal = Sizes.default_bottom_padding),
+                            modifier = Modifier.padding(horizontal = default_bottom_padding),
                             text = "No Results Found :( Maybe you can try another date?",
                             color = White,
                             style = AppTypography().titleMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -291,7 +293,7 @@ fun SearchResultsScreen(
                             .changeScrollStateByMouse(
                                 isVerticalScroll = true,
                                 scrollState = listState,
-                                isLoading = state.isLoading
+                                isLoading = state.isLoadingJourneys
                             ),
                         state = listState,
                         columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else 2),

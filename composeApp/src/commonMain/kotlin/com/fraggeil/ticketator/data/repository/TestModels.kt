@@ -100,6 +100,8 @@ val fakeTickets = (1..3).map {
 
 val _testNewTickets = MutableStateFlow<List<Ticket>>(fakeTickets)
 
+val  _testJourneys = MutableStateFlow(fakeJourneys)
+
 
 
 

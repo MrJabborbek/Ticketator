@@ -113,7 +113,6 @@ fun HomeScreenRoot(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     state: HomeState,
@@ -178,8 +177,7 @@ fun HomeScreen(
                     }
                     Text(
                         modifier = Modifier.padding(top = 4.dp),
-//                        text = "${state.currentLocation?.second?.name}, ${state.currentLocation?.first?.name}",
-                        text = "Dhaka, Bangladesh",
+                        text = if (state.currentLocation != null) "${state.currentLocation.first.name}, ${state.currentLocation.second.name}" else "Loading...",
                         color = White,
                         style = AppTypography().titleLarge.copy(fontWeight = FontWeight.Medium),
                         maxLines = 2,
@@ -246,7 +244,7 @@ fun HomeScreen(
                                 text = state.filter.toDistrict?.name,
                                 abbr = state.filter.toDistrict?.abbr,
                                 onClick = { isSelectToVisible.value = true },
-                                isLoading = state.isLoadingToRegions,
+                                isLoading = state.isLoadingToRegions || state.isLoadingFromRegions,
                                 isEnabled = state.filter.fromDistrict != null
                             )
                         }
@@ -272,7 +270,7 @@ fun HomeScreen(
                     MyInfoButton(
                         modifier = Modifier.padding(top = Sizes.vertical_inner_padding).fillMaxWidth(),
                         label = "Departure",
-                        text = state.filter.dateGo?.toFormattedDate(style = FormattedDateStyle.Words) ?: "Select",
+                        text = state.filter.dateGo?.toFormattedDate(style = FormattedDateStyle.Words) ?: Strings.Select.value(),
                         onClick = {
                             fromDatePickerState.value = true
                         }
@@ -287,7 +285,7 @@ fun HomeScreen(
                             MyInfoButton(
                                 modifier = Modifier.padding(top = Sizes.vertical_inner_padding).fillMaxWidth(),
                                 label = "Return",
-                                text = state.filter.dateBack?.toFormattedDate(style = FormattedDateStyle.Words) ?: "Select",
+                                text = state.filter.dateBack?.toFormattedDate(style = FormattedDateStyle.Words) ?: Strings.Select.value(),
                                 onClick = {
                                     toDatePickerState.value = true
                                 }

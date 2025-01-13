@@ -2,10 +2,16 @@ package com.fraggeil.ticketator.core.data.di
 
 import androidx.compose.material3.SnackbarHostState
 import com.fraggeil.ticketator.core.domain.Platform
+import com.fraggeil.ticketator.data.repository.DefaultHomeRepository
 import com.fraggeil.ticketator.data.repository.DefaultLoginRepository
 import com.fraggeil.ticketator.data.repository.DefaultProfileRepository
+import com.fraggeil.ticketator.data.repository.DefaultSearchResultsRepository
+import com.fraggeil.ticketator.data.repository.DefaultSelectSeatRepository
+import com.fraggeil.ticketator.domain.repository.HomeRepository
 import com.fraggeil.ticketator.domain.repository.LoginRepository
 import com.fraggeil.ticketator.domain.repository.ProfileRepository
+import com.fraggeil.ticketator.domain.repository.SearchResultsRepository
+import com.fraggeil.ticketator.domain.repository.SelectSeatRepository
 import com.fraggeil.ticketator.presentation.SelectedFilterViewModel
 import com.fraggeil.ticketator.presentation.SelectedJourneyViewModel
 import com.fraggeil.ticketator.presentation.SelectedPhoneNumberViewModel
@@ -39,6 +45,10 @@ val sharedModule = module {
     single { Platform() }
     singleOf(::DefaultProfileRepository).bind<ProfileRepository>()
     singleOf(::DefaultLoginRepository).bind<LoginRepository>()
+    singleOf(::DefaultHomeRepository).bind<HomeRepository>()
+    singleOf(::DefaultSearchResultsRepository).bind<SearchResultsRepository>()
+    singleOf(::DefaultSelectSeatRepository).bind<SelectSeatRepository>()
+
 
     single { SnackbarHostState() }
 

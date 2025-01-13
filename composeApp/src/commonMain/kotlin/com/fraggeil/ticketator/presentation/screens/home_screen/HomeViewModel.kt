@@ -4,24 +4,28 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.Constants
-import com.fraggeil.ticketator.domain.FakeData
+import com.fraggeil.ticketator.core.domain.result.onError
+import com.fraggeil.ticketator.core.domain.result.onSuccess
 import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.model.FilterType
 import com.fraggeil.ticketator.domain.model.Region
+import com.fraggeil.ticketator.domain.repository.HomeRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class HomeViewModel(
-    private val snackbarHostState: SnackbarHostState
+    private val snackbarHostState: SnackbarHostState,
+    private val homeRepository: HomeRepository,
 ): ViewModel() {
     private var fetchAllRegionsJob: Job? = null
     private var fetchToRegionsJob: Job? = null
@@ -101,8 +105,6 @@ class HomeViewModel(
                     }
                     search(filter)
                 }
-
-
             }
             is HomeAction.OnRegionFromSelected -> {
                 _state.update { it.copy(filter = it.filter.copy(fromRegion = action.region)) }
@@ -130,23 +132,31 @@ class HomeViewModel(
         fetchAllRegionsJob?.cancel()
         _state.update { it.copy(isLoadingFromRegions = true) }
         fetchAllRegionsJob = viewModelScope.launch {
-            delay(Constants.FAKE_DELAY_TO_TEST)
-            _state.update { it.copy(isLoadingFromRegions = false, fromRegions = FakeData.regions) }
+            homeRepository.getRegions()
+                .onSuccess { regions ->
+                    _state.update { it.copy(fromRegions = regions, isLoadingFromRegions = false) }
+                }
+                .onError { _state.update { it.copy(error = "Error fetching regions") } }
         }
     }
-    private fun fetchToRegions(fromRegion: Region){
+    private fun fetchToRegions(fromRegion: Region) {
         fetchToRegionsJob?.cancel()
         _state.update { it.copy(isLoadingToRegions = true) }
         fetchToRegionsJob = viewModelScope.launch {
-            delay(Constants.FAKE_DELAY_TO_TEST)
-            val regions = FakeData.regions.filter {d -> d != fromRegion }
-            _state.update { it.copy(
-                isLoadingToRegions = false,
-                toRegions = regions,
-                filter = it.filter.copy(
-                    toRegion = if (regions.contains(it.filter.toRegion)) it.filter.toRegion else null,
-                    toDistrict = if (regions.contains(it.filter.toRegion)) it.filter.toDistrict else null)
-            ) }
+            homeRepository.getToRegions(fromRegion)
+                .onSuccess { regions ->
+                    _state.update {
+                        it.copy(
+                            isLoadingToRegions = false,
+                            toRegions = regions,
+                            filter = it.filter.copy(
+                                toRegion = if (regions.contains(it.filter.toRegion)) it.filter.toRegion else null,
+                                toDistrict = if (regions.contains(it.filter.toRegion)) it.filter.toDistrict else null
+                            )
+                        )
+                    }
+                }
+                .onError { _state.update { it.copy(error = "Error fetching regions") } }
         }
     }
 
@@ -154,29 +164,38 @@ class HomeViewModel(
         fetchAllPostsJob?.cancel()
         _state.update { it.copy(isLoadingPosts = true) }
         fetchAllPostsJob = viewModelScope.launch {
-            delay(Constants.FAKE_DELAY_TO_TEST)
-            _state.update { it.copy(isLoadingPosts = false, posts = FakeData.posts) }
+            homeRepository.getAllPosts()
+                .onSuccess { posts ->
+                    _state.update { it.copy(isLoadingPosts = false, posts = posts) }
+                }
+                .onError { _state.update { it.copy(error = "Error fetching posts") } }
         }
     }
 
-    private fun observeCurrentLocation(){
+    private fun observeCurrentLocation() {
         observeCurrentLocationJob?.cancel()
         _state.update { it.copy(isLoadingCurrentLocation = true) }
-        observeCurrentLocationJob = viewModelScope.launch {
-            delay(Constants.FAKE_DELAY_TO_TEST)
-            val region = FakeData.regions.random()
-            val district = region.districts.random()
-            _state.update { it.copy(isLoadingCurrentLocation = false, currentLocation = Pair(region, district)) }
-        }
+        observeCurrentLocationJob = homeRepository.observeCurrentLocation()
+            .onStart {
+                delay(Constants.FAKE_DELAY_TO_TEST)
+            }
+            .onEach { data ->
+                _state.update { it.copy(isLoadingCurrentLocation = false, currentLocation = data) }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeIsThereNewNotifications(){
         observeIsThereNewNotificationsJob?.cancel()
         _state.update { it.copy(isThereNewNotifications = true) }
-        observeIsThereNewNotificationsJob = viewModelScope.launch {
-            delay(Constants.FAKE_DELAY_TO_TEST)
-            _state.update { it.copy(isThereNewNotifications = Random.nextBoolean()) }
-        }
+        observeIsThereNewNotificationsJob = homeRepository.observeIsThereNewNotifications()
+            .onStart {
+                delay(Constants.FAKE_DELAY_TO_TEST)
+            }
+            .onEach { data ->
+                _state.update { it.copy(isThereNewNotifications = data) }
+            }
+            .launchIn(viewModelScope)
     }
 
     private suspend fun showSnackbar(){

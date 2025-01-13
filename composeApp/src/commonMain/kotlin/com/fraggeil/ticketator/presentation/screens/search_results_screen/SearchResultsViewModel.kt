@@ -1,26 +1,28 @@
 package com.fraggeil.ticketator.presentation.screens.search_results_screen
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.Constants
+import com.fraggeil.ticketator.core.domain.result.onError
+import com.fraggeil.ticketator.core.domain.result.onSuccess
 import com.fraggeil.ticketator.core.domain.setFromTimeToBeginningOfTheDay
 import com.fraggeil.ticketator.domain.FakeData
 import com.fraggeil.ticketator.domain.model.Filter
+import com.fraggeil.ticketator.domain.repository.SearchResultsRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SearchResultsViewModel: ViewModel() {
+class SearchResultsViewModel(
+    private val repository: SearchResultsRepository
+): ViewModel() {
     private var isInitialized = false
-    private var fetchResultsJob:
-            Job? = null
+    private var fetchResultsJob: Job? = null
     private val _state = MutableStateFlow(SearchResultsState())
     val state = _state
         .onStart {
@@ -43,6 +45,7 @@ class SearchResultsViewModel: ViewModel() {
                 _state.update { it.copy(filter = newFilter) }
                 fetchResults(newFilter!!)
             }
+
             is SearchResultsAction.OnFilterSelected -> {
                 _state.update { it.copy(filter = action.filter) }
                 fetchResults(action.filter)
@@ -50,17 +53,22 @@ class SearchResultsViewModel: ViewModel() {
         }
     }
 
-    private fun fetchResults(filter: Filter){
+    private fun fetchResults(filter: Filter) {
         fetchResultsJob?.cancel()
         _state.update { it.copy(isLoadingJourneys = true) }
         fetchResultsJob = viewModelScope.launch {
-            delay(Constants.FAKE_DELAY_TO_TEST)
-            _state.update { it ->
-                it.copy(
-                    isLoadingJourneys = false,
-                journeys = FakeData.fakeJourneys.filter { t-> t.timeStart.setFromTimeToBeginningOfTheDay() == filter.dateGo.setFromTimeToBeginningOfTheDay() }
-            ) }
+            repository.getJourneysByFilter(filter)
+                .onSuccess { list ->
+                    _state.update {
+                        it.copy(
+                            isLoadingJourneys = false,
+                            journeys = list
+                        )
+                    }
+                }
+                .onError { e ->
+                    _state.update { it.copy(isLoadingJourneys = false, error = e.toString()) }
+                }
         }
-
     }
 }
