@@ -1,6 +1,6 @@
-package com.fraggeil.ticketator.presentation.screens.otp_screen
+package com.fraggeil.ticketator.presentation.screens.otp_payment_screen
 
-data class OtpState(
+data class OtpPaymentState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val phoneNumber: String = "+99890*******67",

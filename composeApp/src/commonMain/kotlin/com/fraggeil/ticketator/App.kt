@@ -57,12 +57,17 @@ import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.presentation.Route
 import com.fraggeil.ticketator.presentation.SelectedFilterViewModel
 import com.fraggeil.ticketator.presentation.SelectedJourneyViewModel
+import com.fraggeil.ticketator.presentation.SelectedPhoneNumberViewModel
 import com.fraggeil.ticketator.presentation.SelectedPostViewModel
 import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoAction
 import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoScreenRoot
 import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoViewModel
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeScreenRoot
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeViewModel
+import com.fraggeil.ticketator.presentation.screens.login_screen.LoginScreenRoot
+import com.fraggeil.ticketator.presentation.screens.login_screen.LoginViewModel
+import com.fraggeil.ticketator.presentation.screens.otp_payment_screen.OtpPaymentScreenRoot
+import com.fraggeil.ticketator.presentation.screens.otp_payment_screen.OtpPaymentViewModel
 import com.fraggeil.ticketator.presentation.screens.otp_screen.OtpScreenRoot
 import com.fraggeil.ticketator.presentation.screens.otp_screen.OtpViewModel
 import com.fraggeil.ticketator.presentation.screens.passengers_info_screen.PassengersInfoAction
@@ -71,6 +76,10 @@ import com.fraggeil.ticketator.presentation.screens.passengers_info_screen.Passe
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostAction
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostScreenRoot
 import com.fraggeil.ticketator.presentation.screens.post_screen.PostViewModel
+import com.fraggeil.ticketator.presentation.screens.profile_edit_screen.ProfileEditScreenRoot
+import com.fraggeil.ticketator.presentation.screens.profile_edit_screen.ProfileEditViewModel
+import com.fraggeil.ticketator.presentation.screens.profile_screen.ProfileScreenRoot
+import com.fraggeil.ticketator.presentation.screens.profile_screen.ProfileViewModel
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsAction
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsScreenRoot
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsViewModel
@@ -123,7 +132,7 @@ fun App() {
                 SnackbarHost(koinInject())
             },
             bottomBar = {
-                if ( navBackStackEntry?.destination?.route in listOf(Route.Home.route)){
+                if ( navBackStackEntry?.destination?.route in listOf(Route.Home.route, Route.Tickets.route, Route.Profile.route)){
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
@@ -151,6 +160,28 @@ fun App() {
                                     },
                                     isSelected = navBackStackEntry?.destination?.route == Route.Home.route
                                 )
+                                MyNavigationBarItem(
+                                    text = Strings.Tickets.value(),
+                                    selectedPainter = painterResource(Res.drawable.compose_multiplatform), //TODO
+                                    unselectedPainter = painterResource(Res.drawable.compose_multiplatform),
+                                    onClick = {
+                                        if (navBackStackEntry?.destination?.route != Route.Tickets.route){
+                                            navigate(Route.Tickets,true)
+                                        }
+                                    },
+                                    isSelected = navBackStackEntry?.destination?.route == Route.Tickets.route
+                                )
+                                MyNavigationBarItem(
+                                    text = Strings.Profile.value(),
+                                    selectedPainter = painterResource(Res.drawable.compose_multiplatform), //TODO
+                                    unselectedPainter = painterResource(Res.drawable.compose_multiplatform),
+                                    onClick = {
+                                        if (navBackStackEntry?.destination?.route != Route.Profile.route){
+                                            navigate(Route.Profile,true)
+                                        }
+                                    },
+                                    isSelected = navBackStackEntry?.destination?.route == Route.Profile.route
+                                )
                             }
                         }
                     }
@@ -177,8 +208,8 @@ fun App() {
                 ) {
                     navigation(
                         route = Route.TicketatorGraph.route,
-//                        startDestination = Route.Start.route,
-                        startDestination = Route.Tickets.route,
+                        startDestination = Route.Start.route,
+//                        startDestination = Route.Tickets.route,
                     ) {
 
                         composable(
@@ -325,11 +356,25 @@ fun App() {
                                     navController.navigateUp()
                                 },
                                 navigateToEnterCode = {
-                                    navigate(Route.Otp, true)
+                                    navigate(Route.OtpPayment, true)
                                 }
                             )
                         }
 
+                        composable(
+                            route = Route.OtpPayment.route
+                        ) {
+                            val viewModel = koinViewModel<OtpPaymentViewModel>()
+                            OtpPaymentScreenRoot(
+                                viewModel = viewModel,
+                                navigateBack = {
+                                    navController.navigateUp()
+                                },
+                                navigateToTickets = {
+                                    navigate(Route.Tickets, true)
+                                }
+                            )
+                        }
                         composable(
                             route = Route.Otp.route
                         ) {
@@ -339,8 +384,8 @@ fun App() {
                                 navigateBack = {
                                     navController.navigateUp()
                                 },
-                                navigateToTickets = {
-                                    navigate(Route.Tickets, true)
+                                navigateToHome = {
+                                    navigate(Route.Home, true)
                                 }
                             )
                         }
@@ -352,6 +397,68 @@ fun App() {
                                 viewModel = viewModel,
                                 navigateBack = {
                                     navController.navigate(Route.Home)
+                                }
+                            )
+                        }
+                        composable(route = Route.Profile.route){
+                            val viewModel = koinViewModel<ProfileViewModel>()
+                            ProfileScreenRoot(
+                                viewModel = viewModel,
+                                navigateBack = {
+                                    navController.navigateUp()
+                                },
+                                navigateToLogin = {
+                                    navigate(Route.Login, false)
+                                },
+                                navigateToMain = {
+                                    navigate(route = Route.Home, true)
+                                },
+                                navigateToEditProfile = {
+                                    navigate(Route.ProfileEdit, false)
+                                },
+                                navigateToAboutApp = {
+//                                    navigate(Route.AboutApp.routeName, false)
+                                },
+                                navigateToTermsAndConditions = {
+//                                    navigate(Route.TermsAndConditions.routeName, false)
+                                }
+                            )
+                        }
+                        composable(
+                            route = Route.Login.route
+                        ){
+
+                            val viewModel = koinViewModel<LoginViewModel>()
+                            val selectedPhoneNumberViewModel = it.sharedKoinViewModel<SelectedPhoneNumberViewModel>(navController)
+                            LaunchedEffect(true){
+                                selectedPhoneNumberViewModel.onSelectItem(null)
+                            }
+                            LoginScreenRoot(
+                                viewModel = viewModel,
+                                navigateBack = {
+                                    navController.navigateUp()
+                                },
+                                navigateToOtp = {phoneNumber ->
+                                    selectedPhoneNumberViewModel.onSelectItem(phoneNumber)
+                                    navigate(Route.Otp, false)
+                                },
+                                navigateToTermsAndConditions = {
+//                                    navigate(Route.TermsAndConditions.routeName, false)
+                                }
+                            )
+                        }
+                        composable(
+                            route = Route.ProfileEdit.route
+                        ){
+
+                            val viewModel = koinViewModel<ProfileEditViewModel>()
+                            ProfileEditScreenRoot(
+                                viewModel = viewModel,
+                                navigateBack = {
+                                    navController.navigateUp()
+                                },
+                                navigateToMain = {
+                                    navigate(Route.Home, true)
                                 }
                             )
                         }

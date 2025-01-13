@@ -1,4 +1,4 @@
-package com.fraggeil.ticketator.presentation.screens.otp_screen
+package com.fraggeil.ticketator.presentation.screens.otp_payment_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,12 +13,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class OtpViewModel(
+class OtpPaymentViewModel(
 //    private val loginRepository: LoginRepository
 ): ViewModel() {
     private var checkOtpJob: Job? = null
 
-    private val _oneTimeState = Channel<OtpOneTimeState>()
+    private val _oneTimeState = Channel<OtpPaymentOneTimeState>()
     val oneTimeState = _oneTimeState.receiveAsFlow()
 
     private var isInitialized = false
@@ -37,17 +37,17 @@ class OtpViewModel(
         )
     var phoneNumber = ""
     
-    fun onAction(action: OtpAction){
+    fun onAction(action: OtpPaymentAction){
         when(action){
-            OtpAction.OnBackClicked -> {}
-            OtpAction.OnEnterButtonClicked -> {
+            OtpPaymentAction.OnBackClicked -> {}
+            OtpPaymentAction.OnEnterButtonClicked -> {
                 checkOtp(phoneNumber, state.value.otp)
             }
-            is OtpAction.OnPhoneNumberChanged -> {
+            is OtpPaymentAction.OnPhoneNumberChanged -> {
                 phoneNumber = action.number
                 _state.update { it.copy(phoneNumber = action.number.formatPhoneNumber(isSecret = true)) }
             }
-            OtpAction.OnResendButtonClicked -> viewModelScope.launch {
+            OtpPaymentAction.OnResendButtonClicked -> viewModelScope.launch {
 //                loginRepository.sendOtp(phoneNumber) TODO
 //                    .onSuccess {
 //                        _state.update { it.copy(isResendEnabled = false) }
@@ -58,7 +58,7 @@ class OtpViewModel(
 //                    }
             }
 
-            is OtpAction.OnOtpChanged -> {
+            is OtpPaymentAction.OnOtpChanged -> {
                 if (action.otp.any { !it.isDigit() }){
                     return
                 }
@@ -79,7 +79,7 @@ class OtpViewModel(
         }
         checkOtpJob = viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
-            _oneTimeState.send(OtpOneTimeState.NavigateToHome)
+            _oneTimeState.send(OtpPaymentOneTimeState.NavigateToTickets)
 //            loginRepository.verifyOtp(phoneNumber, otp) TODO
 //                .onSuccess {
 //                    _state.update { it.copy(isLoading = false) }

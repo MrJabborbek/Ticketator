@@ -10,10 +10,10 @@ class TicketsViewModel: ViewModel() {
 
     fun onAction(action: TicketsAction){
         when(action){
-            TicketsAction.OnBackClicked -> {}
             is TicketsAction.OnDownloadTicketClicked -> {}
             is TicketsAction.OnShareTicketClicked -> {}
             is TicketsAction.OnTicketClicked -> {}
+            TicketsAction.OnBuyTicketButtonClicked -> {}
         }
     }
 }

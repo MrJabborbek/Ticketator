@@ -77,7 +77,7 @@ fun TicketItem(
     ){
         TicketShape(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-            onClick = onClick,
+            onClick = null,
             isLoading = isLoading,
             contents = listOf(
                 {

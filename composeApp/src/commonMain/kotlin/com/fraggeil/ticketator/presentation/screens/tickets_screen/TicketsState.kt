@@ -6,5 +6,6 @@ import com.fraggeil.ticketator.domain.model.Ticket
 data class TicketsState(
     val isLoading: Boolean = true,
     val error: String? = null,
-    val tickets: List<Ticket> = FakeData.fakeTickets//emptyList()
+    val comingTickets: List<Ticket> = FakeData.fakeTickets,//emptyList()
+    val pastTickets: List<Ticket> = emptyList()// FakeData.fakeTickets//emptyList()
 )

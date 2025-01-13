@@ -251,5 +251,6 @@ object Strings{
     data object To: StringItem(valueUz = "Qayerga", valueEn = "to")
     data object Sort: StringItem(valueUz = "Saralash", valueEn = "Sort")
     data object Price: StringItem(valueUz = "Narx", valueEn = "Price")
+    data object Tickets: StringItem(valueUz = "Tickets", valueEn = "Tickets")
 
 }

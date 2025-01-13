@@ -1,4 +1,4 @@
-package com.fraggeil.ticketator.presentation.screens.otp_screen
+package com.fraggeil.ticketator.presentation.screens.otp_payment_screen
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -64,27 +64,27 @@ import ticketator.composeapp.generated.resources.ic_close
 import kotlin.math.sin
 
 @Composable
-fun OtpScreenRoot(
-    viewModel: OtpViewModel,
+fun OtpPaymentScreenRoot(
+    viewModel: OtpPaymentViewModel,
     navigateBack: () -> Unit,
-    navigateToHome: () -> Unit
+    navigateToTickets: () -> Unit
 ){
 
     LaunchedEffect(Unit){
         viewModel.oneTimeState.collect{oneTimeState ->
             when(oneTimeState){
-                OtpOneTimeState.NavigateToHome -> {
-                    navigateToHome()
+                OtpPaymentOneTimeState.NavigateToTickets -> {
+                    navigateToTickets()
                 }
             }
         }
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
-    OtpScreen(
+    OtpPaymentScreen(
         state = state,
         onAction = {
             when(it){
-                OtpAction.OnBackClicked -> navigateBack()
+                OtpPaymentAction.OnBackClicked -> navigateBack()
                 else -> Unit
             }
             viewModel.onAction(it)
@@ -95,9 +95,9 @@ fun OtpScreenRoot(
 }
 
 @Composable
-fun OtpScreen(
+fun OtpPaymentScreen(
     state: OtpPaymentState,
-    onAction: (OtpAction) -> Unit
+    onAction: (OtpPaymentAction) -> Unit
 ){
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit){
@@ -116,7 +116,7 @@ fun OtpScreen(
         ) {
             MyCircularButton(
                 icon = painterResource(Res.drawable.ic_close),
-                onClick = { onAction(OtpAction.OnBackClicked) }
+                onClick = { onAction(OtpPaymentAction.OnBackClicked) }
             )
 //            Text(
 //                text = "Card info",
@@ -165,7 +165,7 @@ fun OtpScreen(
                 BasicTextField(
                     value = state.otp,
                     onValueChange = {
-                        onAction(OtpAction.OnOtpChanged(it))
+                        onAction(OtpPaymentAction.OnOtpChanged(it))
                     },
                     modifier = Modifier.weight(1f).focusRequester(focusRequester),
                     keyboardOptions = KeyboardOptions(
@@ -223,7 +223,7 @@ fun OtpScreen(
             }
             TextButton(
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 24.dp),
-                onClick = { onAction(OtpAction.OnResendButtonClicked) },
+                onClick = { onAction(OtpPaymentAction.OnResendButtonClicked) },
                 enabled = state.isResendEnabled,
                 colors = ButtonDefaults.textButtonColors().copy(
                     contentColor = White,
