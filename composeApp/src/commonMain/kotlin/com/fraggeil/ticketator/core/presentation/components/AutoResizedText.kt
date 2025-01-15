@@ -49,6 +49,11 @@ fun AutoResizedText(
                     fontSize = resizedTextStyle.fontSize * 0.95
                 )
             } else {
+                if (resizedTextStyle.fontSize < style.fontSize) {
+                    resizedTextStyle = resizedTextStyle.copy(
+                        fontSize = resizedTextStyle.fontSize * 1.05f
+                    )
+                }
                 shouldDraw = true
             }
         }

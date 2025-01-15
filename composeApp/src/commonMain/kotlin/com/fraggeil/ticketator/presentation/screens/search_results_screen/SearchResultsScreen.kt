@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -33,7 +32,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,6 +52,7 @@ import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyCalendarDateSelector
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
+import com.fraggeil.ticketator.core.presentation.components.MyScrollableContentInvisibleBoundsBox
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.theme.AppTypography
 import com.fraggeil.ticketator.core.theme.Blue
@@ -285,46 +284,52 @@ fun SearchResultsScreen(
                         Spacer(modifier = Modifier.height(Sizes.default_bottom_padding_double))
                     }
                 }else{
-                    val listState = rememberLazyGridState()
-                    LazyVerticalGrid(
+                    MyScrollableContentInvisibleBoundsBox(
                         modifier = Modifier
                             .padding(top = vertical_inner_padding)
-                            .fillMaxWidth()
-                            .changeScrollStateByMouse(
-                                isVerticalScroll = true,
-                                scrollState = listState,
-                                isLoading = state.isLoadingJourneys
+                            .fillMaxWidth(),
+                        size = vertical_inner_padding,
+                        color = BlueDark
+                    ){
+                        val listState = rememberLazyGridState()
+                        LazyVerticalGrid(
+                            modifier = Modifier
+                                .changeScrollStateByMouse(
+                                    isVerticalScroll = true,
+                                    scrollState = listState,
+                                    isLoading = state.isLoadingJourneys
+                                ),
+                            state = listState,
+                            columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else 2),
+                            contentPadding = PaddingValues(
+                                start = horizontal_inner_padding,
+                                end = horizontal_inner_padding,
+                                top = vertical_inner_padding,
+                                bottom = default_bottom_padding
                             ),
-                        state = listState,
-                        columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else 2),
-                        contentPadding = PaddingValues(
-                            start = horizontal_inner_padding,
-                            end = horizontal_inner_padding,
-//                        top = vertical_inner_padding,
-                            bottom = default_bottom_padding
-                        ),
-                        horizontalArrangement = Arrangement.spacedBy(
-                            12.dp,
-                            Alignment.CenterHorizontally
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-                    ) {
-                        if (state.isLoadingJourneys) {
-                            items(10) {
-                                JourneyListItem(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    isLoading = true,
-                                    journey = FakeData.fakeJourneys[0],
-                                    onClick = {}
-                                )
-                            }
-                        }else{
-                            items(items = state.journeys) {
-                                JourneyListItem(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    journey = it,
-                                    onClick = { onAction(SearchResultsAction.OnJourneyClicked(it)) }
-                                )
+                            horizontalArrangement = Arrangement.spacedBy(
+                                12.dp,
+                                Alignment.CenterHorizontally
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+                        ) {
+                            if (state.isLoadingJourneys) {
+                                items(10) {
+                                    JourneyListItem(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        isLoading = true,
+                                        journey = FakeData.fakeJourneys[0],
+                                        onClick = {}
+                                    )
+                                }
+                            }else{
+                                items(items = state.journeys) {
+                                    JourneyListItem(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        journey = it,
+                                        onClick = { onAction(SearchResultsAction.OnJourneyClicked(it)) }
+                                    )
+                                }
                             }
                         }
                     }

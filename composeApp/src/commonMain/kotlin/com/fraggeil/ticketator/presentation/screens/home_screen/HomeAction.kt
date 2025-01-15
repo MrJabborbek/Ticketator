@@ -1,8 +1,8 @@
 package com.fraggeil.ticketator.presentation.screens.home_screen
 
-import com.fraggeil.ticketator.domain.model.District
+import com.fraggeil.ticketator.domain.model.uzbekistan.District
 import com.fraggeil.ticketator.domain.model.Post
-import com.fraggeil.ticketator.domain.model.Region
+import com.fraggeil.ticketator.domain.model.uzbekistan.Region
 
 sealed interface HomeAction {
     data object OnBackClicked : HomeAction

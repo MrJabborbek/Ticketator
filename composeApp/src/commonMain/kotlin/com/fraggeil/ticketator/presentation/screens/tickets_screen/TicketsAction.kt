@@ -7,4 +7,6 @@ sealed interface TicketsAction {
     data class OnShareTicketClicked(val ticket: Ticket) : TicketsAction
     data class OnTicketClicked(val ticket: Ticket) : TicketsAction
     data object OnBuyTicketButtonClicked: TicketsAction
+    data object OnShowAllTicketsClicked: TicketsAction
+    data class OnInitialTicketsSelected(val tickets: List<Ticket>) : TicketsAction
 }

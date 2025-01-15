@@ -51,6 +51,7 @@ import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.FlashingCursorIndicator
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
+import com.fraggeil.ticketator.core.presentation.components.MyOtpTextField
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.ErrorColor
@@ -59,6 +60,7 @@ import com.fraggeil.ticketator.core.theme.TextColor
 import com.fraggeil.ticketator.core.theme.TextColorLight
 import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.domain.model.Ticket
+import com.fraggeil.ticketator.presentation.screens.otp_screen.OtpAction
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.ic_close
@@ -160,64 +162,16 @@ fun OtpPaymentScreen(
                 modifier = Modifier.padding(top = 40.dp).fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ){
-                BasicTextField(
+                MyOtpTextField(
+                    modifier = Modifier.weight(1f),
                     value = state.otp,
+                    isLoading = state.isLoading,
+                    focusRequester = focusRequester,
+                    isErrorMode = state.isErrorMode,
                     onValueChange = {
                         onAction(OtpPaymentAction.OnOtpChanged(it))
-                    },
-                    modifier = Modifier.weight(1f).focusRequester(focusRequester),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
-                    )
-                ){
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ){
-                        val infiniteTransition = rememberInfiniteTransition()
-                        val alpha by infiniteTransition.animateFloat(
-                            initialValue = 1f,
-                            targetValue = 0f,
-                            animationSpec = infiniteRepeatable(
-                                animation = tween(durationMillis = 1000, easing = LinearEasing),
-                                repeatMode = RepeatMode.Reverse
-                            )
-                        )
-                        repeat(5){ index ->
-                            val number = when{
-                                index >= state.otp.length -> ""
-                                else -> state.otp[index].toString()
-                            }
-                            val isFocused = index == state.otp.length
-                            Box(
-                                modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(5/6f)
-                            .background(
-                                color = LightGray,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .border(
-                                width = 2.dp,
-                                color = if (state.isLoading) LightGray.copy(alpha = alpha + index*sin(alpha))
-                                else if (isFocused) TextColor
-                                else if (state.isErrorMode) ErrorColor
-                                else Color.Transparent,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(8.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if(number == "" && isFocused){
-                                   FlashingCursorIndicator(indicatorColor = BlueDark)
-                                }
-                                Text(
-                                    text = number,
-                                    style = MaterialTheme.typography.titleLarge,
-                                )
-                            }
-                        }
                     }
-                }
+                )
             }
             TextButton(
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 24.dp),

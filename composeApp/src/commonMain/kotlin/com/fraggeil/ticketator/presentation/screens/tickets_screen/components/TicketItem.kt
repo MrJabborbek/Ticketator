@@ -1,14 +1,12 @@
 package com.fraggeil.ticketator.presentation.screens.tickets_screen.components
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,23 +19,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -231,47 +230,71 @@ fun TicketItem(
                         modifier = Modifier.fillMaxWidth().padding(Sizes.vertical_inner_padding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ){
-                        QRCodeImage(
-                            modifier = Modifier
-                                .widthIn(max = 300.dp)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(Sizes.smallRoundCorner)),
-                            url = ticket.qrCodeLink,
-                            contentDescription = null
-                        )
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.End)
-                        ){
-                            IconButton(
-                                onClick = {
-                                    coroutineScope.launch {
-                                        onShareClick(graphicsLayer.toImageBitmap())
-                                    }
+                        if (isLoading){
+                            Box(
+                                modifier = Modifier
+                                    .widthIn(max = 300.dp)
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f)
+                                    .clip(RoundedCornerShape(Sizes.smallRoundCorner))
+                                    .shimmerLoadingAnimation(
+                                        isLoadingCompleted = !isLoading,
+                                        shimmerStyle = ShimmerStyle.Custom
+                                    )
+                            )
+                        }else{
+                            var isLoadingQr by remember { mutableStateOf(true) }
+                            QRCodeImage(
+                                modifier = Modifier
+                                    .widthIn(max = 300.dp)
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(Sizes.smallRoundCorner))
+                                    .shimmerLoadingAnimation(
+                                        isLoadingCompleted = !isLoadingQr && !isLoading,
+                                        shimmerStyle = ShimmerStyle.Custom
+                                    ),
+                                url = ticket.qrCodeLinkOrToken,
+                                contentDescription = null,
+                                onSuccess = {
+                                    isLoadingQr = false
                                 }
+                            )
+                        }
+                        if (!isLoading){
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.End)
                             ){
-                                Icon(
-                                    Icons.Default.Share,
-                                    contentDescription = null,
-                                    tint = Blue,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    coroutineScope.launch {
-                                        onDownloadClick(graphicsLayer.toImageBitmap())
+                                IconButton(
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            onShareClick(graphicsLayer.toImageBitmap())
+                                        }
                                     }
+                                ){
+                                    Icon(
+                                        Icons.Default.Share,
+                                        contentDescription = null,
+                                        tint = Blue,
+                                        modifier = Modifier.size(24.dp)
+                                    )
                                 }
-                            ){
-                                Icon(
-                                    Icons.Default.Add,
-                                    contentDescription = null,
-                                    tint = Blue,
-                                    modifier = Modifier.size(24.dp)
-                                )
+                                IconButton(
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            onDownloadClick(graphicsLayer.toImageBitmap())
+                                        }
+                                    }
+                                ){
+                                    Icon(
+                                        Icons.Default.Add,
+                                        contentDescription = null,
+                                        tint = Blue,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -448,7 +471,7 @@ fun TicketItem(
                                     .widthIn(max = 300.dp)
                                     .fillMaxWidth()
                                     .clip(RoundedCornerShape(Sizes.smallRoundCorner)),
-                                url = ticket.qrCodeLink,
+                                url = ticket.qrCodeLinkOrToken,
                                 contentDescription = null
                             )
                         }

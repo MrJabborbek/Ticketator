@@ -126,78 +126,85 @@ fun PassengersInfoScreen(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-                state.selectedJourney?.passengers?.takeIf { it.isNotEmpty() }?.let { passengers ->
-                    val scrollState = rememberScrollState()
-                    Column(
-                        modifier = Modifier
-                            .padding(
-                                horizontal = Sizes.horizontal_out_padding,
-                                vertical = vertical_out_padding
-                            )
-                            .fillMaxWidth()
-                            .background(
-                                color = BG_White,
-                                shape = RoundedCornerShape(Sizes.smallRoundCorner)
-                            )
-                            .padding(horizontal = Sizes.horizontal_inner_padding)
-                            .changeScrollStateByMouse(
-                                scrollState = scrollState,
-                                isVerticalScroll = true
-                            )
-                            .verticalScroll(scrollState),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(modifier = Modifier.height(Sizes.vertical_inner_padding))
-                        passengers.forEachIndexed { index, passenger ->
-                            Row(modifier = Modifier.fillMaxWidth()) {
-                                Text(
-                                    text = "${index + 1}-yo'lovchi, ",
-                                    style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                                    color = TextColor
+                val scrollState = rememberScrollState()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = vertical_inner_padding)
+                        .changeScrollStateByMouse(
+                            scrollState = scrollState,
+                            isVerticalScroll = true
+                        )
+                        .verticalScroll(scrollState)
+                ){
+                    state.selectedJourney?.passengers?.takeIf { it.isNotEmpty() }?.let { passengers ->
+                        Column(
+                            modifier = Modifier
+                                .padding(
+                                    bottom = vertical_out_padding
+                                )
+                                .fillMaxWidth()
+                                .background(
+                                    color = BG_White,
+                                    shape = RoundedCornerShape(Sizes.smallRoundCorner)
+                                )
+                                .padding(horizontal = Sizes.horizontal_inner_padding)
+                            ,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Spacer(modifier = Modifier.height(Sizes.vertical_inner_padding))
+                            passengers.forEachIndexed { index, passenger ->
+                                Row(modifier = Modifier.fillMaxWidth()) {
+                                    Text(
+                                        text = "${index + 1}-yo'lovchi, ",
+                                        style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                                        color = TextColor
 //                                text = "Seat ${passenger.seat}"
-                                )
-                                Text(
-                                    text = "${passenger.seat}-o'rindiq",
-                                    style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                                    color = Blue
-                                )
-                            }
-                            MyTextField(
-                                modifier = Modifier.padding(top = 12.dp).fillMaxWidth(),
-                                label = "To‘liq ism-sharifi",
-                                value = passenger.name,
-                                onValueChange = {
-                                    onAction(
-                                        PassengersInfoAction.OnPassengerNameEntered(
-                                            passenger.seat,
-                                            it
-                                        )
                                     )
-                                },
-                            )
-                            MyTextField(
-                                modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
-                                label = "Telefon raqam",
-                                value = passenger.phone,
-                                onValueChange = {
-                                    onAction(
-                                        PassengersInfoAction.OnPassengerPhoneEntered(
-                                            passenger.seat,
-                                            it
-                                        )
+                                    Text(
+                                        text = "${passenger.seat}-o'rindiq",
+                                        style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                                        color = Blue
                                     )
-                                },
-                                inputStyle = InputStyle.PHONE_NUMBER,
-                            )
-                            if (index != passengers.lastIndex) {
-                                HorizontalDivider(
-                                    modifier = Modifier.padding(vertical = 24.dp),
-                                    color = LightGray
+                                }
+                                MyTextField(
+                                    modifier = Modifier.padding(top = 12.dp).fillMaxWidth(),
+                                    label = "To‘liq ism-sharifi",
+                                    value = passenger.name,
+                                    onValueChange = {
+                                        onAction(
+                                            PassengersInfoAction.OnPassengerNameEntered(
+                                                passenger.seat,
+                                                it
+                                            )
+                                        )
+                                    },
                                 )
+                                MyTextField(
+                                    modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
+                                    label = "Telefon raqam",
+                                    value = passenger.phone,
+                                    onValueChange = {
+                                        onAction(
+                                            PassengersInfoAction.OnPassengerPhoneEntered(
+                                                passenger.seat,
+                                                it
+                                            )
+                                        )
+                                    },
+                                    inputStyle = InputStyle.PHONE_NUMBER,
+                                )
+                                if (index != passengers.lastIndex) {
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(vertical = 24.dp),
+                                        color = LightGray
+                                    )
+                                }
                             }
-                        }
-                        Spacer(modifier = Modifier.height(Sizes.default_bottom_padding))
+                            Spacer(modifier = Modifier.height(Sizes.default_bottom_padding))
 
+                        }
                     }
                 }
             }

@@ -18,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +38,7 @@ import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
+import com.fraggeil.ticketator.core.presentation.components.MyScrollableContentInvisibleBoundsBox
 import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
 import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
 import com.fraggeil.ticketator.core.theme.AppTypography
@@ -144,6 +147,7 @@ fun SelectSeatScreen(
                         Text(
                             text = state.selectedJourney?.timeStart?.toFormattedDate(hoursEnabled = false)?.takeIf { !state.isLoading } ?:"",
                             modifier = Modifier.shimmerLoadingAnimation(
+                                bgColor = Color.Transparent,
                                 isLoadingCompleted = !state.isLoading,
                                 modifier = Modifier.width(100.dp),
                                 shimmerStyle = ShimmerStyle.TextSmallLabel
@@ -158,6 +162,7 @@ fun SelectSeatScreen(
                         Text(
                             text = state.selectedJourney?.timeStart?.getHours()?.takeIf { !state.isLoading } ?:"",
                             modifier = Modifier.shimmerLoadingAnimation(
+                                bgColor = Color.Transparent,
                                 isLoadingCompleted = !state.isLoading,
                                 modifier = Modifier.width(100.dp),
                                 shimmerStyle = ShimmerStyle.TextTitle
@@ -171,6 +176,7 @@ fun SelectSeatScreen(
                         Text(
                             text = "${state.selectedJourney?.from?.second?.name}, ${state.selectedJourney?.from?.first?.name}".takeIf { !state.isLoading } ?:"",
                             modifier = Modifier.widthIn(max = 100.dp).shimmerLoadingAnimation(
+                                bgColor = Color.Transparent,
                                 isLoadingCompleted = !state.isLoading,
                                 modifier = Modifier.width(100.dp),
                                 shimmerStyle = ShimmerStyle.TextSmallLabel
@@ -203,6 +209,7 @@ fun SelectSeatScreen(
                         Text(
                             text = state.selectedJourney?.timeArrival?.toFormattedDate(hoursEnabled = false)?.takeIf { !state.isLoading } ?:"",
                             modifier = Modifier.shimmerLoadingAnimation(
+                                bgColor = Color.Transparent,
                                 isLoadingCompleted = !state.isLoading,
                                 modifier = Modifier.width(100.dp),
                                 shimmerStyle = ShimmerStyle.TextSmallLabel
@@ -216,6 +223,7 @@ fun SelectSeatScreen(
                         Text(
                             text = state.selectedJourney?.timeArrival?.getHours()?.takeIf { !state.isLoading } ?:"",
                             modifier = Modifier.shimmerLoadingAnimation(
+                                bgColor = Color.Transparent,
                                 isLoadingCompleted = !state.isLoading,
                                 modifier = Modifier.width(100.dp),
                                 shimmerStyle = ShimmerStyle.TextTitle
@@ -229,6 +237,7 @@ fun SelectSeatScreen(
                         Text(
                             text = "${state.selectedJourney?.to?.second?.name}, ${state.selectedJourney?.to?.first?.name}".takeIf { !state.isLoading } ?:"",
                             modifier = Modifier.widthIn(max = 100.dp).shimmerLoadingAnimation(
+                                bgColor = Color.Transparent,
                                 isLoadingCompleted = !state.isLoading,
                                 modifier = Modifier.width(100.dp),
                                 shimmerStyle = ShimmerStyle.TextTitle
@@ -249,45 +258,45 @@ fun SelectSeatScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ){
                     Column(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .shimmerLoadingAnimation(
+                                bgColor = Color.Transparent,
+                                isLoadingCompleted = !state.isLoading,
+                                shimmerStyle = ShimmerStyle.TextBody,
+                                linesCount = 3
+                            ),
                         horizontalAlignment = Alignment.Start
                     ){
-                        Text(
-                            text = "1 ticket: ${state.selectedJourney?.price.toString().formatWithSpacesNumber()} so‘m".takeIf { !state.isLoading } ?:"",
-                            modifier = Modifier.shimmerLoadingAnimation(
-                                isLoadingCompleted = !state.isLoading,
-                                shimmerStyle = ShimmerStyle.TextSmallLabel
-                            ),
-                            color = White,
-                            style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
-                            textAlign = TextAlign.Start,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = "Additional: 0 so‘m".takeIf { !state.isLoading } ?:"".takeIf { !state.isLoading } ?:"",
-                            modifier = Modifier.shimmerLoadingAnimation(
-                                isLoadingCompleted = !state.isLoading,
-                                shimmerStyle = ShimmerStyle.TextSmallLabel
-                            ),
-                            color = White,
-                            style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
-                            textAlign = TextAlign.Start,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = "Total: ${(state.selectedJourney?.price?.times(state.selectedJourney.selectedSeats.size) ?: 0).toString().formatWithSpacesNumber()} so‘m".takeIf { !state.isLoading } ?:"",
-                            modifier = Modifier.shimmerLoadingAnimation(
-                                isLoadingCompleted = !state.isLoading,
-                                shimmerStyle = ShimmerStyle.TextBody
-                            ),
-                            color = White,
-                            style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                            textAlign = TextAlign.Start,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        if (!state.isLoading) {
+                            Text(
+                                text = "1 ticket: ${state.selectedJourney?.price.toString().formatWithSpacesNumber()} so‘m".takeIf { !state.isLoading } ?: "",
+                                color = White,
+                                style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
+                                textAlign = TextAlign.Start,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = "Additional: 0 so‘m".takeIf { !state.isLoading } ?: "".takeIf { !state.isLoading } ?: "",
+                                color = White,
+                                style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
+                                textAlign = TextAlign.Start,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = "Total: ${
+                                    (state.selectedJourney?.price?.times(state.selectedJourney.selectedSeats.size) ?: 0).toString()
+                                        .formatWithSpacesNumber()
+                                } so‘m".takeIf { !state.isLoading } ?: "",
+                                color = White,
+                                style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                                textAlign = TextAlign.Start,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
                     MyButton(
                         isLoading = state.isLoading,
@@ -298,17 +307,20 @@ fun SelectSeatScreen(
                         enabled = !state.selectedJourney?.selectedSeats.isNullOrEmpty()
                     )
                 }
-
-                Column(
+                MyScrollableContentInvisibleBoundsBox(
                     modifier = Modifier
                         .padding(horizontal = Sizes.horizontal_out_padding, vertical = vertical_out_padding)
                         .fillMaxWidth()
+                        .clip(shape = RoundedCornerShape(Sizes.smallRoundCorner))
+                        .background(color = BG_White, shape = RoundedCornerShape(Sizes.smallRoundCorner))
                         .shimmerLoadingAnimation(
+                            cornerRadius = 12f,
+                            modifier = Modifier.fillMaxSize(),
                             isLoadingCompleted = !state.isLoading,
                             shimmerStyle = ShimmerStyle.Custom
-                        )
-                        .background(color = BG_White, shape = RoundedCornerShape(Sizes.smallRoundCorner)),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        ),
+                    size = Sizes.horizontal_out_padding,
+                    color = BG_White
                 ){
                     if (!state.isLoading){
                         Seats(
@@ -316,14 +328,11 @@ fun SelectSeatScreen(
                             selected = state.selectedJourney?.selectedSeats?: emptyList(),
                             available = state.selectedJourney?.seatsAvailable?: emptyList(),
                             reserved = state.selectedJourney?.seatsReserved?: emptyList(),
-                            onClick = {
-                                onAction(SelectSeatAction.OnSeatClicked(it))
-                            },
+                            onClick = { onAction(SelectSeatAction.OnSeatClicked(it)) },
                             isHorizontal = uiType != UiType.COMPACT
                         )
                     }
                 }
-
         }
     }
 }

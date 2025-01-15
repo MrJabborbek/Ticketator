@@ -63,7 +63,7 @@ class CardInfoViewModel(
 
             is CardInfoAction.OnJourneySelected -> {
                 _state.update { it.copy(selectedJourney = action.journey, isLoading = true) }
-                timer = 10
+                timer = 8*60
             }
         }
     }

@@ -58,7 +58,8 @@ fun MyTextField(
     isEditable: Boolean = true,
     onClicked: () -> Unit = {},
 //    isPhoneNumberField: Boolean = false,
-    inputStyle: InputStyle = InputStyle.ANY
+    inputStyle: InputStyle = InputStyle.ANY,
+    textForAutofill: String? = null
 ) {
     val keyboardTypeLocal by remember {
         if (keyboardType != null) return@remember mutableStateOf(keyboardType)
@@ -268,83 +269,34 @@ private class SeparateEach(private val separateEach: Int = 3, private val separa
             offsetMapping = offsetMapping
         )
     }
-}
+    private class SeparateEachSeparatorOffsetMapping(
+        private val transformed: String,
+        private val separator: Char,
+    ) : OffsetMapping {
+        override fun originalToTransformed(offset: Int): Int {
+            var spacesCount = 0
+            var originalCharsCount = 0
 
-private class SeparateEachSeparatorOffsetMapping(
-    private val transformed: String,
-    private val separator: Char,
-) : OffsetMapping {
-    override fun originalToTransformed(offset: Int): Int {
-        var spacesCount = 0
-        var originalCharsCount = 0
+            for (i in transformed.indices) {
+                if (transformed[i] == separator) spacesCount++
+                else originalCharsCount++
 
-        for (i in transformed.indices) {
-            if (transformed[i] == separator) spacesCount++
-            else originalCharsCount++
+                if (originalCharsCount == offset) return i + 1
+            }
 
-            if (originalCharsCount == offset) return i + 1
+            return transformed.length
         }
 
-        return transformed.length
-    }
+        override fun transformedToOriginal(offset: Int): Int {
+            var originalCharsCount = 0
 
-    override fun transformedToOriginal(offset: Int): Int {
-        var originalCharsCount = 0
+            for (i in transformed.indices) {
+                if (transformed[i] != separator) originalCharsCount++
 
-        for (i in transformed.indices) {
-            if (transformed[i] != separator) originalCharsCount++
+                if (i == offset) return originalCharsCount
+            }
 
-            if (i == offset) return originalCharsCount
+            return originalCharsCount
         }
-
-        return originalCharsCount
     }
 }
-
-//
-//private class ThousandSeparatorTransformation : VisualTransformation {
-//    override fun filter(text: AnnotatedString): TransformedText {
-//        val originalText = text.text
-//        val formattedText = originalText.reversed()
-//            .chunked(3)
-//            .joinToString(" ") { it }
-//            .reversed()
-//
-//        return TransformedText(
-//            text = AnnotatedString(formattedText),
-//            offsetMapping = ThousandSeparatorOffsetMapping(formattedText)
-//        )
-//    }
-//}
-//
-//private class ThousandSeparatorOffsetMapping(
-//    private val transformed: String
-//) : OffsetMapping {
-//    override fun originalToTransformed(offset: Int): Int {
-//        println("CALLED 1")
-//        var spacesCount = 0
-//        var originalCharsCount = 0
-//
-//        for (i in transformed.indices) {
-//            if (transformed[i] == ' ') spacesCount++
-//            else originalCharsCount++
-//
-//            if (originalCharsCount == offset) return i + 1
-//        }
-//
-//        return transformed.length
-//    }
-//
-//    override fun transformedToOriginal(offset: Int): Int {
-//        println("CALLED 2")
-//        var originalCharsCount = 0
-//
-//        for (i in transformed.indices) {
-//            if (transformed[i] != ' ') originalCharsCount++
-//
-//            if (i == offset) return originalCharsCount
-//        }
-//
-//        return originalCharsCount
-//    }
-//}

@@ -1,4 +1,4 @@
-package com.fraggeil.ticketator.domain.model
+package com.fraggeil.ticketator.domain.model.uzbekistan
 
 data class District(
     val id: Int,

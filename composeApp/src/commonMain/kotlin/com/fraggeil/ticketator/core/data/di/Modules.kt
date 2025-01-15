@@ -2,6 +2,7 @@ package com.fraggeil.ticketator.core.data.di
 
 import androidx.compose.material3.SnackbarHostState
 import com.fraggeil.ticketator.core.domain.Platform
+import com.fraggeil.ticketator.data.repository.DefaultCurrentUserInfoRepository
 import com.fraggeil.ticketator.data.repository.DefaultHomeRepository
 import com.fraggeil.ticketator.data.repository.DefaultLoginRepository
 import com.fraggeil.ticketator.data.repository.DefaultOtpPaymentRepository
@@ -9,6 +10,8 @@ import com.fraggeil.ticketator.data.repository.DefaultProfileRepository
 import com.fraggeil.ticketator.data.repository.DefaultSearchResultsRepository
 import com.fraggeil.ticketator.data.repository.DefaultSelectSeatRepository
 import com.fraggeil.ticketator.data.repository.DefaultSendDataToCheckRepository
+import com.fraggeil.ticketator.data.repository.DefaultTicketsRepository
+import com.fraggeil.ticketator.domain.repository.CurrentUserInfoRepository
 import com.fraggeil.ticketator.domain.repository.HomeRepository
 import com.fraggeil.ticketator.domain.repository.LoginRepository
 import com.fraggeil.ticketator.domain.repository.OtpPaymentRepository
@@ -16,10 +19,12 @@ import com.fraggeil.ticketator.domain.repository.ProfileRepository
 import com.fraggeil.ticketator.domain.repository.SearchResultsRepository
 import com.fraggeil.ticketator.domain.repository.SelectSeatRepository
 import com.fraggeil.ticketator.domain.repository.SendDataToCheckRepository
+import com.fraggeil.ticketator.domain.repository.TicketsRepository
 import com.fraggeil.ticketator.presentation.SelectedFilterViewModel
 import com.fraggeil.ticketator.presentation.SelectedJourneyViewModel
 import com.fraggeil.ticketator.presentation.SelectedPhoneNumberAndTokenViewModel
 import com.fraggeil.ticketator.presentation.SelectedPostViewModel
+import com.fraggeil.ticketator.presentation.SelectedTicketsViewModel
 import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoViewModel
 import com.fraggeil.ticketator.presentation.screens.home_screen.HomeViewModel
 import com.fraggeil.ticketator.presentation.screens.login_screen.LoginViewModel
@@ -54,7 +59,8 @@ val sharedModule = module {
     singleOf(::DefaultSelectSeatRepository).bind<SelectSeatRepository>()
     singleOf(::DefaultSendDataToCheckRepository).bind<SendDataToCheckRepository>()
     singleOf(::DefaultOtpPaymentRepository).bind<OtpPaymentRepository>()
-
+    singleOf(::DefaultTicketsRepository).bind<TicketsRepository>()
+    singleOf(::DefaultCurrentUserInfoRepository).bind<CurrentUserInfoRepository>()
 
     single { SnackbarHostState() }
 
@@ -76,4 +82,6 @@ val sharedModule = module {
     viewModelOf(::SelectedFilterViewModel)
     viewModelOf(::SelectedJourneyViewModel)
     viewModelOf(::SelectedPhoneNumberAndTokenViewModel)
+    viewModelOf(::SelectedTicketsViewModel)
+
 }

@@ -3,21 +3,29 @@ package com.fraggeil.ticketator.presentation.screens.passengers_info_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.isValidPhoneNumber
+import com.fraggeil.ticketator.core.domain.result.onSuccess
 import com.fraggeil.ticketator.domain.model.Passenger
+import com.fraggeil.ticketator.domain.repository.CurrentUserInfoRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class PassengersInfoViewModel: ViewModel() {
+class PassengersInfoViewModel(
+    private val repository: CurrentUserInfoRepository
+): ViewModel() {
+    private var fetchUserInfoJob: Job? = null
     private var isInitialized = false
     private val _state = MutableStateFlow(PassengersInfoState())
     val state = _state
         .onStart {
             if (!isInitialized){
                 isInitialized = true
+                fetchUserInfo()
 //                _state.update { it.copy(
 //                    isLoading = false,
 //                    selectedJourney = it.selectedJourney?.copy(passengers = listOf(1,15,51).map { seat -> Passenger(seat = seat) })
@@ -36,6 +44,23 @@ class PassengersInfoViewModel: ViewModel() {
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = _state.value
         )
+
+    private fun fetchUserInfo() {
+        fetchUserInfoJob?.cancel()
+        _state.update { it.copy(isLoading = true) }
+        fetchUserInfoJob = viewModelScope.launch {
+            repository.getUserInfo()
+                .onSuccess {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            currentUserName = it.currentUserName,
+                            currentUserPhoneNumber = it.currentUserPhoneNumber
+                        )
+                    }
+                }
+        }
+        }
 
     fun onAction(action: PassengersInfoAction){
         when(action){

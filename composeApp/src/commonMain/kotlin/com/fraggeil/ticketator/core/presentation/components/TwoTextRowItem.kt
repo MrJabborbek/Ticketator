@@ -39,6 +39,7 @@ fun TwoTextRowItem(
     style: TwoTextRowItemStyle = TwoTextRowItemStyle.SimpleText,
     onText2Clicked: () -> Unit = {},
     isLoading: Boolean = false,
+    whenLoadingAlsoShimmerFirstText: Boolean = true
 ){
     var rowWidth by remember { mutableStateOf(0f) }
     Row(
@@ -51,8 +52,15 @@ fun TwoTextRowItem(
         verticalAlignment = Alignment.CenterVertically
     ){
         Text(
-            modifier = Modifier.weight(1f),
-            text = text1,
+            modifier = Modifier.weight(1f).then(
+                if (whenLoadingAlsoShimmerFirstText) {
+                    Modifier.shimmerLoadingAnimation(
+                        isLoadingCompleted = !isLoading,
+                        shimmerStyle = ShimmerStyle.TextBody
+                    )
+                } else Modifier
+            ),
+            text = text1.takeIf { if (whenLoadingAlsoShimmerFirstText) !isLoading else true } ?: "",
             style = when(style){
                 TwoTextRowItemStyle.SimpleText -> MaterialTheme.typography.bodyMedium.copy(letterSpacing = 0.sp)
                 TwoTextRowItemStyle.LargeText -> MaterialTheme.typography.titleMedium.copy(letterSpacing = 0.sp)

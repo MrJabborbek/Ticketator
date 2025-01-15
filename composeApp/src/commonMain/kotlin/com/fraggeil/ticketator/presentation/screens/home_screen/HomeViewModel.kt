@@ -8,7 +8,7 @@ import com.fraggeil.ticketator.core.domain.result.onError
 import com.fraggeil.ticketator.core.domain.result.onSuccess
 import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.model.FilterType
-import com.fraggeil.ticketator.domain.model.Region
+import com.fraggeil.ticketator.domain.model.uzbekistan.Region
 import com.fraggeil.ticketator.domain.repository.HomeRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel

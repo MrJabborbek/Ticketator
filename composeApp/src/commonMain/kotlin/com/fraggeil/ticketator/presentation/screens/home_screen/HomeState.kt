@@ -1,11 +1,11 @@
 package com.fraggeil.ticketator.presentation.screens.home_screen
 
 import com.fraggeil.ticketator.core.domain.DateTimeUtil
-import com.fraggeil.ticketator.domain.model.District
+import com.fraggeil.ticketator.domain.model.uzbekistan.District
 import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.model.FilterType
 import com.fraggeil.ticketator.domain.model.Post
-import com.fraggeil.ticketator.domain.model.Region
+import com.fraggeil.ticketator.domain.model.uzbekistan.Region
 
 data class HomeState(
 //    val snackbarHostState: SnackbarHostState = SnackbarHostState(),

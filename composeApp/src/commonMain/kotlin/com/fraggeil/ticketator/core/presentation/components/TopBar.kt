@@ -58,6 +58,7 @@ fun TopBar(
         onBackButtonClicked: () -> Unit = {},
         onTextButtonClicked: () -> Unit = {},
         isTextCentered: Boolean = false,
+        backButton: @Composable (onClick:()->Unit) -> Unit = { DefaultBackButton(onBackButtonClicked = it) },
 ){
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -74,17 +75,7 @@ fun TopBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (isBackButtonVisible){
-                    IconButton(onClick = onBackButtonClicked) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = null,
-                            tint = TextColor,
-                            modifier = Modifier
-//                                .size(30.dp)
-//                        .padding(4.dp)
-                                .align(alignment = Alignment.CenterVertically)
-                        )
-                    }
+                    backButton(onBackButtonClicked)
                 }else{
                     Spacer(modifier = Modifier.width(16.dp))
                 }
@@ -186,5 +177,20 @@ fun TopBar(
                 Spacer(modifier = Modifier.height(3.dp))
             }
         }
+    }
+}
+
+@Composable
+private fun DefaultBackButton(
+    modifier: Modifier = Modifier,
+    onBackButtonClicked: () -> Unit
+){
+    IconButton(onClick = onBackButtonClicked) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+            contentDescription = null,
+            tint = TextColor,
+            modifier = modifier
+        )
     }
 }

@@ -8,7 +8,9 @@ data class PassengersInfoState(
     val error: String? = null,
 //    val passengers: List<Passenger> = emptyList(),
     val isAllDataValid: Boolean = false,
-    var selectedJourney: Journey? = null
+    var selectedJourney: Journey? = null,
+    val currentUserName: String = "",
+    val currentUserPhoneNumber: String = "",
 
 )
 

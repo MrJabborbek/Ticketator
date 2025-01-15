@@ -1,5 +1,8 @@
 package com.fraggeil.ticketator.domain.model
 
+import com.fraggeil.ticketator.domain.model.uzbekistan.District
+import com.fraggeil.ticketator.domain.model.uzbekistan.Region
+
 data class Journey(
     val id: String,
     val timeStart: Long,

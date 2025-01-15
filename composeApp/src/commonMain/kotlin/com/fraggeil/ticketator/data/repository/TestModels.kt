@@ -2,14 +2,15 @@ package com.fraggeil.ticketator.data.repository
 
 import com.fraggeil.ticketator.core.domain.DateTimeUtil
 import com.fraggeil.ticketator.core.domain.toFormattedDate
-import com.fraggeil.ticketator.domain.model.District
+import com.fraggeil.ticketator.domain.model.uzbekistan.District
 import com.fraggeil.ticketator.domain.model.Journey
 import com.fraggeil.ticketator.domain.model.Passenger
 import com.fraggeil.ticketator.domain.model.Post
 import com.fraggeil.ticketator.domain.model.Profile
-import com.fraggeil.ticketator.domain.model.Region
+import com.fraggeil.ticketator.domain.model.uzbekistan.Region
 import com.fraggeil.ticketator.domain.model.Ticket
 import com.fraggeil.ticketator.domain.model.User
+import com.fraggeil.ticketator.domain.model.uzbekistan.Uzbekistan
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.random.Random
 
@@ -44,20 +45,22 @@ val testPosts = listOf(
 val _testPosts = MutableStateFlow(testPosts)
 
 
-val regions = (1..15).map {
-    Region(
-        id = it,
-        name = "Region$it",
-        districts = (1..13).map { num ->
-            District(
-                id = it * 10 + num,
-                "District $num of R$it",
-                abbr = "DI$num"
+//val regions = (1..15).map {
+//    Region(
+//        id = it,
+//        name = "Region$it",
+//        districts = (1..13).map { num ->
+//            District(
+//                id = it * 10 + num,
+//                "District $num of R$it",
+//                abbr = "DI$num"
+//
+//            )
+//        }
+//    )
+//}
 
-            )
-        }
-    )
-}
+val regions = Uzbekistan.uzbekistan
 
 
 val testUsers = (1..5).map {
@@ -99,7 +102,7 @@ val fakeTickets = (1..3).map {
         journey = journey,
         buyTime = DateTimeUtil.nowMilliseconds(),
         passenger = Passenger("Passenger $it", seat = journey.seatsAvailable.random(), phone = "+99890$it$it$it$it$it$it$it" ),
-        qrCodeLink = "https://medium.com/mobile-innovation-network/qrkit-qrcode-generator-in-compose-multiplatform-for-android-and-ios-858ec3e1e2b2"
+        qrCodeLinkOrToken = "https://medium.com/mobile-innovation-network/qrkit-qrcode-generator-in-compose-multiplatform-for-android-and-ios-858ec3e1e2b2"
     )
 }
 

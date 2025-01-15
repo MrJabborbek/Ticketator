@@ -59,6 +59,7 @@ import com.fraggeil.ticketator.presentation.SelectedFilterViewModel
 import com.fraggeil.ticketator.presentation.SelectedJourneyViewModel
 import com.fraggeil.ticketator.presentation.SelectedPhoneNumberAndTokenViewModel
 import com.fraggeil.ticketator.presentation.SelectedPostViewModel
+import com.fraggeil.ticketator.presentation.SelectedTicketsViewModel
 import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoAction
 import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoScreenRoot
 import com.fraggeil.ticketator.presentation.screens.card_info_screen.CardInfoViewModel
@@ -89,6 +90,7 @@ import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSea
 import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatViewModel
 import com.fraggeil.ticketator.presentation.screens.start_screen.StartScreenRoot
 import com.fraggeil.ticketator.presentation.screens.start_screen.StartViewModel
+import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsAction
 import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsScreenRoot
 import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsViewModel
 import org.jetbrains.compose.resources.painterResource
@@ -210,7 +212,7 @@ fun App() {
                     navigation(
                         route = Route.TicketatorGraph.route,
                         startDestination = Route.Start.route,
-//                        startDestination = Route.Tickets.route,
+//                        startDestination = Route.SelectSeat.route,
                     ) {
 
                         composable(
@@ -266,7 +268,7 @@ fun App() {
                             StartScreenRoot(
                                 viewModel = viewModel,
                                 navigateToHome = {
-                                    navigate(Route.Home, false)
+                                    navigate(Route.Home, true)
                                 }
                             )
                         }
@@ -293,7 +295,7 @@ fun App() {
                                 },
                                 navigateToJourneyDetails = { journey ->
                                     selectedJourneyViewModel.onSelectItem(journey)
-                                    navigate(Route.SelectSeat, true)
+                                    navigate(Route.SelectSeat, false)
                                 }
                             )
                         }
@@ -315,7 +317,7 @@ fun App() {
                                 },
                                 navigateToPassengersInfo = { journey ->
                                     selectedJourneyViewModel.onSelectItem(journey)
-                                    navigate(Route.PassengersInfo, true)
+                                    navigate(Route.PassengersInfo, false)
                                 }
                             )
                         }
@@ -363,7 +365,7 @@ fun App() {
                                 },
                                 navigateToEnterCode = { token, phoneNumber ->
                                     selectedPhoneNumberAndTokenViewModel.onSelectItem(Pair(token, phoneNumber))
-                                    navigate(Route.OtpPayment, true)
+                                    navigate(Route.OtpPayment, false)
                                 }
                             )
                         }
@@ -373,11 +375,15 @@ fun App() {
                         ) {
                             val viewModel = koinViewModel<OtpPaymentViewModel>()
                             val selectedPhoneNumberAndTokenViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
+                            val selectedTicketsViewModel = it.sharedKoinViewModel<SelectedTicketsViewModel>(navController)
                             val selectedPhoneNumberAndToken by selectedPhoneNumberAndTokenViewModel.state.collectAsState()
                             LaunchedEffect(selectedPhoneNumberAndToken){
                                 selectedPhoneNumberAndToken?.let {
                                     viewModel.onAction(OtpPaymentAction.OnPhoneNumberChanged(token = selectedPhoneNumberAndToken!!.first, number = selectedPhoneNumberAndToken!!.second))
                                 }
+                            }
+                            LaunchedEffect(true){
+                                selectedTicketsViewModel.onSelectItem(null)
                             }
                             OtpPaymentScreenRoot(
                                 viewModel = viewModel,
@@ -385,7 +391,7 @@ fun App() {
                                     navController.navigateUp()
                                 },
                                 navigateToTickets = { tickets ->
-                                    //TODO
+                                    selectedTicketsViewModel.onSelectItem(tickets)
                                     navigate(Route.Tickets, true)
                                 }
                             )
@@ -415,11 +421,18 @@ fun App() {
                             route = Route.Tickets.route
                         ) {
                             val viewModel = koinViewModel<TicketsViewModel>()
+                            val selectedTicketsViewModel = it.sharedKoinViewModel<SelectedTicketsViewModel>(navController)
+                            val selectedTickets by selectedTicketsViewModel.state.collectAsState()
+                            LaunchedEffect(selectedTickets){
+                                selectedTickets?.let {
+                                    viewModel.onAction(TicketsAction.OnInitialTicketsSelected(selectedTickets!!))
+                                }
+                            }
                             TicketsScreenRoot(
                                 viewModel = viewModel,
                                 navigateBack = {
-                                    navController.navigate(Route.Home)
-                                }
+                                    navController.navigateUp()
+                                },
                             )
                         }
                         composable(route = Route.Profile.route){

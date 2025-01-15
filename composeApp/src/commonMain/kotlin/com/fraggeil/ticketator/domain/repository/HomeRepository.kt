@@ -2,9 +2,9 @@ package com.fraggeil.ticketator.domain.repository
 
 import com.fraggeil.ticketator.core.domain.result.Error
 import com.fraggeil.ticketator.core.domain.result.Result
-import com.fraggeil.ticketator.domain.model.District
+import com.fraggeil.ticketator.domain.model.uzbekistan.District
 import com.fraggeil.ticketator.domain.model.Post
-import com.fraggeil.ticketator.domain.model.Region
+import com.fraggeil.ticketator.domain.model.uzbekistan.Region
 import kotlinx.coroutines.flow.Flow
 
 interface HomeRepository {

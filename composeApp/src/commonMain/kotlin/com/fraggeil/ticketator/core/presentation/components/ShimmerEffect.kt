@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -30,17 +31,26 @@ fun Modifier.shimmerLoadingAnimation(
     modifier: Modifier = Modifier.fillMaxWidth(),
     isLoadingCompleted: Boolean = true, // <-- New parameter for start/stop.
     isLightModeActive: Boolean = true, // <-- New parameter for display modes.
+    shimmerBGColor: Color = if(isLightModeActive) Color.White else Color.Black,
+    bgColor: Color = if(isLightModeActive) LightGray else Color.DarkGray,
     widthOfShadowBrush: Int = 500,
     angleOfAxisY: Float = 270f,
     durationMillis: Int = 1000,
     shimmerStyle: ShimmerStyle = ShimmerStyle.TextBody,
-    linesCount: Int = 1
+    linesCount: Int = 1,
+    cornerRadius: Float = 8f
 ): Modifier {
     if (isLoadingCompleted) { // <-- Step 1.
         return this
     } else {
         return composed {
-            val shimmerColors = ShimmerAnimationData(isLightMode = isLightModeActive).getColours()
+            val shimmerColors = listOf(
+                shimmerBGColor.copy(alpha = 0.3f),
+                shimmerBGColor.copy(alpha = 0.5f),
+                shimmerBGColor.copy(alpha = 1.0f),
+                shimmerBGColor.copy(alpha = 0.5f),
+                shimmerBGColor.copy(alpha = 0.3f),
+            )
             val transition = rememberInfiniteTransition(label = "")
             val translateAnimation = transition.animateFloat(
                 initialValue = 0f,
@@ -66,7 +76,8 @@ fun Modifier.shimmerLoadingAnimation(
             this.then(
                     when (shimmerStyle) {
                         ShimmerStyle.Custom -> modifier
-                            .background(LightGray, shape = RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(cornerRadius.dp))
+                            .background(bgColor, shape = RoundedCornerShape(cornerRadius.dp))
                             .background(brush = brush)
 
                         ShimmerStyle.TextTitle -> modifier
@@ -74,9 +85,10 @@ fun Modifier.shimmerLoadingAnimation(
                                 linesCount = linesCount,
                                 lineHeight = 25f,
                                 linePadding = 10f,
-                                cornerRadius = 8f,
+                                cornerRadius =cornerRadius,
                                 brush,
-                                density = density
+                                density = density,
+                                bgColor = bgColor
                             )
 
                         ShimmerStyle.TextSmallLabel -> modifier
@@ -84,11 +96,10 @@ fun Modifier.shimmerLoadingAnimation(
                                 linesCount = linesCount,
                                 lineHeight = 10f,
                                 linePadding = 10f,
-                                cornerRadius = 8f,
+                                cornerRadius = cornerRadius,
                                 brush,
-                                density = density
-
-
+                                density = density,
+                                bgColor = bgColor
                             )
 
                         ShimmerStyle.TextBody -> modifier
@@ -96,9 +107,10 @@ fun Modifier.shimmerLoadingAnimation(
                                 linesCount = linesCount,
                                 lineHeight = 15f,
                                 linePadding = 10f,
-                                cornerRadius = 8f,
+                                cornerRadius = cornerRadius,
                                 brush,
-                                density = density
+                                density = density,
+                                bgColor = bgColor
                             )
                     }
                 )
@@ -112,7 +124,8 @@ private fun Modifier.drawShimmerLines(
     linePadding: Float,
     cornerRadius: Float,
     brush: Brush,
-    density: Float
+    density: Float,
+    bgColor: Color
 ) = this
     .height(((linesCount * (lineHeight + linePadding) - linePadding)).dp )
     .drawBehind {
@@ -120,7 +133,7 @@ private fun Modifier.drawShimmerLines(
         val k = i / 2
         if (i % 2 == 0){
             drawRoundRect(
-                color = LightGray,
+                color = bgColor,
                 topLeft = Offset(x = 0f, y = (lineHeight + linePadding) * k*density),
                 size = Size(width = size.width, height = lineHeight*density),
                 cornerRadius = CornerRadius(cornerRadius)
@@ -129,7 +142,7 @@ private fun Modifier.drawShimmerLines(
                 brush = brush,
                 topLeft = Offset(x = 0f, y = (lineHeight + linePadding) * k*density),
                 size = Size(width = size.width, height = lineHeight*density),
-                cornerRadius = CornerRadius(8f,8f)
+                cornerRadius = CornerRadius(cornerRadius)
             )
         }else{
             drawRect(
@@ -141,33 +154,33 @@ private fun Modifier.drawShimmerLines(
     }
 }
 
-data class ShimmerAnimationData(
-    private val isLightMode: Boolean
-) {
-    fun getColours(): List<Color> {
-        return if (isLightMode) {
-            val color = Color.White
-
-            listOf(
-                color.copy(alpha = 0.3f),
-                color.copy(alpha = 0.5f),
-                color.copy(alpha = 1.0f),
-                color.copy(alpha = 0.5f),
-                color.copy(alpha = 0.3f),
-            )
-        } else {
-            val color = Color.Black
-
-            listOf(
-                color.copy(alpha = 0.0f),
-                color.copy(alpha = 0.3f),
-                color.copy(alpha = 0.5f),
-                color.copy(alpha = 0.3f),
-                color.copy(alpha = 0.0f),
-            )
-        }
-    }
-}
+//data class ShimmerAnimationData(
+//    private val isLightMode: Boolean
+//) {
+//    fun getColours(): List<Color> {
+//        return if (isLightMode) {
+//            val color = Color.White
+//
+//            listOf(
+//                color.copy(alpha = 0.3f),
+//                color.copy(alpha = 0.5f),
+//                color.copy(alpha = 1.0f),
+//                color.copy(alpha = 0.5f),
+//                color.copy(alpha = 0.3f),
+//            )
+//        } else {
+//            val color = Color.Black
+//
+//            listOf(
+//                color.copy(alpha = 0.0f),
+//                color.copy(alpha = 0.3f),
+//                color.copy(alpha = 0.5f),
+//                color.copy(alpha = 0.3f),
+//                color.copy(alpha = 0.0f),
+//            )
+//        }
+//    }
+//}
 
 
 //fun Modifier.splitBackground(lineCount: Int,

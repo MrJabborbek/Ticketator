@@ -54,6 +54,7 @@ fun Dots(
         Text(
             text = topText.takeIf { !isLoading } ?:"",
             modifier = Modifier.shimmerLoadingAnimation(
+                bgColor = Color.Transparent,
                 isLoadingCompleted = !isLoading,
                 modifier = Modifier.width(100.dp),
                 shimmerStyle = ShimmerStyle.TextSmallLabel
@@ -66,6 +67,7 @@ fun Dots(
         Row(
             modifier = Modifier.fillMaxWidth()
                 .shimmerLoadingAnimation(
+                    bgColor = Color.Transparent,
                     isLoadingCompleted = !isLoading
                 ),
             verticalAlignment = Alignment.CenterVertically
@@ -90,6 +92,7 @@ fun Dots(
         Text(
             text = bottomText.takeIf { !isLoading } ?:"",
             modifier = Modifier.shimmerLoadingAnimation(
+                bgColor = Color.Transparent,
                 isLoadingCompleted = !isLoading,
                 modifier = Modifier.width(100.dp),
                 shimmerStyle = ShimmerStyle.TextSmallLabel

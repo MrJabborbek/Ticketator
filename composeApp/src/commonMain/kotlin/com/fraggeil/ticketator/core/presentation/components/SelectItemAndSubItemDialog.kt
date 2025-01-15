@@ -40,6 +40,7 @@ import com.fraggeil.ticketator.core.domain.UiType
 import com.fraggeil.ticketator.core.domain.getUiType
 import com.fraggeil.ticketator.core.domain.rememberScreenSizeInfo
 import com.fraggeil.ticketator.core.presentation.Sizes
+import com.fraggeil.ticketator.core.presentation.components.autosizetext.AutoSizeText
 import com.fraggeil.ticketator.core.theme.AppTypography
 import com.fraggeil.ticketator.core.theme.BG_White
 import com.fraggeil.ticketator.core.theme.BlueDark
@@ -64,8 +65,7 @@ fun <T, S>SelectItemAndSubItemDialog(
     isVisible: MutableState<Boolean>
 ) {
     if (isVisible.value){
-        val screenSizeInfo = rememberScreenSizeInfo()
-        val uiType = screenSizeInfo.getUiType()
+        val uiType = rememberScreenSizeInfo().getUiType()
 
         var selectedItemM by remember { mutableStateOf(selectedItem) }
         var isMainScreen by remember { mutableStateOf(selectedSubItem == null) }
@@ -101,7 +101,7 @@ fun <T, S>SelectItemAndSubItemDialog(
                             modifier = Modifier.padding(top = Sizes.vertical_inner_padding),
                             horizontalArrangement = Arrangement.spacedBy(Sizes.horizontal_inner_padding),
                             verticalArrangement = Arrangement.spacedBy(Sizes.vertical_inner_padding),
-                            columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 2 else if (uiType == UiType.MEDIUM) 3 else 3)
+                            columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 2)
                         ) {
                             if (isLoading) {
                                 items(8) {
@@ -109,7 +109,8 @@ fun <T, S>SelectItemAndSubItemDialog(
                                         text = "",
                                         onClick = {},
                                         isLoading = true,
-                                        false
+                                        false,
+                                        style = if (uiType == UiType.COMPACT) Style.Small else Style.Medium
                                     )
                                 }
                             }else{
@@ -122,7 +123,9 @@ fun <T, S>SelectItemAndSubItemDialog(
                                                 isMainScreen = false
                                             },
                                             isLoading = isLoading,
-                                            isSelected = selectedItemM == item
+                                            isSelected = selectedItemM == item,
+                                            style = if (uiType == UiType.COMPACT) Style.Small else Style.Medium
+
                                         )
                                     }
                                 }
@@ -145,7 +148,7 @@ fun <T, S>SelectItemAndSubItemDialog(
                             modifier = Modifier.padding(top = Sizes.vertical_inner_padding),
                             horizontalArrangement = Arrangement.spacedBy(Sizes.horizontal_inner_padding),
                             verticalArrangement = Arrangement.spacedBy(Sizes.vertical_inner_padding),
-                            columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 2 else if (uiType == UiType.MEDIUM) 3 else 3)
+                            columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 2)
                         ) {
                             if (isLoading) {
                                 items(8) {
@@ -153,7 +156,9 @@ fun <T, S>SelectItemAndSubItemDialog(
                                         text = "",
                                         onClick = {},
                                         isLoading = true,
-                                        false
+                                        false,
+                                        style = if (uiType == UiType.COMPACT) Style.Small else Style.Medium
+
                                     )
                                 }
                             }else{
@@ -169,7 +174,9 @@ fun <T, S>SelectItemAndSubItemDialog(
 
                                                 },
                                                 isLoading = isLoading,
-                                                isSelected = selectedSubItem == item
+                                                isSelected = selectedSubItem == item,
+                                                style = if (uiType == UiType.COMPACT) Style.Small else Style.Medium
+
                                             )
                                         }
                                     }
@@ -238,17 +245,23 @@ fun <T, S>SelectItemAndSubItemDialog(
     }
 }
 
+private enum class Style {Small, Medium}
 @Composable
 private fun itemBox(
     text: String,
     onClick: () -> Unit,
     isLoading: Boolean = false,
-    isSelected: Boolean
+    isSelected: Boolean,
+    style: Style = Style.Medium
+
 ){
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(when(style){
+                Style.Small -> 40.dp
+                Style.Medium -> 60.dp
+            })
             .clip(RoundedCornerShape(Sizes.smallRoundCorner))
             .then(
                 if (isLoading) Modifier else Modifier.clickable { onClick() }
@@ -266,11 +279,22 @@ private fun itemBox(
             .padding(horizontal = Sizes.horizontal_inner_padding),
         contentAlignment = Alignment.CenterStart
     ) {
-        Text(
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
+//        AutoResizedText(
+//            text = text,
+//            style = AppTypography().bodyLarge,
+//            color = if (isSelected) BlueDark else TextColorLight
+//        )
+        AutoSizeText(
             text = text,
-            color = if (isSelected) BlueDark else TextColorLight,
+            style = AppTypography().bodyLarge,
+            maxTextSize = AppTypography().bodyLarge.fontSize,
+            color = if (isSelected) BlueDark else TextColorLight
         )
+//        Text(
+//            maxLines = 2,
+//            overflow = TextOverflow.Ellipsis,
+//            text = text,
+//            color = if (isSelected) BlueDark else TextColorLight,
+//        )
     }
 }

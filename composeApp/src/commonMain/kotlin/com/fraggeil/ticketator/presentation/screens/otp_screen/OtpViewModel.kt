@@ -84,7 +84,6 @@ class OtpViewModel(
         }
         checkOtpJob = viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
-            _oneTimeState.send(OtpOneTimeState.NavigateToHome)
             loginRepository.verifyOtp(token, phoneNumber, otp)
                 .onSuccess {
                     _state.update { it.copy(isLoading = false) }
