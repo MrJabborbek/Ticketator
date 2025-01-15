@@ -50,6 +50,8 @@ class SearchResultsViewModel(
                 _state.update { it.copy(filter = action.filter) }
                 fetchResults(action.filter)
             }
+
+            SearchResultsAction.OnFilterClicked -> {}
         }
     }
 

@@ -142,7 +142,7 @@ object Uzbekistan{
             District(id = 5, name = "Gʻallaorol", abbr = "Gal"),
             District(id = 6, name = "Uchtepa", abbr = "Uch"),
             District(id = 7, name = "Gagarin", abbr = "Gag"),
-            District(id = 8, name = "Paxtakor", abbr = "Paxt"),
+            District(id = 8, name = "Paxtakor", abbr = "Pax"),
             District(id = 9, name = "Balandchaqir", abbr = "Bal"),
             District(id = 10, name = "Zomin", abbr = "Zom"),
             District(id = 11, name = "Zafarobod", abbr = "Zaf"),
@@ -160,7 +160,7 @@ object Uzbekistan{
             District(id = 4, name = "Xovos", abbr = "Xov"),
             District(id = 5, name = "Navroʻz", abbr = "Nav"),
             District(id = 6, name = "Sayxun", abbr = "Say"),
-            District(id = 7, name = "Paxtaobod", abbr = "Paxt"),
+            District(id = 7, name = "Paxtaobod", abbr = "Pax"),
             District(id = 8, name = "Sirdaryo", abbr = "Sir"),
             District(id = 9, name = "Yangiyer", abbr = "Yan"),
             District(id = 10, name = "Shirin", abbr = "Shi"),
@@ -170,7 +170,7 @@ object Uzbekistan{
 
     val toshkent = Region(
         id = 10,
-        name = "Toshkent",
+        name = "Toshkent vil.",
         districts = listOf(
             District(id = 1, name = "Zafar", abbr = "Zaf"),
             District(id = 2, name = "Gʻazalkent", abbr = "Gaz"),
@@ -211,7 +211,7 @@ object Uzbekistan{
         id = 12,
         name = "Fargʻona",
         districts = listOf(
-            District(id = 1, name = "Oltiariq", abbr = "Olti"),
+            District(id = 1, name = "Oltiariq", abbr = "Olt"),
             District(id = 2, name = "Bagʻdod", abbr = "Bag"),
             District(id = 3, name = "Beshariq", abbr = "Besh"),
             District(id = 4, name = "Ibrat", abbr = "Ibr"),
@@ -241,23 +241,23 @@ object Uzbekistan{
             District(id = 6, name = "Poytugʻ", abbr = "Poy"),
             District(id = 7, name = "Jalaquduq", abbr = "Jal"),
             District(id = 8, name = "Xoʻjaobod", abbr = "Xoj"),
-            District(id = 9, name = "Qoʻrgʻontepa", abbr = "Qoʻr"),
+            District(id = 9, name = "Qoʻrgʻontepa", abbr = "Qor"),
             District(id = 10, name = "Marhamat", abbr = "Mar"),
             District(id = 11, name = "Oltinkoʻl", abbr = "Olt"),
-            District(id = 12, name = "Paxtaobod", abbr = "Paxt"),
+            District(id = 12, name = "Paxtaobod", abbr = "Pax"),
             District(id = 13, name = "Shahrixon", abbr = "Sha"),
             District(id = 14, name = "Oqoltin", abbr = "Oqo")
         )
     )
     val toshkentShahri = Region(
         id = 14,
-        name = "Toshkent shahri",
+        name = "Toshkent",
         districts = listOf(
             District(id = 1, name = "Bektemir", abbr = "Bek"),
             District(id = 2, name = "Chilonzor", abbr = "Chi"),
             District(id = 3, name = "Hamza", abbr = "Ham"),
             District(id = 4, name = "Mirobod", abbr = "Mir"),
-            District(id = 5, name = "Mirzo Ulugʻbek", abbr = "Mirz"),
+            District(id = 5, name = "Mirzo Ulugʻbek", abbr = "Mir"),
             District(id = 6, name = "Sergeli", abbr = "Ser"),
             District(id = 7, name = "Shayxontohur", abbr = "Sha"),
             District(id = 8, name = "Olmazor", abbr = "Olm"),

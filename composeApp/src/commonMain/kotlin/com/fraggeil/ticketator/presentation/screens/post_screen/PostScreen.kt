@@ -33,14 +33,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.rememberAsyncImagePainter
 
 import com.fraggeil.ticketator.core.domain.Constants
+import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
+import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
 import com.fraggeil.ticketator.core.presentation.components.TopBar
+import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
 import com.fraggeil.ticketator.core.theme.LightGray
 import com.fraggeil.ticketator.core.theme.TextColor
+import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
 import org.koin.compose.koinInject
 
 @Composable
@@ -88,11 +92,11 @@ fun PostScreen(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopBar(
-            modifier = Modifier.fillMaxWidth(),
+        TopBar2(
             text = "",
-            isBackButtonVisible = true,
-            onBackButtonClicked = { onAction(PostAction.OnBackClicked) }
+            isLeadingButtonVisible = true,
+            onLeadingButtonClick = { onAction(PostAction.OnBackClicked) },
+            isLightMode = true
         )
         val scrollState = rememberScrollState()
         Column(

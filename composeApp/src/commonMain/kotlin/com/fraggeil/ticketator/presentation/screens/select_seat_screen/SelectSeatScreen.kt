@@ -40,6 +40,7 @@ import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.presentation.components.MyScrollableContentInvisibleBoundsBox
 import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
+import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
 import com.fraggeil.ticketator.core.theme.AppTypography
 import com.fraggeil.ticketator.core.theme.BG_White
@@ -48,6 +49,7 @@ import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.BlueDarkSecondary
 import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.domain.model.Journey
+import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsAction
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.components.Dots
 import com.fraggeil.ticketator.presentation.screens.select_seat_screen.components.Seats
 import org.jetbrains.compose.resources.painterResource
@@ -111,31 +113,15 @@ fun SelectSeatScreen(
 //                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            TopBar2(
+                text = "Select Seats",
+                isLeadingButtonVisible = true,
+                onLeadingButtonClick = { onAction(SelectSeatAction.OnBackClicked) },
+            )
                 Row(
                     modifier = Modifier
                         .padding(horizontal = Sizes.horizontal_out_padding)
-                        .padding(top = vertical_inner_padding).fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    MyCircularButton(
-                        icon = painterResource(Res.drawable.ic_close),
-                        onClick = { onAction(SelectSeatAction.OnBackClicked) }
-                    )
-                    Text(
-                        text = "Select Seats",
-                        color = White,
-                        style = AppTypography().headlineSmall.copy(fontWeight = FontWeight.Medium),
-                        modifier = Modifier.padding(vertical = vertical_out_padding).weight(1f),
-                        textAlign = TextAlign.Start,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = Sizes.horizontal_out_padding)
-                        .padding(top = vertical_out_padding).fillMaxWidth(),
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {

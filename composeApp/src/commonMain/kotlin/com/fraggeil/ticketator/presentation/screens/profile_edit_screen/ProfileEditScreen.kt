@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
+import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.InputStyle
@@ -41,13 +42,14 @@ import com.fraggeil.ticketator.core.presentation.components.MyButtonStyle
 import com.fraggeil.ticketator.core.presentation.components.MyTextField
 import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
 import com.fraggeil.ticketator.core.presentation.components.TopBar
+import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
 import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.BlueDark
-import com.fraggeil.ticketator.core.theme.BlueDarkOnSecondary
 import com.fraggeil.ticketator.core.theme.BlueDarkSecondary
 import com.fraggeil.ticketator.core.theme.ErrorColor
+import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.ic_default_profile
 import org.jetbrains.compose.resources.painterResource
@@ -87,10 +89,11 @@ fun ProfileEditScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopBar(
+        TopBar2(
             text = Strings.EditProfile.value(),
-            isBackButtonVisible = true,
-            onBackButtonClicked = { onAction(ProfileEditAction.OnBackClicked) }
+            isLeadingButtonVisible = true,
+            onLeadingButtonClick = { onAction(ProfileEditAction.OnBackClicked) },
+            isLightMode = true
         )
         Box(modifier = Modifier.weight(1f).fillMaxWidth().padding(horizontal = horizontal_inner_padding)) {
             if (state.isLoadingDeleteOrUpdate){

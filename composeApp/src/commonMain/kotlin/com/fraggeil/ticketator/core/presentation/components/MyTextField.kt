@@ -4,11 +4,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -16,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,10 +38,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fraggeil.ticketator.core.domain.PlatformType
 import com.fraggeil.ticketator.core.domain.phoneNumberFormatting.PhoneNumberVisualTransformation
-import com.fraggeil.ticketator.core.theme.Blue
+import com.fraggeil.ticketator.core.theme.BlueContainer
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.LightGray
 import com.fraggeil.ticketator.core.theme.TextColor
+import com.fraggeil.ticketator.core.theme.White
 import io.michaelrocks.libphonenumber.kotlin.PhoneNumberUtil
 import io.michaelrocks.libphonenumber.kotlin.metadata.defaultMetadataLoader
 import org.koin.compose.koinInject
@@ -43,6 +52,7 @@ enum class InputStyle{
     PLASTIC_CARD_VALID_DATE,
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTextField(
     isLoading: Boolean = false,
@@ -57,10 +67,69 @@ fun MyTextField(
     trailingIcon: ImageVector? = null,
     isEditable: Boolean = true,
     onClicked: () -> Unit = {},
-//    isPhoneNumberField: Boolean = false,
     inputStyle: InputStyle = InputStyle.ANY,
-    textForAutofill: String? = null
+    suggestions: List<String>? = null,
+    maxSuggestions: Int = 3
 ) {
+
+    fun changeValue(text: String) {
+        if (isLoading) return
+
+        when (inputStyle) {
+            InputStyle.ANY -> onValueChange(text)
+            InputStyle.NUMBER -> {
+                if (text.any { !it.isDigit() }) return
+                onValueChange(text)
+            }
+
+            InputStyle.PHONE_NUMBER -> {
+                if (text.length > 13) return// for uzbekistan
+                if (!("^\\+?[1-9]\\d{1,14}\$".toRegex().matches(text))) return
+                if (text.any { !it.isDigit() && it != '+' }) return
+                if (text.indexOfLast { it == '+' } > 0) return
+                if (text.length <= 3) {
+                    onValueChange("+998")
+                    return
+                }
+                onValueChange(text)
+            }
+
+            InputStyle.PASSPORT -> {
+                if (text.length > 9) return
+                if (!text.getOrElse(0, { 'a' }).isLetter()) return
+                if (!text.getOrElse(1, { 'a' }).isLetter()) return
+                if (!text.drop(2).all { it.isDigit() }) return
+
+                onValueChange(text)
+            }
+
+            InputStyle.DESCRIPTION -> {
+                onValueChange(text)
+            }
+
+            InputStyle.MONEY -> {
+                if (text.any { !it.isDigit() }) return
+                onValueChange(text)
+            }
+
+            InputStyle.PLASTIC_CARD -> {
+                if (text.length > 16) return
+                if (text.any { !it.isDigit() }) return
+                onValueChange(text)
+            }
+
+            InputStyle.PLASTIC_CARD_VALID_DATE -> {
+                if (text.length > 4) return
+                if (text.any { !it.isDigit() }) return
+                if (text.length >= 2) {
+                    if (text.substring(0, 2).toInt() > 12) return
+                }
+                onValueChange(text)
+            }
+        }
+//            onValueChange(text)
+    }
+
     val keyboardTypeLocal by remember {
         if (keyboardType != null) return@remember mutableStateOf(keyboardType)
         val type = when (inputStyle) {
@@ -92,141 +161,150 @@ fun MyTextField(
         if (inputStyle == InputStyle.PASSPORT) return@remember mutableStateOf(true)
         mutableStateOf(false)
     }
-    TextField(
-        enabled = isEditable,
-        trailingIcon = {
-            if (trailingIcon != null) Icon(
-                imageVector = trailingIcon,
-                contentDescription = null,
-                tint = BlueDark,
-                modifier = Modifier.size(24.dp)
-            )
-        },
-        modifier = modifier
-            .then(
-                if (inputStyle == InputStyle.DESCRIPTION) {
-                    Modifier.height(150.dp)
-                } else {
-                    Modifier
-                }
-            )
-            .then(
-                if (!isEditable) Modifier
-                    .clickable(
-                        onClick = {if (!isLoading) onClicked()},
-                        indication = null,
-                        interactionSource = MutableInteractionSource()
-                    ) else Modifier
-            )
-            .shimmerLoadingAnimation(
-                isLoadingCompleted = !isLoading,
-                shimmerStyle = ShimmerStyle.Custom,
-            ),
-        placeholder = { Text(text = hint?.takeIf { !isLoading } ?: "")},
-        label = { Text(text = label.takeIf { !isLoading } ?: "") },
-        value = if (isLoading) "" else if (isAllCaps.value) value.uppercase() else value,
-        onValueChange = { text ->
-            if (isLoading) return@TextField
-
-            when (inputStyle) {
-                InputStyle.ANY -> onValueChange(text)
-                InputStyle.NUMBER -> {
-                    if (text.any { !it.isDigit() }) return@TextField
-                    onValueChange(text)
-                }
-
-                InputStyle.PHONE_NUMBER -> {
-                    if (text.length > 13) return@TextField// for uzbekistan
-                    if (!("^\\+?[1-9]\\d{1,14}\$".toRegex().matches(text))) return@TextField
-                    if (text.any { !it.isDigit() && it != '+' }) return@TextField
-                    if (text.indexOfLast { it == '+' } > 0) return@TextField
-                    if (text.length <= 3) {
-                        onValueChange("+998")
-                        return@TextField
+    var isMenuExpanded by remember { mutableStateOf(false) }
+    ExposedDropdownMenuBox(
+        expanded = isMenuExpanded,
+        onExpandedChange = {isMenuExpanded = it}
+    ) {
+        TextField(
+            enabled = isEditable,
+            trailingIcon = {
+                if (trailingIcon != null) Icon(
+                    imageVector = trailingIcon,
+                    contentDescription = null,
+                    tint = BlueDark,
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+            modifier = modifier
+                .menuAnchor(MenuAnchorType.PrimaryEditable)
+                .then(
+                    if (inputStyle == InputStyle.DESCRIPTION) {
+                        Modifier.height(150.dp)
+                    } else {
+                        Modifier
                     }
-                    onValueChange(text)
+                )
+                .then(
+                    if (!isEditable) Modifier
+                        .clickable(
+                            onClick = {
+                                if (!isLoading)
+                                    isMenuExpanded = true
+                                    onClicked()
+                                      },
+                            indication = null,
+                            interactionSource = MutableInteractionSource()
+                        ) else Modifier
+                )
+                .shimmerLoadingAnimation(
+                    isLoadingCompleted = !isLoading,
+                    shimmerStyle = ShimmerStyle.Custom,
+                ),
+            placeholder = { Text(text = hint?.takeIf { !isLoading } ?: "") },
+            label = { Text(text = label.takeIf { !isLoading } ?: "") },
+            value = if (isLoading) "" else if (isAllCaps.value) value.uppercase() else value,
+            onValueChange = {changeValue(it)},
+            shape = RoundedCornerShape(16.dp),
+            colors = TextFieldDefaults.colors().copy(
+                focusedContainerColor = BlueContainer,
+                unfocusedContainerColor = LightGray,
+                disabledContainerColor = LightGray,
+                focusedLabelColor = BlueDark,
+                unfocusedLabelColor = BlueDark,
+                disabledLabelColor = BlueDark,
+                cursorColor = BlueDark,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                focusedTextColor = TextColor,
+                unfocusedTextColor = TextColor,
+                disabledTextColor = TextColor,
+            ),
+            textStyle = if (!isEditable) MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = FontWeight.Medium,
+                letterSpacing = 0.sp
+            ) else MaterialTheme.typography.bodyLarge.copy(letterSpacing = 0.sp),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardTypeLocal,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = keyboardActions,
+            singleLine = when (inputStyle) {
+                InputStyle.ANY -> true
+                InputStyle.NUMBER -> true
+                InputStyle.PHONE_NUMBER -> true
+                InputStyle.PASSPORT -> true
+                InputStyle.DESCRIPTION -> false
+                InputStyle.MONEY -> true
+                InputStyle.PLASTIC_CARD -> true
+                InputStyle.PLASTIC_CARD_VALID_DATE -> true
+            },
+            prefix = { if (prefix != null) Text(text = prefix) },
+            visualTransformation = when (inputStyle) {
+                InputStyle.PHONE_NUMBER -> {
+                    when (koinInject<PlatformType>()) {
+                        PlatformType.ANDROID, PlatformType.DESKTOP -> PhoneNumberVisualTransformation(
+                            PhoneNumberUtil.createInstance(defaultMetadataLoader()),
+                            "UZ"
+                        )
+
+                        PlatformType.IOS -> VisualTransformation.None // TODO TODO
+                    }
                 }
 
-                InputStyle.PASSPORT -> {
-                    if (text.length > 9) return@TextField
-                    if (!text.getOrElse(0, { 'a' }).isLetter()) return@TextField
-                    if (!text.getOrElse(1, { 'a' }).isLetter()) return@TextField
-                    if (!text.drop(2).all { it.isDigit() }) return@TextField
+                InputStyle.MONEY -> SeparateEach()
+                InputStyle.PLASTIC_CARD -> SeparateEach(separateEach = 4, reverse = true)
+                InputStyle.PLASTIC_CARD_VALID_DATE -> SeparateEach(
+                    separateEach = 2,
+                    separator = '/',
+                    reverse = true
+                )
 
-                    onValueChange(text)
-                }
-
-                InputStyle.DESCRIPTION -> {
-                    onValueChange(text)
-                }
-                InputStyle.MONEY -> {
-                    if (text.any { !it.isDigit() }) return@TextField
-                    onValueChange(text)
-                }
-                InputStyle.PLASTIC_CARD -> {
-                    if (text.length > 16) return@TextField
-                    if (text.any { !it.isDigit() }) return@TextField
-                    onValueChange(text)
-                }
-                InputStyle.PLASTIC_CARD_VALID_DATE -> {
-                    if (text.length > 4) return@TextField
-                    if (text.any { !it.isDigit() }) return@TextField
-                    if (text.length >= 2){ if (text.substring(0,2).toInt() > 12) return@TextField }
-                    onValueChange(text)
-                }
+                else -> VisualTransformation.None
             }
-//            onValueChange(text)
-        },
-        shape = RoundedCornerShape(16.dp),
-        colors = TextFieldDefaults.colors().copy(
-            focusedContainerColor = Blue.copy(alpha = 0.2f),
-            unfocusedContainerColor = LightGray,
-            disabledContainerColor = LightGray,
-            focusedLabelColor = BlueDark,
-            unfocusedLabelColor = BlueDark,
-            disabledLabelColor = BlueDark,
-            cursorColor = BlueDark,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            focusedTextColor = TextColor,
-            unfocusedTextColor = TextColor,
-            disabledTextColor = TextColor,
-        ),
-        textStyle = if (!isEditable) MaterialTheme.typography.bodyLarge.copy(
-            fontWeight = FontWeight.Medium,
-            letterSpacing = 0.sp
-        ) else MaterialTheme.typography.bodyLarge.copy(letterSpacing = 0.sp),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardTypeLocal,
-            imeAction = ImeAction.Next
-        ),
-        keyboardActions = keyboardActions,
-        singleLine = when (inputStyle) {
-            InputStyle.ANY -> true
-            InputStyle.NUMBER -> true
-            InputStyle.PHONE_NUMBER -> true
-            InputStyle.PASSPORT -> true
-            InputStyle.DESCRIPTION -> false
-            InputStyle.MONEY -> true
-            InputStyle.PLASTIC_CARD -> true
-            InputStyle.PLASTIC_CARD_VALID_DATE -> true
-        },
-        prefix = { if (prefix != null) Text(text = prefix) },
-        visualTransformation = when (inputStyle) {
-            InputStyle.PHONE_NUMBER -> {
-                when(koinInject<PlatformType>()){
-                    PlatformType.ANDROID, PlatformType.DESKTOP -> PhoneNumberVisualTransformation(PhoneNumberUtil.createInstance(defaultMetadataLoader()), "UZ")
-                    PlatformType.IOS -> VisualTransformation.None // TODO TODO
-                }
-            }
-            InputStyle.MONEY -> SeparateEach()
-            InputStyle.PLASTIC_CARD -> SeparateEach(separateEach = 4, reverse = true)
-            InputStyle.PLASTIC_CARD_VALID_DATE -> SeparateEach(separateEach = 2, separator = '/', reverse = true)
+        )
+            suggestions?.filter {it.contains(value, true)}?.takeIf { it.isNotEmpty() }?.take(maxSuggestions)?.let { items ->
+                val scrollState = rememberScrollState()
+                ExposedDropdownMenu(
+                    modifier = Modifier.changeScrollStateByMouse(
+                        scrollState = scrollState,
+                        isVerticalScroll = true
+                    ),
+                    scrollState = scrollState,
+//                    modifier = Modifier.width(IntrinsicSize.Max),
+                    matchTextFieldWidth = true,
+                    expanded = isMenuExpanded,
+                    onDismissRequest = { isMenuExpanded = false },
+                    containerColor = BlueDark
+                ) {
+                    items.forEach { item ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = item,
+                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                        fontWeight = FontWeight.Medium,
+                                        letterSpacing = 0.sp
+                                    ),
+                                    color = White
+                                )
+                            },
+                            onClick = {
+                                changeValue(item)
+                                isMenuExpanded = false
+                            },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                        )
+                        if (item != items.last()) HorizontalDivider(color = White)
+                    }
 
-            else -> VisualTransformation.None
-        }
-    )
+                }
+            } ?: kotlin.run {
+                isMenuExpanded = false
+            }
+
+    }
 }
 
 private class SeparateEach(private val separateEach: Int = 3, private val separator: Char = ' ', private val reverse: Boolean = false) : VisualTransformation { //TODO optimize
@@ -295,7 +373,6 @@ private class SeparateEach(private val separateEach: Int = 3, private val separa
 
                 if (i == offset) return originalCharsCount
             }
-
             return originalCharsCount
         }
     }

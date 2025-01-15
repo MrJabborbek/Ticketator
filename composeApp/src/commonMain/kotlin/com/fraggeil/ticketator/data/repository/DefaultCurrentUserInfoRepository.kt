@@ -21,4 +21,17 @@ class DefaultCurrentUserInfoRepository: CurrentUserInfoRepository {
         } ?: return Result.Error(DataError.Local.USER_NOT_FOUND)
     }
 
+    override suspend fun getOldTicketUsers(): Result<List<User>, Error> {
+        delay(Constants.FAKE_DELAY_TO_TEST)
+        return Result.Success(
+            fakeTickets.map {
+                User(
+                    id = it.passenger.seat,
+                    name = it.passenger.name,
+                    phoneNumber = it.passenger.phone
+                )
+            }
+        )
+    }
+
 }

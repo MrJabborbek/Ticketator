@@ -1,7 +1,6 @@
 package com.fraggeil.ticketator.presentation.screens.login_screen
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,15 +26,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
+import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.InputStyle
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyTextField
 import com.fraggeil.ticketator.core.presentation.components.TopBar
+import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.TextColor
+import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.ic_logo
 import org.jetbrains.compose.resources.painterResource
@@ -76,10 +78,11 @@ fun LoginScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopBar(
+        TopBar2(
             text = Strings.Login.value(),
-            isBackButtonVisible = true,
-            onBackButtonClicked = { onAction(LoginAction.OnBackClicked) }
+            isLeadingButtonVisible = true,
+            isLightMode = true,
+            onLeadingButtonClick = { onAction(LoginAction.OnBackClicked) },
         )
         Box(modifier = Modifier.weight(1f).fillMaxWidth().padding(horizontal = horizontal_inner_padding)) {
             val scrollState = rememberScrollState()

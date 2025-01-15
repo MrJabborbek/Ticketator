@@ -177,7 +177,7 @@ fun HomeScreen(
                     }
                     Text(
                         modifier = Modifier.padding(top = 4.dp),
-                        text = if (state.currentLocation != null) "${state.currentLocation.first.name}, ${state.currentLocation.second.name}" else "Loading...",
+                        text = if (state.currentLocation != null) "${state.currentLocation.second.name}, ${state.currentLocation.first.name}" else "Loading...",
                         color = White,
                         style = AppTypography().titleLarge.copy(fontWeight = FontWeight.Medium),
                         maxLines = 2,

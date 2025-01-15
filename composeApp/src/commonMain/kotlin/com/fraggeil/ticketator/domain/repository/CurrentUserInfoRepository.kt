@@ -7,4 +7,5 @@ import com.fraggeil.ticketator.domain.model.User
 
 interface CurrentUserInfoRepository {
     suspend fun getUserInfo():Result<User, Error>
+    suspend fun getOldTicketUsers():Result<List<User>, Error>
 }

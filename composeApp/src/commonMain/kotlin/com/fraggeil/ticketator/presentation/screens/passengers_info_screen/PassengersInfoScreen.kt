@@ -34,6 +34,7 @@ import com.fraggeil.ticketator.core.presentation.components.InputStyle
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.presentation.components.MyTextField
+import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.theme.AppTypography
 import com.fraggeil.ticketator.core.theme.BG_White
@@ -44,6 +45,7 @@ import com.fraggeil.ticketator.core.theme.LightGray
 import com.fraggeil.ticketator.core.theme.TextColor
 import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.domain.model.Journey
+import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.ic_close
@@ -105,27 +107,12 @@ fun PassengersInfoScreen(
 //                .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = Sizes.horizontal_out_padding)
-                        .padding(top = vertical_inner_padding).fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    MyCircularButton(
-                        icon = painterResource(Res.drawable.ic_close),
-                        onClick = { onAction(PassengersInfoAction.OnBackClicked) }
-                    )
-                    Text(
-                        text = "Passenger Info",
-                        color = White,
-                        style = AppTypography().headlineSmall.copy(fontWeight = FontWeight.Medium),
-                        modifier = Modifier.padding(vertical = vertical_out_padding).weight(1f),
-                        textAlign = TextAlign.Start,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                TopBar2(
+
+                    text = "Passenger Info",
+                    isLeadingButtonVisible = true,
+                    onLeadingButtonClick = { onAction(PassengersInfoAction.OnBackClicked) },
+                )
                 val scrollState = rememberScrollState()
                 Box(
                     modifier = Modifier
@@ -180,6 +167,7 @@ fun PassengersInfoScreen(
                                             )
                                         )
                                     },
+                                    suggestions = state.suggestionUserNames
                                 )
                                 MyTextField(
                                     modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
@@ -194,6 +182,7 @@ fun PassengersInfoScreen(
                                         )
                                     },
                                     inputStyle = InputStyle.PHONE_NUMBER,
+                                    suggestions = state.suggestionPhones
                                 )
                                 if (index != passengers.lastIndex) {
                                     HorizontalDivider(

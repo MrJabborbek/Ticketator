@@ -53,6 +53,7 @@ import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyCalendarDateSelector
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.presentation.components.MyScrollableContentInvisibleBoundsBox
+import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.theme.AppTypography
 import com.fraggeil.ticketator.core.theme.Blue
@@ -124,36 +125,18 @@ fun SearchResultsScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             state.filter?.let {
+                TopBar2(
+                    text = "Journey Results",
+                    isLeadingButtonVisible = true,
+                    isTrailingButtonVisible = true,
+                    trailingButtonIcon = painterResource(Res.drawable.uzbekistan), //TODO
+                    onLeadingButtonClick = { onAction(SearchResultsAction.OnBackClicked) },
+                    onTrailingButtonClick = { onAction(SearchResultsAction.OnFilterClicked) }
+                )
                 Row(
                     modifier = Modifier
                         .padding(horizontal = Sizes.horizontal_out_padding)
-                        .padding(top = vertical_inner_padding).fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    MyCircularButton(
-                        icon = painterResource(Res.drawable.ic_close),
-                        onClick = { onAction(SearchResultsAction.OnBackClicked) }
-                    )
-                    Text(
-                        text = "Journey Results",
-                        color = White,
-                        style = AppTypography().headlineSmall.copy(fontWeight = FontWeight.Medium),
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    MyCircularButton(
-                        icon = painterResource(Res.drawable.uzbekistan),
-                        onClick = { onAction(SearchResultsAction.OnBackClicked) }
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = Sizes.horizontal_out_padding)
-                        .padding(top = vertical_out_padding).fillMaxWidth(),
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -243,6 +226,7 @@ fun SearchResultsScreen(
                         val date = state.filter.dateGo!!.setFromTimeToBeginningOfTheDay()!! + it * 24 * 60 * 60 * 1000L
                         if (date >= DateTimeUtil.getToday().first){
                             MyButton(
+                                isLightMode = false,
                                 text = date.toFormattedDate(
                                     style = FormattedDateStyle.Words,
                                     hoursEnabled = false

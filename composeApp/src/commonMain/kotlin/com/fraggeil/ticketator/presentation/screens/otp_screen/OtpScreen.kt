@@ -52,6 +52,7 @@ import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.FlashingCursorIndicator
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.presentation.components.MyOtpTextField
+import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.ErrorColor
@@ -59,6 +60,7 @@ import com.fraggeil.ticketator.core.theme.LightGray
 import com.fraggeil.ticketator.core.theme.TextColor
 import com.fraggeil.ticketator.core.theme.TextColorLight
 import com.fraggeil.ticketator.core.theme.White
+import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.ic_close
@@ -105,31 +107,15 @@ fun OtpScreen(
         modifier = Modifier.fillMaxSize().background(BlueDark),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Row(
-            modifier = Modifier
-                .padding(horizontal = Sizes.horizontal_out_padding)
-                .padding(top = vertical_inner_padding).fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            MyCircularButton(
-                icon = painterResource(Res.drawable.ic_close),
-                onClick = { onAction(OtpAction.OnBackClicked) }
-            )
-//            Text(
-//                text = "Card info",
-//                color = White,
-//                style = AppTypography().headlineSmall.copy(fontWeight = FontWeight.Medium),
-//                modifier = Modifier.padding(vertical = vertical_out_padding).weight(1f),
-//                textAlign = TextAlign.Start,
-//                maxLines = 2,
-//                overflow = TextOverflow.Ellipsis
-//            )
-        }
+        TopBar2(
+            text = "",
+            isLeadingButtonVisible = true,
+            onLeadingButtonClick = { onAction(OtpAction.OnBackClicked) },
+        )
         val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
-                .padding( start = horizontal_inner_padding, end = horizontal_inner_padding, top = 40.dp)
+                .padding( start = horizontal_inner_padding, end = horizontal_inner_padding, top = 24.dp)
                 .sizeIn(maxWidth = 280.dp)
                 .fillMaxWidth()
                 .changeScrollStateByMouse(

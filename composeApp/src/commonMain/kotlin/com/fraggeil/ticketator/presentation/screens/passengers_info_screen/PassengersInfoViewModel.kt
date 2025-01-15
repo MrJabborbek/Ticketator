@@ -7,6 +7,7 @@ import com.fraggeil.ticketator.core.domain.result.onSuccess
 import com.fraggeil.ticketator.domain.model.Passenger
 import com.fraggeil.ticketator.domain.repository.CurrentUserInfoRepository
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onEach
@@ -47,20 +48,39 @@ class PassengersInfoViewModel(
 
     private fun fetchUserInfo() {
         fetchUserInfoJob?.cancel()
-        _state.update { it.copy(isLoading = true) }
         fetchUserInfoJob = viewModelScope.launch {
-            repository.getUserInfo()
-                .onSuccess {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            currentUserName = it.currentUserName,
-                            currentUserPhoneNumber = it.currentUserPhoneNumber
-                        )
+            async {
+                repository.getUserInfo()
+                    .onSuccess {
+                        val suggestionUserNames = _state.value.suggestionUserNames.toMutableList()
+                        val suggestionPhones = _state.value.suggestionPhones.toMutableList()
+                        suggestionUserNames.add(it.name)
+                        suggestionPhones.add(it.phoneNumber)
+                        _state.update {
+                            it.copy(
+                                suggestionUserNames = suggestionUserNames.distinct(),
+                                suggestionPhones = suggestionPhones.distinct()
+                            )
+                        }
                     }
-                }
+            }
+            async {
+                repository.getOldTicketUsers()
+                    .onSuccess {
+                        val suggestionUserNames = _state.value.suggestionUserNames.toMutableList()
+                        val suggestionPhones = _state.value.suggestionPhones.toMutableList()
+                        suggestionUserNames.addAll(it.map {t -> t.name})
+                        suggestionPhones.addAll(it.map {t -> t.phoneNumber})
+                        _state.update {
+                            it.copy(
+                                suggestionUserNames = suggestionUserNames.distinct(),
+                                suggestionPhones = suggestionPhones.distinct()
+                            )
+                        }
+                    }
+            }
         }
-        }
+    }
 
     fun onAction(action: PassengersInfoAction){
         when(action){
@@ -72,8 +92,14 @@ class PassengersInfoViewModel(
                     passengers.indexOfFirst { it.seat == action.seat }.takeIf { it != -1 }
                         ?.let { index ->
                             val passenger = passengers[index].copy(name = action.name)
+                            val suggestionUserNames = _state.value.suggestionUserNames.toMutableList()
+                            suggestionUserNames.remove(passenger.name)
                             passengers[index] = passenger
-                            _state.update { it.copy(selectedJourney = selectedJourney.copy(passengers = passengers)) }
+                            _state.update { it.copy(
+                                selectedJourney = selectedJourney.copy(passengers = passengers),
+                                suggestionUserNames = suggestionUserNames,
+
+                            ) }
                         }
                 }
             }
@@ -83,8 +109,14 @@ class PassengersInfoViewModel(
                     passengers.indexOfFirst { it.seat == action.seat }.takeIf { it != -1 }
                         ?.let { index ->
                             val passenger = passengers[index].copy(phone = action.phone)
+                            val suggestionPhones = _state.value.suggestionPhones.toMutableList()
+                            suggestionPhones.remove(passenger.phone)
                             passengers[index] = passenger
-                            _state.update { it.copy(selectedJourney = selectedJourney.copy(passengers = passengers)) }
+                            _state.update { it.copy(
+                                selectedJourney = selectedJourney.copy(passengers = passengers),
+                                suggestionPhones = suggestionPhones
+                            )
+                            }
                         }
                 }
             }

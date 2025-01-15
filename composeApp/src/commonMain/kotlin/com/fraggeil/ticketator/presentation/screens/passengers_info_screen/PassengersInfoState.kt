@@ -9,10 +9,10 @@ data class PassengersInfoState(
 //    val passengers: List<Passenger> = emptyList(),
     val isAllDataValid: Boolean = false,
     var selectedJourney: Journey? = null,
-    val currentUserName: String = "",
-    val currentUserPhoneNumber: String = "",
+    val suggestionUserNames: List<String> = emptyList(),
+    val suggestionPhones: List<String> = emptyList(),
 
-)
+    )
 
 
 

@@ -17,17 +17,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fraggeil.ticketator.core.theme.BG_White
 import com.fraggeil.ticketator.core.theme.Blue
+import com.fraggeil.ticketator.core.theme.BlueContainer
 import com.fraggeil.ticketator.core.theme.BlueDark
-import com.fraggeil.ticketator.core.theme.LightGray
+import com.fraggeil.ticketator.core.theme.BlueDarkContainer
 import com.fraggeil.ticketator.core.theme.TextColorLight
 import com.fraggeil.ticketator.core.theme.White
 
@@ -43,6 +44,8 @@ fun MyButton(
     icon: ImageVector? = null,
     iconPainter: Painter? = null,
     style: MyButtonStyle = MyButtonStyle.FILLED,
+    isLightMode: Boolean = true,
+    unselectedContainerColor: Color = if (isLightMode) BlueContainer else BlueDarkContainer
 ){
     @Composable
     fun content() = Row(
@@ -101,7 +104,7 @@ fun MyButton(
                 onClick = onClick,
                 enabled = enabled && !isLoading,
                 colors = ButtonDefaults.buttonColors().copy(
-                    containerColor = if (isSelected) Blue else Blue.copy(0.2f) ,
+                    containerColor = if (isSelected) Blue else unselectedContainerColor ,
                     disabledContentColor = TextColorLight
                 ),
                 contentPadding = PaddingValues(16.dp)
@@ -116,7 +119,7 @@ fun MyButton(
                 onClick = onClick,
                 enabled = enabled && !isLoading,
                 colors = ButtonDefaults.outlinedButtonColors().copy(containerColor = BG_White, contentColor = BlueDark),
-                border = BorderStroke(width = 1.dp, color = if (isSelected) BlueDark else Blue.copy(0.2f)),
+                border = BorderStroke(width = 1.dp, color = if (isSelected) BlueDark else unselectedContainerColor),
                 contentPadding = PaddingValues(16.dp)
             ){
                 content()
@@ -129,7 +132,7 @@ fun MyButton(
                 modifier = modifier,
                 onClick = onClick,
                 enabled = enabled && !isLoading,
-                colors = ButtonDefaults.buttonColors().copy(containerColor = if (isSelected) Blue else Blue.copy(0.2f), contentColor = if (isSelected) White else BlueDark),
+                colors = ButtonDefaults.buttonColors().copy(containerColor = if (isSelected) Blue else unselectedContainerColor, contentColor = if (isSelected) White else BlueDark),
                 contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
             ){
                 content()
