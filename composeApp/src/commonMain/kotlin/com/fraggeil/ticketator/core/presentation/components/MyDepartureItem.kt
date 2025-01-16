@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,7 +34,7 @@ import com.fraggeil.ticketator.core.theme.TextColorLight
 @Composable
 fun MyDepartureItem(
     modifier: Modifier = Modifier,
-    icon: ImageVector,
+    icon: Painter,
     label: String,
     text: String?,
     abbr: String?,
@@ -64,7 +65,7 @@ fun MyDepartureItem(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Icon(
-                imageVector = icon,
+                painter = icon,
                 contentDescription = null,
                 tint = if (isEnabled && !isLoading) Blue else Blue.copy(alpha = 0.1f),
                 modifier = Modifier.size(24.dp)

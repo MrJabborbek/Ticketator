@@ -10,12 +10,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -36,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.fraggeil.ticketator.core.domain.Constants
 import com.fraggeil.ticketator.core.domain.UiType
 import com.fraggeil.ticketator.core.domain.getUiType
 import com.fraggeil.ticketator.core.domain.rememberScreenSizeInfo
@@ -71,7 +79,9 @@ fun <T, S>SelectItemAndSubItemDialog(
         var isMainScreen by remember { mutableStateOf(selectedSubItem == null) }
         BasicAlertDialog(
             modifier = Modifier
-                .wrapContentSize()
+                .padding(if (uiType != UiType.EXPANDED) Sizes.default_bottom_padding else Sizes.default_bottom_padding_double)
+                .widthIn(max = Constants.MAX_ITEM_WIDTH_IN_DP)
+                .fillMaxWidth()
                 .animateContentSize(
                     animationSpec = tween(durationMillis = 300, easing = LinearOutSlowInEasing)
                 )
@@ -86,47 +96,58 @@ fun <T, S>SelectItemAndSubItemDialog(
             content = {
                 Column(
                     modifier = Modifier
-                        .padding(32.dp)
-                        .fillMaxWidth(),
+                        .padding(start = 32.dp, end = 32.dp, top = 32.dp)
+                        .wrapContentWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (isMainScreen) {
                         Text(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.align(Alignment.Start),
                             text = title,
                             color = TextColor,
                             style = AppTypography().titleLarge
                         )
-                        LazyVerticalGrid(
-                            modifier = Modifier.padding(top = Sizes.vertical_inner_padding),
-                            horizontalArrangement = Arrangement.spacedBy(Sizes.horizontal_inner_padding),
-                            verticalArrangement = Arrangement.spacedBy(Sizes.vertical_inner_padding),
-                            columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 2)
-                        ) {
-                            if (isLoading) {
-                                items(8) {
-                                    itemBox(
-                                        text = "",
-                                        onClick = {},
-                                        isLoading = true,
-                                        false,
-                                        style = if (uiType == UiType.COMPACT) Style.Small else Style.Medium
-                                    )
-                                }
-                            }else{
-                                items?.forEach { item ->
-                                    item {
+                        val state = rememberLazyGridState()
+                        MyScrollableContentInvisibleBoundsBox(
+                            size = Sizes.vertical_inner_padding,
+                            left = false,
+                        ){
+                            LazyVerticalGrid(
+                                modifier = Modifier.wrapContentWidth()
+                                    .changeScrollStateByMouse(
+                                        isVerticalScroll = true,
+                                        scrollState = state
+                                    ),
+                                state = state,
+                                contentPadding = PaddingValues(vertical = Sizes.vertical_inner_padding),
+                                horizontalArrangement = Arrangement.spacedBy(Sizes.horizontal_inner_padding),
+                                verticalArrangement = Arrangement.spacedBy(Sizes.vertical_inner_padding),
+                                columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 3)
+                            ) {
+                                if (isLoading) {
+                                    items(8) {
                                         itemBox(
-                                            itemToString(item),
-                                            onClick = {
-                                                selectedItemM = item
-                                                isMainScreen = false
-                                            },
-                                            isLoading = isLoading,
-                                            isSelected = selectedItemM == item,
+                                            text = "",
+                                            onClick = {},
+                                            isLoading = true,
+                                            false,
                                             style = if (uiType == UiType.COMPACT) Style.Small else Style.Medium
-
                                         )
+                                    }
+                                }else{
+                                    items?.forEach { item ->
+                                        item {
+                                            itemBox(
+                                                itemToString(item),
+                                                onClick = {
+                                                    selectedItemM = item
+                                                    isMainScreen = false
+                                                },
+                                                isLoading = isLoading,
+                                                isSelected = selectedItemM == item,
+                                                style = if (uiType == UiType.COMPACT) Style.Small else Style.Medium
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -144,40 +165,52 @@ fun <T, S>SelectItemAndSubItemDialog(
                                 tint = TextColor,
                             )
                         }
-                        LazyVerticalGrid(
-                            modifier = Modifier.padding(top = Sizes.vertical_inner_padding),
-                            horizontalArrangement = Arrangement.spacedBy(Sizes.horizontal_inner_padding),
-                            verticalArrangement = Arrangement.spacedBy(Sizes.vertical_inner_padding),
-                            columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 2)
-                        ) {
-                            if (isLoading) {
-                                items(8) {
-                                    itemBox(
-                                        text = "",
-                                        onClick = {},
-                                        isLoading = true,
-                                        false,
-                                        style = if (uiType == UiType.COMPACT) Style.Small else Style.Medium
+                        MyScrollableContentInvisibleBoundsBox(
+                            size = Sizes.vertical_inner_padding,
+                            left = false,
+                        ){
+                            val state = rememberLazyGridState()
+                            LazyVerticalGrid(
+                                modifier = Modifier
+                                    .changeScrollStateByMouse(
+                                        isVerticalScroll = true,
+                                        scrollState = state
+                                    ),
+                                state = state,
+                                contentPadding = PaddingValues(vertical = Sizes.vertical_inner_padding),
+                                horizontalArrangement = Arrangement.spacedBy(Sizes.horizontal_inner_padding),
+                                verticalArrangement = Arrangement.spacedBy(Sizes.vertical_inner_padding),
+                                columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 3)
+                            ) {
+                                if (isLoading) {
+                                    items(8) {
+                                        itemBox(
+                                            text = "",
+                                            onClick = {},
+                                            isLoading = true,
+                                            false,
+                                            style = if (uiType == UiType.COMPACT) Style.Small else Style.Medium
 
-                                    )
-                                }
-                            }else{
-                                if (selectedItemM != null){
-                                    getSubItems(selectedItemM!!)?.forEach { item ->
-                                        item {
-                                            itemBox(
-                                                subItemToString(item),
-                                                onClick = {
-                                                    onSubItemSelected(item)
-                                                    onItemSelected(selectedItemM!!)
-                                                    isVisible.value = false
+                                        )
+                                    }
+                                }else{
+                                    if (selectedItemM != null){
+                                        getSubItems(selectedItemM!!)?.forEach { item ->
+                                            item {
+                                                itemBox(
+                                                    subItemToString(item),
+                                                    onClick = {
+                                                        onSubItemSelected(item)
+                                                        onItemSelected(selectedItemM!!)
+                                                        isVisible.value = false
 
-                                                },
-                                                isLoading = isLoading,
-                                                isSelected = selectedSubItem == item,
-                                                style = if (uiType == UiType.COMPACT) Style.Small else Style.Medium
+                                                    },
+                                                    isLoading = isLoading,
+                                                    isSelected = selectedSubItem == item,
+                                                    style = if (uiType == UiType.COMPACT) Style.Small else Style.Medium
 
-                                            )
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -237,7 +270,7 @@ fun <T, S>SelectItemAndSubItemDialog(
 
 
             },
-            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = true),
+            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = true, usePlatformDefaultWidth = false),
             onDismissRequest = {
                 isVisible.value = false
             },
@@ -252,14 +285,14 @@ private fun itemBox(
     onClick: () -> Unit,
     isLoading: Boolean = false,
     isSelected: Boolean,
-    style: Style = Style.Medium
-
+    style: Style = Style.Medium,
+    modifier: Modifier = Modifier.wrapContentSize()
 ){
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(when(style){
-                Style.Small -> 40.dp
+                Style.Small -> 60.dp //
                 Style.Medium -> 60.dp
             })
             .clip(RoundedCornerShape(Sizes.smallRoundCorner))

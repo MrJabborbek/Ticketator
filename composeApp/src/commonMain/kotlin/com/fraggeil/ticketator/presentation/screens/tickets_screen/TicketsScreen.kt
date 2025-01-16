@@ -2,11 +2,13 @@ package com.fraggeil.ticketator.presentation.screens.tickets_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -131,11 +133,13 @@ fun TicketsScreen(
                     )
                 }
                 item(span = { GridItemSpan(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 3) }) {
-                    MyButton(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        text = "Show old tickets",
-                        onClick = { onAction(TicketsAction.OnShowAllTicketsClicked) }
-                    )
+                    Box {
+                        MyButton(
+                            modifier = Modifier.align(Alignment.Center).widthIn(max = 400.dp).fillMaxWidth(),
+                            text = "Show old tickets",
+                            onClick = { onAction(TicketsAction.OnShowAllTicketsClicked) }
+                        )
+                    }
                 }
             } else if (state.isLoading){
                 items(10){
@@ -220,7 +224,7 @@ fun TicketsScreen(
                 if (state.pastTickets.isEmpty()) {
                     item(span = { GridItemSpan(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 3) }) {
                         Text(
-                            text = "You have not any journeys yet.",
+                            text = "You have not any old journeys yet.",
                             style = AppTypography().bodyMedium,
                             modifier = Modifier.padding(16.dp),
                             textAlign = TextAlign.Center,

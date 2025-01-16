@@ -3,9 +3,9 @@ package com.fraggeil.ticketator.domain.model.uzbekistan
 object Uzbekistan{
     val qoraqalpogiston = Region(
         id = 1,
-        name = "Qoraqalpogʻiston",
+        name = "Qoraqalpogʻiston Resp.",
         districts = listOf(
-            District(id = 1, name = "Mangʻit", abbr = "Mang"),
+            District(id = 1, name = "Mangʻit", abbr = "Mng"),
             District(id = 2, name = "Beruniy", abbr = "Ber"),
             District(id = 3, name = "Chimboy", abbr = "Chi"),
             District(id = 4, name = "Boʻston", abbr = "Bos"),
@@ -25,7 +25,7 @@ object Uzbekistan{
     )
     val xorazm = Region(
         id = 2,
-        name = "Xorazm",
+        name = "Xorazm viloyati",
         districts = listOf(
             District(id = 1, name = "Bogʻot", abbr = "Bog"),
             District(id = 2, name = "Gurlan", abbr = "Gur"),
@@ -42,7 +42,7 @@ object Uzbekistan{
     )
     val navoiy = Region(
         id = 3,
-        name = "Navoiy",
+        name = "Navoiy viloyati",
         districts = listOf(
             District(id = 1, name = "Konimex", abbr = "Kon"),
             District(id = 2, name = "Karmana", abbr = "Kar"),
@@ -56,11 +56,11 @@ object Uzbekistan{
     )
     val buxoro = Region(
         id = 4,
-        name = "Buxoro",
+        name = "Buxoro viloyati",
         districts = listOf(
             District(id = 1, name = "Olot", abbr = "Olo"),
             District(id = 2, name = "Galaosiyo", abbr = "Gal"),
-            District(id = 3, name = "Gʻijduvon", abbr = "Gʻij"),
+            District(id = 3, name = "Gʻijduvon", abbr = "Gʻj"),
             District(id = 4, name = "Jondor", abbr = "Jon"),
             District(id = 5, name = "Kogon", abbr = "Kog"),
             District(id = 6, name = "Qorakoʻl", abbr = "Kor"),
@@ -73,7 +73,7 @@ object Uzbekistan{
     )
     val samarqand = Region(
         id = 5,
-        name = "Samarqand",
+        name = "Samarqand viloyati",
         districts = listOf(
             District(id = 1, name = "Bulungʻur", abbr = "Bul"),
             District(id = 2, name = "Ishtixon", abbr = "Ish"),
@@ -93,11 +93,11 @@ object Uzbekistan{
     )
     val qashqadaryo = Region(
         id = 6,
-        name = "Qashqadaryo",
+        name = "Qashqadaryo viloyati",
         districts = listOf(
             District(id = 1, name = "Chiroqchi", abbr = "Chi"),
             District(id = 2, name = "Karashina", abbr = "Kar"),
-            District(id = 3, name = "Gʻuzor", abbr = "Gʻuz"),
+            District(id = 3, name = "Gʻuzor", abbr = "Gʻz"),
             District(id = 4, name = "Qamashi", abbr = "Qam"),
             District(id = 5, name = "Beshkent", abbr = "Bes"),
             District(id = 6, name = "Koson", abbr = "Kos"),
@@ -113,7 +113,7 @@ object Uzbekistan{
     )
     val surxondaryo = Region(
         id = 7,
-        name = "Surxondaryo",
+        name = "Surxondaryo viloyati",
         districts = listOf(
             District(id = 1, name = "Angor", abbr = "Ang"),
             District(id = 2, name = "Boysun", abbr = "Boy"),
@@ -133,7 +133,7 @@ object Uzbekistan{
 
     val jizzax = Region(
         id = 8,
-        name = "Jizzax",
+        name = "Jizzax viloyati",
         districts = listOf(
             District(id = 1, name = "Gʻoliblar", abbr = "Gol"),
             District(id = 2, name = "Usmat", abbr = "Usm"),
@@ -152,7 +152,7 @@ object Uzbekistan{
 
     val sirdaryo = Region(
         id = 9,
-        name = "Sirdaryo",
+        name = "Sirdaryo viloyati",
         districts = listOf(
             District(id = 1, name = "Sardoba", abbr = "Sar"),
             District(id = 2, name = "Boyovut", abbr = "Boy"),
@@ -170,7 +170,7 @@ object Uzbekistan{
 
     val toshkent = Region(
         id = 10,
-        name = "Toshkent vil.",
+        name = "Toshkent viloyati",
         districts = listOf(
             District(id = 1, name = "Zafar", abbr = "Zaf"),
             District(id = 2, name = "Gʻazalkent", abbr = "Gaz"),
@@ -191,7 +191,7 @@ object Uzbekistan{
 
     val namangan = Region(
         id = 11,
-        name = "Namangan",
+        name = "Namangan viloyati",
         districts = listOf(
             District(id = 1, name = "Chortoq", abbr = "Chor"),
             District(id = 2, name = "Chust", abbr = "Chus"),
@@ -209,7 +209,7 @@ object Uzbekistan{
 
     val fargona = Region(
         id = 12,
-        name = "Fargʻona",
+        name = "Fargʻona viloyati",
         districts = listOf(
             District(id = 1, name = "Oltiariq", abbr = "Olt"),
             District(id = 2, name = "Bagʻdod", abbr = "Bag"),
@@ -231,7 +231,7 @@ object Uzbekistan{
     )
     val andijon = Region(
         id = 13,
-        name = "Andijon",
+        name = "Andijon viloyati",
         districts = listOf(
             District(id = 1, name = "Kuyganyor", abbr = "Kuy"),
             District(id = 2, name = "Asaka", abbr = "Asa"),
@@ -251,7 +251,7 @@ object Uzbekistan{
     )
     val toshkentShahri = Region(
         id = 14,
-        name = "Toshkent",
+        name = "Toshkent shahri",
         districts = listOf(
             District(id = 1, name = "Bektemir", abbr = "Bek"),
             District(id = 2, name = "Chilonzor", abbr = "Chi"),
@@ -269,17 +269,17 @@ object Uzbekistan{
     )
 
     val uzbekistan = listOf(
-        qoraqalpogiston,
-        xorazm,
+        toshkentShahri,
+        toshkent,
         buxoro,
         navoiy,
         samarqand,
         qashqadaryo,
         surxondaryo,
+        xorazm,
+        qoraqalpogiston,
         jizzax,
         sirdaryo,
-        toshkent,
-        toshkentShahri,
         fargona,
         namangan,
         andijon

@@ -120,7 +120,7 @@ private fun PostItem(
         painter = painter.takeIf { !isLoading} ?: rememberAsyncImagePainter(""),
         contentDescription = null,
         modifier = modifier
-            .widthIn(max = Constants.MAX_ITEM_WIDTH_IN_DP.dp)
+            .widthIn(max = Constants.MAX_ITEM_WIDTH_IN_DP)
             .fillMaxWidth()
             .aspectRatio(695/295f)
             .clip(RoundedCornerShape(12.dp))

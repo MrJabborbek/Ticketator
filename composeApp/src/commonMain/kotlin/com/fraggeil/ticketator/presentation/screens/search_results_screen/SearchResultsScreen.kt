@@ -66,6 +66,7 @@ import com.fraggeil.ticketator.presentation.screens.search_results_screen.compon
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.components.JourneyListItem
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
+import ticketator.composeapp.generated.resources.filter
 import ticketator.composeapp.generated.resources.ic_close
 import ticketator.composeapp.generated.resources.uzbekistan
 
@@ -129,7 +130,7 @@ fun SearchResultsScreen(
                     text = "Journey Results",
                     isLeadingButtonVisible = true,
                     isTrailingButtonVisible = true,
-                    trailingButtonIcon = painterResource(Res.drawable.uzbekistan), //TODO
+                    trailingButtonIcon = painterResource(Res.drawable.filter),
                     onLeadingButtonClick = { onAction(SearchResultsAction.OnBackClicked) },
                     onTrailingButtonClick = { onAction(SearchResultsAction.OnFilterClicked) }
                 )

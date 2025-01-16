@@ -99,6 +99,12 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.compose_multiplatform
+import ticketator.composeapp.generated.resources.ic_main_selected
+import ticketator.composeapp.generated.resources.ic_main_unselected
+import ticketator.composeapp.generated.resources.person
+import ticketator.composeapp.generated.resources.person_filled
+import ticketator.composeapp.generated.resources.ticket
+import ticketator.composeapp.generated.resources.ticket_filled
 
 @Composable
 @Preview
@@ -154,8 +160,8 @@ fun App() {
                             ) {
                                 MyNavigationBarItem(
                                     text = Strings.Home.value(),
-                                    selectedPainter = painterResource(Res.drawable.compose_multiplatform), //TODO
-                                    unselectedPainter = painterResource(Res.drawable.compose_multiplatform),
+                                    selectedPainter = painterResource(Res.drawable.ic_main_selected), //TODO
+                                    unselectedPainter = painterResource(Res.drawable.ic_main_unselected),
                                     onClick = {
                                         if (navBackStackEntry?.destination?.route != Route.Home.route){
                                             navigate(Route.Home,true)
@@ -165,8 +171,8 @@ fun App() {
                                 )
                                 MyNavigationBarItem(
                                     text = Strings.Tickets.value(),
-                                    selectedPainter = painterResource(Res.drawable.compose_multiplatform), //TODO
-                                    unselectedPainter = painterResource(Res.drawable.compose_multiplatform),
+                                    selectedPainter = painterResource(Res.drawable.ticket_filled), //TODO
+                                    unselectedPainter = painterResource(Res.drawable.ticket),
                                     onClick = {
                                         if (navBackStackEntry?.destination?.route != Route.Tickets.route){
                                             navigate(Route.Tickets,true)
@@ -176,8 +182,8 @@ fun App() {
                                 )
                                 MyNavigationBarItem(
                                     text = Strings.Profile.value(),
-                                    selectedPainter = painterResource(Res.drawable.compose_multiplatform), //TODO
-                                    unselectedPainter = painterResource(Res.drawable.compose_multiplatform),
+                                    selectedPainter = painterResource(Res.drawable.person_filled), //TODO
+                                    unselectedPainter = painterResource(Res.drawable.person),
                                     onClick = {
                                         if (navBackStackEntry?.destination?.route != Route.Profile.route){
                                             navigate(Route.Profile,true)
@@ -200,7 +206,7 @@ fun App() {
             ) {
                 NavHost(
                     modifier = Modifier
-                        .widthIn(max = Constants.MAX_ITEM_WIDTH_IN_DP.dp)
+                        .widthIn(max = Constants.MAX_ITEM_WIDTH_IN_DP)
                         .fillMaxSize(),
                     navController = navController,
                     startDestination = Route.TicketatorGraph.route,

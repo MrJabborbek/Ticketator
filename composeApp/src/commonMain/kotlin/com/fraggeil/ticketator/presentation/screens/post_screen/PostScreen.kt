@@ -122,7 +122,7 @@ fun PostScreen(
                     modifier = Modifier.fillMaxWidth()
                         .shimmerLoadingAnimation(
                             modifier = Modifier
-                                .widthIn(max = Constants.MAX_ITEM_WIDTH_IN_DP.dp)
+                                .widthIn(max = Constants.MAX_ITEM_WIDTH_IN_DP)
                                 .fillMaxWidth()
                                 .aspectRatio(695/295f),
                             isLoadingCompleted = imageState?.isSuccess == true && !state.isLoading,

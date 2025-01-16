@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
@@ -82,6 +83,10 @@ import com.fraggeil.ticketator.domain.model.FilterType
 import com.fraggeil.ticketator.domain.model.Post
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
+import ticketator.composeapp.generated.resources.bell
+import ticketator.composeapp.generated.resources.finish
+import ticketator.composeapp.generated.resources.start
+import ticketator.composeapp.generated.resources.swap
 import ticketator.composeapp.generated.resources.uzbekistan
 
 @Composable
@@ -185,7 +190,7 @@ fun HomeScreen(
                     )
                 }
                 MyCircularButton(
-                    icon = painterResource(Res.drawable.uzbekistan),
+                    icon = painterResource(Res.drawable.bell),
                     onClick = {onAction(HomeAction.OnNotificationClicked)}
                 )
             }
@@ -229,7 +234,7 @@ fun HomeScreen(
                             modifier = Modifier.fillMaxWidth()
                         ){
                             MyDepartureItem(
-                                icon = Icons.Default.Menu,
+                                icon = painterResource(Res.drawable.start),
                                 label = Strings.From.value(),
                                 text = state.filter.fromDistrict?.name,
                                 abbr = state.filter.fromDistrict?.abbr,
@@ -239,7 +244,7 @@ fun HomeScreen(
                             )
                             MyDepartureItem(
                                 modifier = Modifier.padding(top = 12.dp),
-                                icon = Icons.Default.Home,
+                                icon = painterResource(Res.drawable.finish),
                                 label = Strings.To.value(),
                                 text = state.filter.toDistrict?.name,
                                 abbr = state.filter.toDistrict?.abbr,
@@ -260,7 +265,8 @@ fun HomeScreen(
                             onClick = {onAction(HomeAction.OnReverseDistrictsClicked)},
                         ){
                             Icon(
-                                imageVector = Icons.Default.Menu,
+                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(Res.drawable.swap),
                                 contentDescription = null,
                                 tint = White,
                             )
@@ -293,8 +299,8 @@ fun HomeScreen(
                         }
                     }
                     MyButton(
-                        modifier = Modifier.padding(top = Sizes.vertical_inner_padding).fillMaxWidth(),
-                        text = "Search flights",
+                        modifier = Modifier.padding(top = Sizes.vertical_inner_padding).align(Alignment.CenterHorizontally).widthIn(max = 400.dp).fillMaxWidth(),
+                        text = "Search journeys",
                         onClick = {onAction(HomeAction.OnSearchClicked)},
                         style = MyButtonStyle.FILLED
                     )

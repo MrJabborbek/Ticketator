@@ -157,7 +157,7 @@ fun CardInfoScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ){
                         MyTextField(
-                            modifier = Modifier.wrapContentWidth(),
+                            modifier = Modifier.weight(1f),
                             label = "Valid date",
                             hint = "MM/YY",
                             value = state.cardValidUntil,
@@ -167,7 +167,7 @@ fun CardInfoScreen(
                             inputStyle = InputStyle.PLASTIC_CARD_VALID_DATE,
                         )
                         Text(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.wrapContentWidth(),
                             textAlign = TextAlign.End,
                             text = state.timer,
                             style = AppTypography().bodyLarge.copy(color = Blue, fontWeight = FontWeight.SemiBold),
@@ -231,7 +231,8 @@ fun CardInfoScreen(
 //                        modifier = Modifier.padding(top = vertical_out_padding, start = Sizes.horizontal_out_padding, end = Sizes.horizontal_out_padding).widthIn(max = 600.dp).fillMaxWidth(),
                         text = "Send SMS",
                         onClick = { onAction(CardInfoAction.OnNextClicked) },
-                        enabled = state.isAllDataValid
+                        enabled = state.isAllDataValid,
+                        isLoading = state.isSendingData
                     )
                 }
             }

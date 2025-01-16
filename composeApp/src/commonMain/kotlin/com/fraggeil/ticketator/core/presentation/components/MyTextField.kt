@@ -2,6 +2,7 @@ package com.fraggeil.ticketator.core.presentation.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -34,10 +35,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fraggeil.ticketator.core.domain.PlatformType
 import com.fraggeil.ticketator.core.domain.phoneNumberFormatting.PhoneNumberVisualTransformation
+import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.BlueContainer
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.LightGray
@@ -163,20 +166,24 @@ fun MyTextField(
     }
     var isMenuExpanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
+        modifier = modifier,
         expanded = isMenuExpanded,
         onExpandedChange = {isMenuExpanded = it}
     ) {
         TextField(
             enabled = isEditable,
-            trailingIcon = {
-                if (trailingIcon != null) Icon(
-                    imageVector = trailingIcon,
-                    contentDescription = null,
-                    tint = BlueDark,
-                    modifier = Modifier.size(24.dp)
-                )
-            },
-            modifier = modifier
+            trailingIcon = if (trailingIcon != null){
+                {
+                    Icon(
+                        imageVector = trailingIcon,
+                        contentDescription = null,
+                        tint = BlueDark,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            } else null,
+            modifier = Modifier
+                .fillMaxWidth()
                 .menuAnchor(MenuAnchorType.PrimaryEditable)
                 .then(
                     if (inputStyle == InputStyle.DESCRIPTION) {
@@ -201,8 +208,8 @@ fun MyTextField(
                     isLoadingCompleted = !isLoading,
                     shimmerStyle = ShimmerStyle.Custom,
                 ),
-            placeholder = { Text(text = hint?.takeIf { !isLoading } ?: "") },
-            label = { Text(text = label.takeIf { !isLoading } ?: "") },
+            placeholder = { Text(text = hint?.takeIf { !isLoading } ?: "", maxLines = 2, overflow = TextOverflow.Ellipsis) },
+            label = { Text(text = label.takeIf { !isLoading } ?: "", maxLines = 2, overflow = TextOverflow.Ellipsis) },
             value = if (isLoading) "" else if (isAllCaps.value) value.uppercase() else value,
             onValueChange = {changeValue(it)},
             shape = RoundedCornerShape(16.dp),
@@ -276,7 +283,7 @@ fun MyTextField(
                     matchTextFieldWidth = true,
                     expanded = isMenuExpanded,
                     onDismissRequest = { isMenuExpanded = false },
-                    containerColor = BlueDark
+                    containerColor = Blue
                 ) {
                     items.forEach { item ->
                         DropdownMenuItem(
@@ -287,14 +294,16 @@ fun MyTextField(
                                         fontWeight = FontWeight.Medium,
                                         letterSpacing = 0.sp
                                     ),
-                                    color = White
+                                    color = White,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             },
                             onClick = {
                                 changeValue(item)
                                 isMenuExpanded = false
                             },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+//                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                         )
                         if (item != items.last()) HorizontalDivider(color = White)
                     }
