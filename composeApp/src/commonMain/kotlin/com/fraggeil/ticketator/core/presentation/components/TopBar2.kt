@@ -1,9 +1,14 @@
 package com.fraggeil.ticketator.core.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Text
@@ -32,7 +37,7 @@ import com.fraggeil.ticketator.core.theme.White
 
 @Composable
 fun TopBar2(
-    modifier: Modifier = Modifier.padding(horizontal = Sizes.horizontal_out_padding, vertical = vertical_inner_padding).fillMaxWidth(),
+    modifier: Modifier = Modifier.statusBarsPadding().padding(start = Sizes.horizontal_out_padding, end = Sizes.horizontal_out_padding, bottom = vertical_inner_padding).fillMaxWidth(),
     text: String,
     isTextCentered: Boolean = true,
     isLeadingButtonVisible: Boolean = false,
@@ -53,37 +58,47 @@ fun TopBar2(
             MyCircularButton(
                 isLightMode = isLightMode,
                 modifier = Modifier.onGloballyPositioned {
+                    println("Widthh:1 ${it.size.width}")
                     width = maxOf(width, it.size.width)
                 },
                 imageVector = leadingButtonIcon,
                 onClick = { onLeadingButtonClick() }
             )
+        } else if (isTrailingButtonVisible && isTextCentered){
+            Spacer(Modifier.width(width.dp))
         }
         Text(
             text = text,
             color = if (!isLightMode) BG_White else BlueDarkSecondary,
             style = AppTypography().headlineSmall.copy(fontWeight = FontWeight.Medium),
             modifier = Modifier
-                .then(
-                    if (isTextCentered)
-                        Modifier.padding(start = if (!isLeadingButtonVisible) width.dp else 0.dp, end = if (!isTrailingButtonVisible) width.dp else 0.dp)
-                    else Modifier
-                ).weight(1f),
+                .weight(1f)
+//                .then(
+//                    if (isTextCentered){
+//                        println("Widthh:3 $width")
+//                        Modifier.padding(start = if (!isLeadingButtonVisible) width.dp else 0.dp, end = if (!isTrailingButtonVisible) width.dp else 0.dp)
+//                    }
+//                    else Modifier
+//                )
+                .background(Color.Red)
+            ,
             textAlign = if (isTextCentered) TextAlign.Center else TextAlign.Start,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
         if (isTrailingButtonVisible) {
-            if (isLeadingButtonVisible){
-                MyCircularButton(
-                    isLightMode = isLightMode,
-                    modifier = Modifier.onGloballyPositioned {
-                        width = maxOf(width, it.size.width)
-                    },
-                    icon = trailingButtonIcon,
-                    onClick = { onTrailingButtonClick() }
-                )
-            }
+            MyCircularButton(
+                isLightMode = isLightMode,
+                modifier = Modifier.onGloballyPositioned {
+                    println("Widthh:2 ${it.size.width}")
+
+                    width = maxOf(width, it.size.width)
+                },
+                icon = trailingButtonIcon,
+                onClick = { onTrailingButtonClick() }
+            )
+        }  else if (isLeadingButtonVisible && isTextCentered){
+            Spacer(Modifier.width(width.dp))
         }
     }
 }

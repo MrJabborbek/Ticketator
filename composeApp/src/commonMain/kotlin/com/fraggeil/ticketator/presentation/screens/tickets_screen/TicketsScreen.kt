@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -88,11 +89,14 @@ fun TicketsScreen(
                     isVerticalScroll = true
                 ),
             state = scrollState,
-            contentPadding = PaddingValues(start = horizontal_out_padding, end = horizontal_out_padding, top = vertical_out_padding, bottom = default_bottom_padding_double),
+            contentPadding = PaddingValues(start = horizontal_out_padding, end = horizontal_out_padding,  bottom = default_bottom_padding_double),
             horizontalArrangement = Arrangement.spacedBy(Sizes.horizontal_inner_padding),
             verticalArrangement = Arrangement.spacedBy(vertical_inner_padding),
             columns = GridCells.Fixed(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 3)
         ) {
+            item(span = { GridItemSpan(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 3) }) {
+                Box(modifier = Modifier.statusBarsPadding())
+            }
             if (state.initialTickets.isNotEmpty()) {
                 item(span = { GridItemSpan(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 3) }) {
                     Text(

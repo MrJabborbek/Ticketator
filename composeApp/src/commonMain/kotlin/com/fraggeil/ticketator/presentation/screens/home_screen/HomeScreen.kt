@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -165,7 +166,7 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.Start
                 ){
                     Row(
-                        modifier = Modifier.height(IntrinsicSize.Max),
+                        modifier = Modifier.statusBarsPadding().height(IntrinsicSize.Max),
                         verticalAlignment = Alignment.CenterVertically,
                     ){
                         Icon(

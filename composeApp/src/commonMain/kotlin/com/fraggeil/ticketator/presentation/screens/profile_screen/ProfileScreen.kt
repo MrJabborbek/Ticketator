@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -113,6 +115,7 @@ fun ProfileScreen(
     onAction: (ProfileAction) -> Unit
 ){
     var height by remember { mutableStateOf(0) }
+    val density = LocalDensity.current.density
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -127,6 +130,7 @@ fun ProfileScreen(
             height = it.size.height
         },
     ){
+        Box(modifier = Modifier.statusBarsPadding())
         state.profile?.let { user ->
             Row(
                 modifier = Modifier.padding(top = 16.dp).clickable (onClick =  {onAction(
@@ -169,7 +173,7 @@ fun ProfileScreen(
                 iconPainter = painterResource(Res.drawable.ic_feedback)
             )
         } ?: kotlin.run {
-            Box(modifier = Modifier.height((height * 0.15).dp))
+            Box(modifier = Modifier.height((height * 0.15/density).dp))
 
             YouAreNotLoggedInMessage(
                 isLoading = state.isLoadingProfile,
