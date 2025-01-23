@@ -61,8 +61,8 @@ class TicketsViewModel(
             .onEach { pair ->
                 _state.update {
                     it.copy(
-                        comingTickets = pair.second,
-                        pastTickets = pair.first,
+                        comingTickets = pair.second.sortedByDescending {t-> t.journey.timeStart },
+                        pastTickets = pair.first.sortedByDescending {t-> t.journey.timeStart },
                         isLoading = false
                     )
                 }

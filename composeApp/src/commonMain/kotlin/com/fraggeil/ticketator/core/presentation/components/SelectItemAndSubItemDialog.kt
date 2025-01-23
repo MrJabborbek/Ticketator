@@ -89,7 +89,7 @@ fun <T, S>SelectItemAndSubItemDialog(
 //        containerColor = White,
 //        onDismissRequest = {},
 //        confirmButton = {  },
-//        dismissButton = {
+//        dismissButton =
 ////            if(isDismissButtonVisible) TextButton(onClick = onCancelled){ Text(text = dismissButtonText, color = LightTextColor) }
 //                        },
 //        title = { Text(text = title) },
@@ -270,7 +270,7 @@ fun <T, S>SelectItemAndSubItemDialog(
 
 
             },
-            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = true, usePlatformDefaultWidth = false),
+            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true, usePlatformDefaultWidth = false),
             onDismissRequest = {
                 isVisible.value = false
             },

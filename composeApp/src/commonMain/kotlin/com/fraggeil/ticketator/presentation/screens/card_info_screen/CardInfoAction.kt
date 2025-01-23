@@ -8,4 +8,5 @@ sealed interface CardInfoAction {
     data class OnCardNumberChanged(val cardNumber: String) : CardInfoAction
     data class OnCardValidUntilChanged(val cardValidUntil: String) : CardInfoAction
     data class OnJourneySelected(val journey: Journey) : CardInfoAction
+    data object OnSaveCardChecked : CardInfoAction
 }

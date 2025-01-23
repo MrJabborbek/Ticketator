@@ -70,6 +70,7 @@ import com.fraggeil.ticketator.presentation.screens.login_screen.LoginViewModel
 import com.fraggeil.ticketator.presentation.screens.otp_payment_screen.OtpPaymentAction
 import com.fraggeil.ticketator.presentation.screens.otp_payment_screen.OtpPaymentScreenRoot
 import com.fraggeil.ticketator.presentation.screens.otp_payment_screen.OtpPaymentViewModel
+import com.fraggeil.ticketator.presentation.screens.otp_screen.OtpAction
 import com.fraggeil.ticketator.presentation.screens.otp_screen.OtpScreenRoot
 import com.fraggeil.ticketator.presentation.screens.otp_screen.OtpViewModel
 import com.fraggeil.ticketator.presentation.screens.passengers_info_screen.PassengersInfoAction
@@ -344,6 +345,7 @@ fun App() {
                                     navController.navigateUp()
                                 },
                                 navigateToCardInfo = {
+                                    selectedJourneyViewModel.onSelectItem(it)
                                     navigate(Route.CardInfo, true)
                                 }
                             )
@@ -410,7 +412,7 @@ fun App() {
                             val selectedPhoneNumberAndToken by selectedPhoneNumberAndTokenViewModel.state.collectAsState()
                             LaunchedEffect(selectedPhoneNumberAndToken){
                                 selectedPhoneNumberAndToken?.let {
-
+                                    viewModel.onAction(OtpAction.OnPhoneNumberChanged(number = selectedPhoneNumberAndToken!!.second, token = selectedPhoneNumberAndToken!!.first))
                                 }
                             }
                             OtpScreenRoot(

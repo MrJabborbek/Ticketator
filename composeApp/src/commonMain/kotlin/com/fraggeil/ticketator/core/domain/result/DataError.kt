@@ -9,6 +9,7 @@ sealed interface DataError: Error {
         SERIALIZATION,
         UNKNOWN,
         INVALID_OTP,
+        INVALID_TOKEN,
         NOT_FOUND
     }
 

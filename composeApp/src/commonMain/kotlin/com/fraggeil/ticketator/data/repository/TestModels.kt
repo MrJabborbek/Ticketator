@@ -2,6 +2,7 @@ package com.fraggeil.ticketator.data.repository
 
 import com.fraggeil.ticketator.core.domain.DateTimeUtil
 import com.fraggeil.ticketator.core.domain.toFormattedDate
+import com.fraggeil.ticketator.domain.model.CardData
 import com.fraggeil.ticketator.domain.model.uzbekistan.District
 import com.fraggeil.ticketator.domain.model.Journey
 import com.fraggeil.ticketator.domain.model.Passenger
@@ -60,7 +61,8 @@ val _testPosts = MutableStateFlow(testPosts)
 //    )
 //}
 
-val regions = Uzbekistan.uzbekistan
+//val regions = Uzbekistan.uzbekistan
+val regions = Regions.avtoticketuz_regions
 
 
 val testUsers = (1..5).map {
@@ -71,7 +73,7 @@ val testUsers = (1..5).map {
     )
 }
 
-val _testCurrentProfile = MutableStateFlow<Profile?>(null)
+//val _testCurrentProfile = MutableStateFlow<Profile?>(null)
 
 val fakeJourneys = (1..12).map {
     val fromRegion = regions.random()
@@ -106,9 +108,12 @@ val fakeTickets = (1..3).map {
     )
 }
 
-val _testNewTickets = MutableStateFlow<List<Ticket>>(fakeTickets)
+//val _testNewTickets = MutableStateFlow<List<Ticket>>(fakeTickets)
 
-val  _testJourneys = MutableStateFlow(fakeJourneys)
+val  _testJourneys = MutableStateFlow<List<Journey>>(emptyList())
+
+val _testSendDataToCheck = MutableStateFlow<List<Triple<Journey, CardData, String>>>(emptyList()) // journey, (card num. valid), token
+
 
 
 

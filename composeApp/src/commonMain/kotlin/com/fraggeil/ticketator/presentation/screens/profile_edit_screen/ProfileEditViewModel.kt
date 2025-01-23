@@ -1,5 +1,6 @@
 package com.fraggeil.ticketator.presentation.screens.profile_edit_screen
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.result.onError
@@ -17,7 +18,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProfileEditViewModel(
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val snackbarHostState: SnackbarHostState
 ): ViewModel() {
     private var observeCurrentUserJob: Job? = null
     private var updateCurrentUserJob: Job? = null
@@ -74,6 +76,7 @@ class ProfileEditViewModel(
         observeCurrentUserJob = viewModelScope.launch {
             profileRepository.getCurrentProfile()
                 .onSuccess { user ->
+                    println("USERRR SUCCESS")
                     profile = user
                     _state.update { it.copy(
                         firstName = user.firstName,
@@ -82,6 +85,12 @@ class ProfileEditViewModel(
                         phoneNumber = user.phoneNumber,
                         isLoadingProfile = false
                     ) }
+                }
+                .onError {
+                    println("USERRR Errorr")
+
+                    _state.update { it.copy(isLoadingProfile = false, error = "Error") }
+                    snackbarHostState.showSnackbar("Error while loading profile")
                 }
         }
     }
@@ -95,7 +104,7 @@ class ProfileEditViewModel(
                     _oneTimeState.send(ProfileEditOneTimeState.NavigateBack)
                 }
                 .onError {
-                    _state.update { it.copy(isLoadingProfile = false, error = "Error") }
+                    _state.update { it.copy(isLoadingDeleteOrUpdate = false, error = "Error") }
                 }
         }
     }
@@ -109,8 +118,8 @@ class ProfileEditViewModel(
                     _state.update { it.copy(isLoadingDeleteOrUpdate = false) }
                     _oneTimeState.send(ProfileEditOneTimeState.NavigateToMain)
                 }
-                .onSuccess {
-                    _state.update { it.copy(isLoadingProfile = false, error = "Error") }
+                .onError {
+                    _state.update { it.copy(isLoadingDeleteOrUpdate = false, error = "Error") }
                 }
         }
     }

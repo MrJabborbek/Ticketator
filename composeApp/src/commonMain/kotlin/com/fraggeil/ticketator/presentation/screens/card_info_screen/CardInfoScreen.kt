@@ -2,6 +2,7 @@ package com.fraggeil.ticketator.presentation.screens.card_info_screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -107,12 +110,12 @@ fun CardInfoScreen(
                     colorFilter = ColorFilter.tint(BlueDarkSecondary)
                 )
             }
-//        val scrollState = rememberScrollState()
+        val scrollState = rememberScrollState()
             Column(
                 modifier = Modifier
-                    .fillMaxSize(),
-//                .changeScrollStateByMouse(isVerticalScroll = true, scrollState = scrollState)
-//                .verticalScroll(scrollState),
+                    .fillMaxSize()
+                    .changeScrollStateByMouse(isVerticalScroll = true, scrollState = scrollState)
+                    .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TopBar2(
@@ -120,7 +123,6 @@ fun CardInfoScreen(
                     isLeadingButtonVisible = true,
                     onLeadingButtonClick = { onAction(CardInfoAction.OnBackClicked) },
                 )
-                val scrollState = rememberScrollState()
                 Column(
                     modifier = Modifier
                         .padding(
@@ -132,12 +134,7 @@ fun CardInfoScreen(
                             color = BG_White,
                             shape = RoundedCornerShape(Sizes.smallRoundCorner)
                         )
-                        .padding(horizontal = Sizes.horizontal_inner_padding)
-                        .changeScrollStateByMouse(
-                            scrollState = scrollState,
-                            isVerticalScroll = true
-                        )
-                        .verticalScroll(scrollState),
+                        .padding(horizontal = Sizes.horizontal_inner_padding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(modifier = Modifier.height(Sizes.vertical_inner_padding))
@@ -145,11 +142,12 @@ fun CardInfoScreen(
                         modifier = Modifier.padding(top = 12.dp).fillMaxWidth(),
                         label = "Card number",
                         hint = "0000 0000 0000 0000",
-                        value = state.cardNumber,
+                        value = state.cardData.cardNumber,
                         onValueChange = {
                             onAction(CardInfoAction.OnCardNumberChanged(it))
                         },
                         inputStyle = InputStyle.PLASTIC_CARD,
+                        suggestions = state.savedCardData.map { it.cardNumber },
                     )
                     Row(
                         modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
@@ -160,11 +158,12 @@ fun CardInfoScreen(
                             modifier = Modifier.weight(1f),
                             label = "Valid date",
                             hint = "MM/YY",
-                            value = state.cardValidUntil,
+                            value = state.cardData.cardValidUntil,
                             onValueChange = {
                                 onAction(CardInfoAction.OnCardValidUntilChanged(it))
                             },
                             inputStyle = InputStyle.PLASTIC_CARD_VALID_DATE,
+                            suggestions = state.savedCardData.filter { it.cardNumber == state.cardData.cardNumber }.map { it.cardValidUntil },
                         )
                         Text(
                             modifier = Modifier.wrapContentWidth(),
@@ -185,6 +184,35 @@ fun CardInfoScreen(
                     Spacer(modifier = Modifier.height(Sizes.vertical_inner_padding))
 
                 }
+                Row(
+                    modifier = Modifier
+                        .padding(top = vertical_out_padding)
+                        .fillMaxWidth()
+                        .padding(horizontal = Sizes.horizontal_inner_padding)
+                        .clickable {
+                            onAction(CardInfoAction.OnSaveCardChecked)
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ){
+                    Checkbox(
+                        checked = state.isSaveCardChecked,
+                        onCheckedChange = {
+                            onAction(CardInfoAction.OnSaveCardChecked)
+                        },
+                        colors = CheckboxDefaults.colors().copy(
+                            checkedCheckmarkColor = White,
+                            checkedBorderColor = White,
+                            uncheckedBorderColor = White
+                        )
+                    )
+                    Text(
+                        text = "Save card info to later use",
+                        color = White,
+                        style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
+                    )
+                }
+
             }
         }
         state.selectedJourney?.let { selectedJourney ->

@@ -1,8 +1,6 @@
 package com.fraggeil.ticketator.core.presentation.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -27,17 +24,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.fraggeil.ticketator.core.domain.PlatformType
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.theme.AppTypography
 import com.fraggeil.ticketator.core.theme.BG_White
-import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.BlueDarkSecondary
-import com.fraggeil.ticketator.core.theme.White
+import org.koin.compose.koinInject
 
 @Composable
 fun TopBar2(
-    modifier: Modifier = Modifier.statusBarsPadding().padding(start = Sizes.horizontal_out_padding, end = Sizes.horizontal_out_padding, bottom = vertical_inner_padding).fillMaxWidth(),
+    modifier: Modifier = Modifier.statusBarsPadding().padding(
+        top = if (koinInject<PlatformType>() == PlatformType.DESKTOP) Sizes.vertical_out_padding else 0.dp,
+        start = Sizes.horizontal_out_padding,
+        end = Sizes.horizontal_out_padding,
+        bottom = vertical_inner_padding
+    ).fillMaxWidth(),
     text: String,
     isTextCentered: Boolean = true,
     isLeadingButtonVisible: Boolean = false,
@@ -58,7 +60,6 @@ fun TopBar2(
             MyCircularButton(
                 isLightMode = isLightMode,
                 modifier = Modifier.onGloballyPositioned {
-                    println("Widthh:1 ${it.size.width}")
                     width = maxOf(width, it.size.width)
                 },
                 imageVector = leadingButtonIcon,
@@ -80,7 +81,6 @@ fun TopBar2(
 //                    }
 //                    else Modifier
 //                )
-                .background(Color.Red)
             ,
             textAlign = if (isTextCentered) TextAlign.Center else TextAlign.Start,
             maxLines = 2,
@@ -90,8 +90,6 @@ fun TopBar2(
             MyCircularButton(
                 isLightMode = isLightMode,
                 modifier = Modifier.onGloballyPositioned {
-                    println("Widthh:2 ${it.size.width}")
-
                     width = maxOf(width, it.size.width)
                 },
                 icon = trailingButtonIcon,

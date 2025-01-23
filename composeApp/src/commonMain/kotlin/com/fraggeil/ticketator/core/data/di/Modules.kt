@@ -1,7 +1,10 @@
 package com.fraggeil.ticketator.core.data.di
 
 import androidx.compose.material3.SnackbarHostState
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.fraggeil.ticketator.core.domain.Platform
+import com.fraggeil.ticketator.data.database.Database
+import com.fraggeil.ticketator.data.database.DatabaseFactory
 import com.fraggeil.ticketator.data.repository.DefaultCurrentUserInfoRepository
 import com.fraggeil.ticketator.data.repository.DefaultHomeRepository
 import com.fraggeil.ticketator.data.repository.DefaultLoginRepository
@@ -51,6 +54,12 @@ val sharedModule = module {
 //        get<ImageLoader>().create()
 //    }
 //    single { ::DefaultCategoriesRepository }
+    single {
+        get<DatabaseFactory>().create()
+            .setDriver(BundledSQLiteDriver())
+            .build()
+    }
+    single { get<Database>().dao }
     single { Platform() }
     singleOf(::DefaultProfileRepository).bind<ProfileRepository>()
     singleOf(::DefaultLoginRepository).bind<LoginRepository>()

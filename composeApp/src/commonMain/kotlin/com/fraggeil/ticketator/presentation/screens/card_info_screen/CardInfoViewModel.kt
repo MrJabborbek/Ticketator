@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.result.onError
 import com.fraggeil.ticketator.core.domain.result.onSuccess
+import com.fraggeil.ticketator.domain.model.CardData
 import com.fraggeil.ticketator.domain.repository.SendDataToCheckRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -21,6 +22,7 @@ class CardInfoViewModel(
     private val repository: SendDataToCheckRepository
 ): ViewModel() {
     private var sendDataToCheckJob: Job? = null
+    private var fetchSavedCardDataJob: Job? = null
     private var isInitialized = false
     private var timer = 0
 
@@ -32,14 +34,15 @@ class CardInfoViewModel(
         .onStart {
             if (!isInitialized) {
                 isInitialized = true
+                fetchSavedCardData()
                 startTimer()
             }
         }
         .onEach {
             _state.update { it.copy(
                 isAllDataValid = !it.isTimerEnd &&
-                        it.cardNumber.length == 16 && it.cardNumber.all { d-> d.isDigit() } &&
-                        it.cardValidUntil.length == 4 && it.cardValidUntil.all {d-> d.isDigit() }
+                        it.cardData.cardNumber.length == 16 && it.cardData.cardNumber.all { d-> d.isDigit() } &&
+                        it.cardData.cardValidUntil.length == 4 && it.cardData.cardValidUntil.all {d-> d.isDigit() }
             ) }
         }
         .stateIn(
@@ -48,6 +51,13 @@ class CardInfoViewModel(
             initialValue = _state.value
         )
 
+    private fun fetchSavedCardData() {
+        fetchSavedCardDataJob?.cancel()
+        fetchSavedCardDataJob = viewModelScope.launch {
+            _state.update { it.copy(savedCardData = repository.getAllSavedCardData())}
+        }
+    }
+
     fun onAction(action: CardInfoAction){
         when(action) {
             CardInfoAction.OnBackClicked -> {}
@@ -55,15 +65,19 @@ class CardInfoViewModel(
                sendDataToCheck()
             }
             is CardInfoAction.OnCardNumberChanged -> {
-                _state.update { it.copy(cardNumber = action.cardNumber) }
+                _state.update { it.copy(cardData = it.cardData.copy(cardNumber = action.cardNumber)) }
             }
             is CardInfoAction.OnCardValidUntilChanged -> {
-                _state.update { it.copy(cardValidUntil = action.cardValidUntil) }
+                _state.update { it.copy(cardData = it.cardData.copy(cardValidUntil = action.cardValidUntil)) }
             }
 
             is CardInfoAction.OnJourneySelected -> {
                 _state.update { it.copy(selectedJourney = action.journey, isLoading = true) }
                 timer = 8*60
+            }
+
+            CardInfoAction.OnSaveCardChecked -> {
+                _state.update { it.copy(isSaveCardChecked = !it.isSaveCardChecked) }
             }
         }
     }
@@ -74,8 +88,8 @@ class CardInfoViewModel(
         sendDataToCheckJob = viewModelScope.launch {
             repository.sendDataToCheck(
                 _state.value.selectedJourney!!,
-                _state.value.cardNumber,
-                _state.value.cardValidUntil,
+                _state.value.cardData,
+                _state.value.isSaveCardChecked
             )
                 .onSuccess { pair ->
                     _state.update { it.copy(isSendingData = false) }

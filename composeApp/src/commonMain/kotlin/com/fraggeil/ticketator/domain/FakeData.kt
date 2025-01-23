@@ -112,4 +112,5 @@ object FakeData{
             qrCodeLinkOrToken = "https://medium.com/mobile-innovation-network/qrkit-qrcode-generator-in-compose-multiplatform-for-android-and-ios-858ec3e1e2b2"
         )
     }
+
 }

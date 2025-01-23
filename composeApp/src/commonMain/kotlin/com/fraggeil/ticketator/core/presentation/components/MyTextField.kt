@@ -296,7 +296,8 @@ fun MyTextField(
                                     ),
                                     color = White,
                                     maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+
                                 )
                             },
                             onClick = {

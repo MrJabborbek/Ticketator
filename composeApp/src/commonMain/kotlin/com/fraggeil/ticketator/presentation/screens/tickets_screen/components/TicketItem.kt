@@ -58,7 +58,11 @@ import com.fraggeil.ticketator.core.theme.TextColorLight
 import com.fraggeil.ticketator.domain.model.Ticket
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.components.Dots
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import qrgenerator.QRCodeImage
+import ticketator.composeapp.generated.resources.Res
+import ticketator.composeapp.generated.resources.download
+import ticketator.composeapp.generated.resources.send
 
 @Composable
 fun TicketItem(
@@ -275,7 +279,7 @@ fun TicketItem(
                                     }
                                 ){
                                     Icon(
-                                        Icons.Default.Share,
+                                        painterResource(Res.drawable.send),
                                         contentDescription = null,
                                         tint = Blue,
                                         modifier = Modifier.size(24.dp)
@@ -289,7 +293,7 @@ fun TicketItem(
                                     }
                                 ){
                                     Icon(
-                                        Icons.Default.Add,
+                                        painterResource(Res.drawable.download),
                                         contentDescription = null,
                                         tint = Blue,
                                         modifier = Modifier.size(24.dp)
