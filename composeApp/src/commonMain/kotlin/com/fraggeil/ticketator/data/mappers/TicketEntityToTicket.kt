@@ -31,7 +31,7 @@ fun TicketEntity.toTicket(): Ticket {
             seatsReserved = emptyList(),
             seatsAvailable = emptyList(),
             seatsUnavailable = emptyList(),
-            stopAt = this.stopAt.split("/")
+            stopAt = this.stopAt.takeIf { it.isNotBlank() }?.split("/") ?: emptyList()
         )
     )
 }
@@ -53,6 +53,6 @@ fun Ticket.toTicketEntity(): TicketEntity {
         toDistrict = this.journey.to.second.name,
         toDistrictAbbr = this.journey.to.second.abbr,
         price = this.journey.price,
-        stopAt = this.journey.stopAt.joinToString("/")
+        stopAt = this.journey.stopAt.takeIf { it.isNotEmpty() }?.joinToString("/") ?: ""
     )
 }

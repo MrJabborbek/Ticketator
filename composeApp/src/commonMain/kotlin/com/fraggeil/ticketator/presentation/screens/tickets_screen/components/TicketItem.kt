@@ -267,6 +267,7 @@ fun TicketItem(
                         if (!isLoading){
                             Row(
                                 modifier = Modifier
+                                    .padding(top = 8.dp)
                                     .fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.End)
@@ -282,7 +283,7 @@ fun TicketItem(
                                         painterResource(Res.drawable.send),
                                         contentDescription = null,
                                         tint = Blue,
-                                        modifier = Modifier.size(24.dp)
+                                        modifier = Modifier.size(24.dp).padding(2.dp)
                                     )
                                 }
                                 IconButton(
@@ -378,7 +379,7 @@ fun TicketItem(
                                     dotsColor = LightGray,
                                     pinColor = LightGray,
                                     topText = (ticket.journey.timeArrival - ticket.journey.timeStart).millisecondsToFormattedString(),
-                                    bottomText = if (ticket.journey.stopAt.isEmpty()) "Non-stop" else "Stop at: ${ticket.journey.stopAt.joinToString(", ")}"
+                                    bottomText = if (ticket.journey.stopAt.also { println("stopAt: $it // ${it.size}") }.isEmpty()) "Non-stop" else "Stop at: ${ticket.journey.stopAt.joinToString(", ")}"
                                 )
                             }
                             Column(
