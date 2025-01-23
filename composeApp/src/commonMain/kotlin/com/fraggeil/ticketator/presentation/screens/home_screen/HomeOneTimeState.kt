@@ -4,4 +4,5 @@ import com.fraggeil.ticketator.domain.model.Filter
 
 sealed interface HomeOneTimeState {
     data class NavigateToSearchResults(val filter: Filter): HomeOneTimeState
+    data object NavigateToGpsSettings: HomeOneTimeState
 }

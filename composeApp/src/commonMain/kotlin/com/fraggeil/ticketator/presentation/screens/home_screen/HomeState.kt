@@ -28,7 +28,8 @@ data class HomeState(
     val fromRegions: List<Region> = emptyList(),
     val toRegions: List<Region> = emptyList(),
     val posts: List<Post> = emptyList(),
-    val currentLocation: Pair<Region, District>? = null
+    val currentLocation: Pair<Region, District>? = null,
+    val location: String = ""
 )
 
 

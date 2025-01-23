@@ -17,6 +17,7 @@ libphonenumber = "0.1.1"
 navigationCompose = "2.8.0-alpha10"
 ktor = "3.0.1"
 kotlinxDatetime = "0.6.1"
+playServicesLocation = "21.3.0"
 qrKit = "1.0.8"
 ksp = "2.0.21-1.0.26"
 sqlite = "2.5.0-alpha11"
@@ -52,6 +53,7 @@ ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 
 jetbrains-compose-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref= "navigationCompose"}
 libphonenumber = { module = "io.github.luca992.libphonenumber-kotlin:libphonenumber", version.ref = "libphonenumber" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 qr-kit = { module = "network.chaintech:qr-kit", version.ref = "qrKit" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }

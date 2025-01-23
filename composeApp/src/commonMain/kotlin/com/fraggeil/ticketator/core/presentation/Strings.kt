@@ -252,5 +252,10 @@ object Strings{
     data object Sort: StringItem(valueUz = "Saralash", valueEn = "Sort")
     data object Price: StringItem(valueUz = "Narx", valueEn = "Price")
     data object Tickets: StringItem(valueUz = "Tickets", valueEn = "Tickets")
+    data object AreYouSureYouWantToCancel: StringItem(valueUz = "Rostdan ham bekor qilmoqchimisiz?", valueEn = "Are you sure you want to cancel?", valueUzCyr = "Ҳақиқатдан ҳам бекор қилмоқчимисиз?", valueRu = "Вы действительно хотите отменить?")
+    data object Stay: StringItem(valueUz = "Qolish", valueEn = "Stay", valueUzCyr = "Қолиш", valueRu = "Оставаться")
+    data object Exit: StringItem(valueUz = "Chiqish", valueEn = "Exit", valueUzCyr = "Чиқиш", valueRu = "Выход")
+    data object PermissionRequired: StringItem(valueUz = "Ruxsat talab qilinadi", valueEn = "Permission required", valueUzCyr = "Рухсат талаб қилинади", valueRu = "Требуется разрешение")
+    data object ToSetYourLocation : StringItem(valueUz = "Joylashuvingizni o'rnatish uchun", valueEn = "To set your location", valueUzCyr = "Жойлашувингизни ўрнатиш учун", valueRu = "Чтобы установить ваше местоположение")
 
 }

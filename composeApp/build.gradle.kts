@@ -10,6 +10,8 @@ plugins {
     kotlin("plugin.serialization")
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+
+    id("com.google.gms.google-services")
 }
 
 kotlin {
@@ -46,6 +48,10 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.play.services.location)
+
+            implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -76,6 +82,11 @@ kotlin {
 
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
+
+
+//            api("dev.icerock.moko:permissions:0.18.1")
+//            api("dev.icerock.moko:permissions-compose:0.18.1")
+
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

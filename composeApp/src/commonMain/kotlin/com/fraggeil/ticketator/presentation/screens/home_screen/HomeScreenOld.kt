@@ -5,7 +5,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,11 +32,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,13 +49,15 @@ import com.fraggeil.ticketator.core.domain.DateTimeUtil
 import com.fraggeil.ticketator.core.domain.FormattedDateStyle
 import com.fraggeil.ticketator.core.domain.LocationService
 import com.fraggeil.ticketator.core.domain.NavigateToGpsSettings
-import com.fraggeil.ticketator.core.domain.moko_permission.permissions.PermissionState
-import com.fraggeil.ticketator.core.domain.moko_permission.permissions.compose.BindEffect
-import com.fraggeil.ticketator.core.domain.moko_permission.permissions.compose.rememberPermissionsControllerFactory
+import com.fraggeil.ticketator.core.domain.permission.PermissionCallback
+import com.fraggeil.ticketator.core.domain.permission.PermissionStatus
+import com.fraggeil.ticketator.core.domain.permission.PermissionType
+import com.fraggeil.ticketator.core.domain.permission.createPermissionsManager
 import com.fraggeil.ticketator.core.domain.toFormattedDate
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
+import com.fraggeil.ticketator.core.presentation.components.ConfirmationExitDialog
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyButtonStyle
 import com.fraggeil.ticketator.core.presentation.components.MyCalendarDateSelector
@@ -75,6 +77,7 @@ import com.fraggeil.ticketator.domain.FakeData
 import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.model.FilterType
 import com.fraggeil.ticketator.domain.model.Post
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import ticketator.composeapp.generated.resources.Res
@@ -85,37 +88,23 @@ import ticketator.composeapp.generated.resources.swap
 import ticketator.composeapp.generated.resources.uzbekistan
 
 @Composable
-fun HomeScreenRoot(
+fun HomeScreenOldRoot(
     viewModel: HomeViewModel,
     navigateToPost: (Post) -> Unit,
     navigateToSearchResults: (Filter) -> Unit
 ) {
-    val factory = rememberPermissionsControllerFactory()
-    val controller = remember (factory){
-        factory.createPermissionsController()
-    }
-    BindEffect(controller)
-    LaunchedEffect(controller){
-        viewModel.provideController(controller)
-    }
-
     val state by viewModel.state.collectAsState()
-    var isNavigateToLocation = remember { mutableStateOf(false) }
-
     LaunchedEffect(true){
         viewModel.oneTimeState.collect{oneTimeState ->
             when(oneTimeState){
                 is HomeOneTimeState.NavigateToSearchResults -> navigateToSearchResults(oneTimeState.filter)
-                HomeOneTimeState.NavigateToGpsSettings -> {
-                    isNavigateToLocation.value = true
-                }
+                HomeOneTimeState.NavigateToGpsSettings -> {}
             }
         }
     }
 
-    HomeScreen(
+    HomeScreenOld(
         state = state,
-        permissionState = viewModel.permissionState,
         onAction = {
             when (it){
                 is HomeAction.OnPostClicked -> {
@@ -124,18 +113,64 @@ fun HomeScreenRoot(
                 else -> Unit
             }
             viewModel.onAction(it)
-        },
-        isNavigateToLocationRequired = isNavigateToLocation
+        }
     )
 }
 
 @Composable
-fun HomeScreen(
+fun HomeScreenOld(
     state: HomeState,
-    permissionState: PermissionState,
-    onAction: (HomeAction) -> Unit,
-    isNavigateToLocationRequired: MutableState<Boolean>
+    onAction: (HomeAction) -> Unit
 ) {
+    val locationService = koinInject<LocationService>()
+    val coroutineScope = rememberCoroutineScope()
+    var launchLocation by remember { mutableStateOf(value = false) }
+    var isNavigateToLocation by remember { mutableStateOf(false) }
+    var launchSetting by remember { mutableStateOf(value = false) }
+    var permissionRationalDialog by remember { mutableStateOf(value = false) }
+    var getLocations by remember { mutableStateOf(true) }
+
+    val permissionsManager = createPermissionsManager(object : PermissionCallback {
+        override fun onPermissionStatus(permissionType: PermissionType, status: PermissionStatus) {
+            when(status){
+                PermissionStatus.GRANTED -> {
+                    when(permissionType) {
+                        PermissionType.LOCATION -> {
+                            launchLocation = true
+                            getLocations = true
+                        }
+                        else->{}
+                    }
+                }
+                else ->{
+                    permissionRationalDialog = true
+                }
+            }
+        }
+    })
+
+    LaunchedEffect(getLocations){
+        coroutineScope.launch {
+            try {
+                locationService.getCurrentLocation(
+                    onPermissionRequired = {
+                        launchLocation = true
+                        getLocations = false
+                    },
+                    onTurnOnGpsRequired = {
+                        isNavigateToLocation = true
+                        getLocations = false
+                    }
+                ){ location ->
+                    println("Location: $location")
+                }
+            } catch (e: Exception) {
+                println("Location: $e")
+            }
+        }
+    }
+
+
     val isSelectFromVisible = remember { mutableStateOf(false) }
     val isSelectToVisible = remember { mutableStateOf(false) }
     val fromDatePickerState = remember { mutableStateOf(false) }
@@ -194,9 +229,8 @@ fun HomeScreen(
                         )
                     }
                     Text(
-                        modifier = Modifier.padding(top = 4.dp).clickable { onAction(HomeAction.OnLocationClicked) },
-//                        text = if (state.currentLocation != null) "${state.currentLocation.second.name}, ${state.currentLocation.first.name}" else "Loading...",
-                        text = state.location,
+                        modifier = Modifier.padding(top = 4.dp),
+                        text = if (state.currentLocation != null) "${state.currentLocation.second.name}, ${state.currentLocation.first.name}" else "Loading...",
                         color = White,
                         style = AppTypography().titleLarge.copy(fontWeight = FontWeight.Medium),
                         maxLines = 2,
@@ -341,8 +375,6 @@ fun HomeScreen(
         }
     }
 
-
-
     SelectItemAndSubItemDialog(
         title = "From",
         items = state.fromRegions,
@@ -392,8 +424,37 @@ fun HomeScreen(
             isVisible = toDatePickerState
         )
     }
-    if (isNavigateToLocationRequired.value){
+
+    if (isNavigateToLocation){
         NavigateToGpsSettings()
-        isNavigateToLocationRequired.value = false
+        isNavigateToLocation = false
     }
+
+    if (launchLocation) {
+        if (permissionsManager.isPermissionGranted(PermissionType.LOCATION)) {
+        } else {
+            permissionsManager.askPermission(PermissionType.LOCATION)
+        }
+        launchLocation = false
+    }
+    if (launchSetting) {
+        permissionsManager.launchSettings()
+        launchSetting = false
+    }
+    if (permissionRationalDialog) {
+    ConfirmationExitDialog(title = Strings.PermissionRequired.value(),
+        message = Strings.ToSetYourLocation.value(),
+        confirmButtonText = Strings.Settings.value(),
+        dismissButtonText = Strings.Cancel.value(),
+        onConfirmed = {
+            permissionRationalDialog = false
+            launchSetting = true
+
+        },
+        onCancelled = {
+            permissionRationalDialog = false
+        })
+
+}
+
 }

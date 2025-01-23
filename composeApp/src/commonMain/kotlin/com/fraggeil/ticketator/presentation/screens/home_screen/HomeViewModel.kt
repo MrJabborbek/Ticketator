@@ -1,9 +1,19 @@
 package com.fraggeil.ticketator.presentation.screens.home_screen
 
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.Constants
+import com.fraggeil.ticketator.core.domain.LocationService
+import com.fraggeil.ticketator.core.domain.moko_permission.permissions.DeniedAlwaysException
+import com.fraggeil.ticketator.core.domain.moko_permission.permissions.DeniedException
+import com.fraggeil.ticketator.core.domain.moko_permission.permissions.Permission
+import com.fraggeil.ticketator.core.domain.moko_permission.permissions.PermissionState
+import com.fraggeil.ticketator.core.domain.moko_permission.permissions.PermissionsController
+import com.fraggeil.ticketator.core.domain.moko_permission.permissions.RequestCanceledException
 import com.fraggeil.ticketator.core.domain.result.onError
 import com.fraggeil.ticketator.core.domain.result.onSuccess
 import com.fraggeil.ticketator.domain.model.Filter
@@ -26,7 +36,10 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val snackbarHostState: SnackbarHostState,
     private val homeRepository: HomeRepository,
+    private val locationService: LocationService
 ): ViewModel() {
+    private var controller: PermissionsController? = null
+
     private var fetchAllRegionsJob: Job? = null
     private var fetchToRegionsJob: Job? = null
     private var fetchAllPostsJob: Job? = null
@@ -36,6 +49,42 @@ class HomeViewModel(
     private var isInitialized = false
     private val _oneTimeState = Channel<HomeOneTimeState>()
     val oneTimeState = _oneTimeState.receiveAsFlow()
+
+    var permissionState by mutableStateOf(PermissionState.NotDetermined)
+        private set
+
+    fun provideController(controller: PermissionsController){
+        this.controller = controller
+        viewModelScope.launch {
+            permissionState = controller.getPermissionState(Permission.COARSE_LOCATION)
+        }
+    }
+
+    fun provideOrRequestLocationPermission() {
+        if (controller == null) return
+        viewModelScope.launch {
+            try {
+                controller!!.providePermission(Permission.COARSE_LOCATION)
+                permissionState = PermissionState.Granted
+                locationService.getCurrentLocation(
+                    onPermissionRequired = {
+                        provideOrRequestLocationPermission()
+                    },
+                    onTurnOnGpsRequired = {
+
+                    }
+                ){
+                    println("Location permission: $it")
+                }
+            }catch (e: DeniedAlwaysException){
+                permissionState = PermissionState.DeniedAlways
+            }catch (e: DeniedException){
+                permissionState = PermissionState.Denied
+            }catch (e: RequestCanceledException){
+                e.printStackTrace()
+            }
+        }
+    }
 
     private val _state = MutableStateFlow(HomeState())
     val state = _state
@@ -124,6 +173,44 @@ class HomeViewModel(
 
             is HomeAction.OnDateToSelected -> {
                 _state.update { it.copy(filter = it.filter.copy(dateBack = action.date)) }
+            }
+
+            HomeAction.OnPermissionRequired -> {
+                provideOrRequestLocationPermission()
+            }
+
+            HomeAction.OnLocationClicked -> {
+                if (controller == null) return
+                viewModelScope.launch {
+                    try {
+                        controller!!.providePermission(Permission.COARSE_LOCATION)
+                        permissionState = PermissionState.Granted
+                        _state.update { it.copy(location = "Loading...") }
+                        locationService.getCurrentLocation(
+                            onPermissionRequired = {
+                                // not possibke
+                            },
+                            onTurnOnGpsRequired = {
+                                viewModelScope.launch {
+                                    _oneTimeState.send(HomeOneTimeState.NavigateToGpsSettings)
+                                }
+                            },
+                            onError = { t->
+                                _state.update { it.copy(location = "Error: ${t.message}") }
+                            }
+                        ){ location ->
+                            println("Location permission: $location")
+                            _state.update { it.copy(location = location.toString()) }
+                        }
+                    }catch (e: DeniedAlwaysException){
+                        permissionState = PermissionState.DeniedAlways
+                        controller?.openAppSettings()
+                    }catch (e: DeniedException){
+                        permissionState = PermissionState.Denied
+                    }catch (e: RequestCanceledException){
+                        e.printStackTrace()
+                    }
+                }
             }
         }
     }

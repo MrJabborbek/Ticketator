@@ -19,5 +19,8 @@ sealed interface HomeAction {
     data class OnDateFromSelected(val date: Long) : HomeAction
     data class OnDateToSelected(val date: Long) : HomeAction
 
+    data object OnPermissionRequired : HomeAction
+    data object OnLocationClicked : HomeAction
+
 
 }

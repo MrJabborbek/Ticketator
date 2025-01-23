@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "559181342426",
+    "project_id": "ticketator-5e328",
+    "storage_bucket": "ticketator-5e328.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559181342426:android:3a90085453f5a22c91a7e3",
+        "android_client_info": {
+          "package_name": "com.fraggeil.ticketator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBx5aVzczzt2i83vHL62Ece0bMrokF5p5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
