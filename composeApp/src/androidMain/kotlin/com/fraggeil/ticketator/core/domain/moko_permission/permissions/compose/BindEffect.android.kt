@@ -16,7 +16,7 @@ import com.fraggeil.ticketator.core.domain.moko_permission.permissions.Permissio
 @Suppress("FunctionNaming")
 @Composable
 actual fun BindEffect(permissionsController: PermissionsController) {
-    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleOwner: LifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val context: Context = LocalContext.current
 
     LaunchedEffect(permissionsController, lifecycleOwner, context) {

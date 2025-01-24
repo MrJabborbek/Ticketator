@@ -47,7 +47,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fraggeil.ticketator.core.domain.DateTimeUtil
 import com.fraggeil.ticketator.core.domain.FormattedDateStyle
-import com.fraggeil.ticketator.core.domain.LocationService
+import com.fraggeil.ticketator.core.data.LocationService
 import com.fraggeil.ticketator.core.domain.NavigateToGpsSettings
 import com.fraggeil.ticketator.core.domain.permission.PermissionCallback
 import com.fraggeil.ticketator.core.domain.permission.PermissionStatus
@@ -122,8 +122,6 @@ fun HomeScreenOld(
     state: HomeState,
     onAction: (HomeAction) -> Unit
 ) {
-    val locationService = koinInject<LocationService>()
-    val coroutineScope = rememberCoroutineScope()
     var launchLocation by remember { mutableStateOf(value = false) }
     var isNavigateToLocation by remember { mutableStateOf(false) }
     var launchSetting by remember { mutableStateOf(value = false) }
@@ -148,28 +146,6 @@ fun HomeScreenOld(
             }
         }
     })
-
-    LaunchedEffect(getLocations){
-        coroutineScope.launch {
-            try {
-                locationService.getCurrentLocation(
-                    onPermissionRequired = {
-                        launchLocation = true
-                        getLocations = false
-                    },
-                    onTurnOnGpsRequired = {
-                        isNavigateToLocation = true
-                        getLocations = false
-                    }
-                ){ location ->
-                    println("Location: $location")
-                }
-            } catch (e: Exception) {
-                println("Location: $e")
-            }
-        }
-    }
-
 
     val isSelectFromVisible = remember { mutableStateOf(false) }
     val isSelectToVisible = remember { mutableStateOf(false) }

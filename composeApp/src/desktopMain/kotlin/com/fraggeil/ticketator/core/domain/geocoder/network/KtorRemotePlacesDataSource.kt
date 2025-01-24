@@ -1,7 +1,9 @@
 package com.fraggeil.ticketator.core.domain.geocoder.network
 
 
+import com.fraggeil.ticketator.core.domain.geocoder.geocode_response.GeocodeResponse
 import com.fraggeil.ticketator.core.domain.geocoder.place.Places
+import dev.jordond.compass.InternalCompassApi
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 
@@ -11,13 +13,14 @@ class KtorRemotePlacesDataSource(
     private val httpClient: HttpClient
 ): RemotePlacesDataSource {
 
+    @OptIn(InternalCompassApi::class)
     override suspend fun searchPlacesData(
         latitude: Double,
         longitude: Double,
         apiKey: String,
         resultLimit: Int?,
-    ): Places? {
-        return safeCall<Places> {
+    ): GeocodeResponse? {
+        return safeCall<GeocodeResponse> {
             httpClient.get(
                 urlString = "$BASE_URL?latlng=$latitude,$longitude&key=$apiKey"
             )

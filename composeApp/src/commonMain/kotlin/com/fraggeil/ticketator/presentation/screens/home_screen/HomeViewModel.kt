@@ -7,14 +7,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.Constants
-import com.fraggeil.ticketator.core.domain.LocationService
-import com.fraggeil.ticketator.core.domain.createGeocoder
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.DeniedAlwaysException
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.DeniedException
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.Permission
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.PermissionState
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.PermissionsController
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.RequestCanceledException
+import com.fraggeil.ticketator.core.domain.result.DataError
 import com.fraggeil.ticketator.core.domain.result.onError
 import com.fraggeil.ticketator.core.domain.result.onSuccess
 import com.fraggeil.ticketator.domain.model.Filter
@@ -37,14 +36,13 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val snackbarHostState: SnackbarHostState,
     private val homeRepository: HomeRepository,
-    private val locationService: LocationService
 ): ViewModel() {
     private var controller: PermissionsController? = null
 
     private var fetchAllRegionsJob: Job? = null
     private var fetchToRegionsJob: Job? = null
     private var fetchAllPostsJob: Job? = null
-    private var observeCurrentLocationJob: Job? = null
+    private var fetchCurrentLocationJob: Job? = null
     private var observeIsThereNewNotificationsJob: Job? = null
 
     private var isInitialized = false
@@ -54,39 +52,6 @@ class HomeViewModel(
     var permissionState by mutableStateOf(PermissionState.NotDetermined)
         private set
 
-    fun provideController(controller: PermissionsController){
-        this.controller = controller
-        viewModelScope.launch {
-            permissionState = controller.getPermissionState(Permission.COARSE_LOCATION)
-        }
-    }
-
-    fun provideOrRequestLocationPermission() {
-        if (controller == null) return
-        viewModelScope.launch {
-            try {
-                controller!!.providePermission(Permission.COARSE_LOCATION)
-                permissionState = PermissionState.Granted
-                locationService.getCurrentLocation(
-                    onPermissionRequired = {
-                        provideOrRequestLocationPermission()
-                    },
-                    onTurnOnGpsRequired = {
-
-                    }
-                ){
-                    println("Location permission: $it")
-                }
-            }catch (e: DeniedAlwaysException){
-                permissionState = PermissionState.DeniedAlways
-            }catch (e: DeniedException){
-                permissionState = PermissionState.Denied
-            }catch (e: RequestCanceledException){
-                e.printStackTrace()
-            }
-        }
-    }
-
     private val _state = MutableStateFlow(HomeState())
     val state = _state
         .onStart {
@@ -94,16 +59,16 @@ class HomeViewModel(
                 isInitialized = true
                 fetchAllRegions()
                 fetchAllPosts()
-                observeCurrentLocation()
+                fetchCurrentLocation()
                 observeIsThereNewNotifications()
-
-
-                viewModelScope.launch {
-                    val geocoder = createGeocoder()
-                    val places = geocoder.reverse(41.311081, 69.240515).getOrNull()
-                    println("Location permission: place: $places")
-
-                }
+//
+//
+//                viewModelScope.launch {
+//                    val geocoder = createGeocoder()
+//                    val places = geocoder.reverse(41.311081, 69.240515).getOrNull()
+//                    println("Location permission: place: $places")
+//
+//                }
 
             }
         }
@@ -191,36 +156,31 @@ class HomeViewModel(
 
             HomeAction.OnLocationClicked -> {
                 if (controller == null) return
-                viewModelScope.launch {
-                    try {
-                        controller!!.providePermission(Permission.COARSE_LOCATION)
-                        permissionState = PermissionState.Granted
-                        _state.update { it.copy(location = "Loading...") }
-                        locationService.getCurrentLocation(
-                            onPermissionRequired = {
-                                // not possibke
-                            },
-                            onTurnOnGpsRequired = {
-                                viewModelScope.launch {
-                                    _oneTimeState.send(HomeOneTimeState.NavigateToGpsSettings)
-                                }
-                            },
-                            onError = { t->
-                                _state.update { it.copy(location = "Error: ${t.message}") }
-                            }
-                        ){ location ->
-                            println("Location permission: $location")
-                            _state.update { it.copy(location = location.toString()) }
-                        }
-                    }catch (e: DeniedAlwaysException){
-                        permissionState = PermissionState.DeniedAlways
-                        controller?.openAppSettings()
-                    }catch (e: DeniedException){
-                        permissionState = PermissionState.Denied
-                    }catch (e: RequestCanceledException){
-                        e.printStackTrace()
-                    }
-                }
+                fetchCurrentLocation()
+            }
+        }
+    }
+
+    fun provideController(controller: PermissionsController){
+        this.controller = controller
+        viewModelScope.launch {
+            permissionState = controller.getPermissionState(Permission.COARSE_LOCATION)
+        }
+    }
+
+    private fun provideOrRequestLocationPermission() {
+        if (controller == null) return
+        viewModelScope.launch {
+            try {
+                controller!!.providePermission(Permission.COARSE_LOCATION)
+                permissionState = PermissionState.Granted
+            }catch (e: DeniedAlwaysException){
+                permissionState = PermissionState.DeniedAlways
+                controller?.openAppSettings()
+            }catch (e: DeniedException){
+                permissionState = PermissionState.Denied
+            }catch (e: RequestCanceledException){
+                e.printStackTrace()
             }
         }
     }
@@ -269,17 +229,47 @@ class HomeViewModel(
         }
     }
 
-    private fun observeCurrentLocation() {
-        observeCurrentLocationJob?.cancel()
-        _state.update { it.copy(isLoadingCurrentLocation = true) }
-        observeCurrentLocationJob = homeRepository.observeCurrentLocation()
-            .onStart {
-                delay(Constants.FAKE_DELAY_TO_TEST)
-            }
-            .onEach { data ->
-                _state.update { it.copy(isLoadingCurrentLocation = false, currentLocation = data) }
-            }
-            .launchIn(viewModelScope)
+    private fun fetchCurrentLocation() {
+        fetchCurrentLocationJob?.cancel()
+        _state.update { it.copy(isLoadingCurrentLocation = true, location = "Loading...") }
+        fetchCurrentLocationJob = viewModelScope.launch {
+            homeRepository.fetchCurrentLocation()
+                .onSuccess { data ->
+                    _state.update {
+                        it.copy(
+                            isLoadingCurrentLocation = false,
+                            location = data
+                        )
+                    }
+                }
+                .onError { error ->
+                    when (error) {
+                        DataError.LocationError.NO_PERMISSION -> {
+                            provideOrRequestLocationPermission()
+                            _state.update {
+                                it.copy(error = "No permission")
+                            }
+                        }
+                        DataError.LocationError.NO_GPS ->{
+                            _oneTimeState.send(HomeOneTimeState.NavigateToGpsSettings)
+                            _state.update {
+                                it.copy(error = "Turn on GPS")
+                            }
+                        }
+                        DataError.LocationError.UNKNOWN -> {
+                            _state.update {
+                                it.copy(error = "Error fetching location")
+                            }
+                        }
+
+                        DataError.LocationError.NO_GEOLOCATION -> {
+                            _state.update {
+                                it.copy(error = "Error fetching location")
+                            }
+                        }
+                    }
+                }
+        }
     }
 
     private fun observeIsThereNewNotifications(){

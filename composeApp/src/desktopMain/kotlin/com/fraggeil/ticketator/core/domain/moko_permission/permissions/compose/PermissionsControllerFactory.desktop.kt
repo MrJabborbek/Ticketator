@@ -11,8 +11,4 @@ actual fun rememberPermissionsControllerFactory(): PermissionsControllerFactory 
     }
 }
 
-actual class PermissionsControllerFactoryClass {
-    actual fun create(): PermissionsController {
-        return PermissionsController()
-    }
-}
+

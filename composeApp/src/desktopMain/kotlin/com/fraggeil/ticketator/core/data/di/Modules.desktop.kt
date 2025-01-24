@@ -1,9 +1,9 @@
 package com.fraggeil.ticketator.core.data.di
 
 import coil3.PlatformContext
-import com.fraggeil.ticketator.core.domain.CustomGeocoder
+import com.fraggeil.ticketator.core.data.CustomGeocoder
 import com.fraggeil.ticketator.core.domain.DialPhoneNumber
-import com.fraggeil.ticketator.core.domain.LocationService
+import com.fraggeil.ticketator.core.data.LocationService
 import com.fraggeil.ticketator.core.domain.OpenUrlInBrowser
 import com.fraggeil.ticketator.core.domain.geocoder.network.HttpClientFactory
 import com.fraggeil.ticketator.core.domain.geocoder.network.KtorRemotePlacesDataSource
@@ -32,4 +32,5 @@ actual val platformModule: Module
             apiKey = "AIzaSyBetCt0piP5xjqn9Hj3LBKI1MdYxR1ZjjE",
             remotePlacesDataSource = get()
         ) }
+
     }

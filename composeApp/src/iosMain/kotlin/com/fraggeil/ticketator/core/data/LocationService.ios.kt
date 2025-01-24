@@ -1,4 +1,4 @@
-package com.fraggeil.ticketator.core.domain
+package com.fraggeil.ticketator.core.data
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
@@ -10,9 +10,6 @@ import platform.CoreLocation.kCLLocationAccuracyBest
 import platform.Foundation.NSError
 import platform.darwin.NSObject
 import kotlin.concurrent.AtomicReference
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 // Implement the LocationService in iOS
 actual class LocationService  {
@@ -47,7 +44,7 @@ actual class LocationService  {
 
 
     // Implement the getCurrentLocation() method
-    actual suspend fun getCurrentLocation(
+    actual fun getCurrentLocation(
         onPermissionRequired: () -> Unit,
         onTurnOnGpsRequired: () -> Unit,
         onError: (Throwable) -> Unit,

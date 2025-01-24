@@ -1,5 +1,6 @@
 package com.fraggeil.ticketator.domain.repository
 
+import com.fraggeil.ticketator.core.domain.result.DataError
 import com.fraggeil.ticketator.core.domain.result.Error
 import com.fraggeil.ticketator.core.domain.result.Result
 import com.fraggeil.ticketator.domain.model.uzbekistan.District
@@ -12,7 +13,7 @@ interface HomeRepository {
     suspend fun getToRegions(fromRegion: Region): Result<List<Region>, Error>
     suspend fun getMostPopularRegions(): Result<List<Region>, Error>
     suspend fun getAllPosts(): Result<List<Post>, Error>
-    fun observeCurrentLocation(): Flow<Pair<Region, District>>
+    suspend fun fetchCurrentLocation(): Result<String, DataError.LocationError>
     fun observeIsThereNewNotifications(): Flow<Boolean>
 
 }

@@ -1,4 +1,4 @@
-package com.fraggeil.ticketator.core.domain
+package com.fraggeil.ticketator.core.data
 
 import dev.jordond.compass.geocoder.Geocoder
 import dev.jordond.compass.geocoder.mobile

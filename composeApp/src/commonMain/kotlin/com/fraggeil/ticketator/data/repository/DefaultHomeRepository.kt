@@ -1,18 +1,30 @@
 package com.fraggeil.ticketator.data.repository
 
+import com.fraggeil.ticketator.core.data.Location
+import com.fraggeil.ticketator.core.data.LocationService
 import com.fraggeil.ticketator.core.domain.Constants
+import com.fraggeil.ticketator.core.domain.result.DataError
 import com.fraggeil.ticketator.core.domain.result.Error
 import com.fraggeil.ticketator.core.domain.result.Result
 import com.fraggeil.ticketator.domain.model.uzbekistan.District
 import com.fraggeil.ticketator.domain.model.Post
 import com.fraggeil.ticketator.domain.model.uzbekistan.Region
 import com.fraggeil.ticketator.domain.repository.HomeRepository
+import dev.jordond.compass.geocoder.Geocoder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 import kotlin.random.Random
 
 class DefaultHomeRepository(
+    private val locationService: LocationService,
+    private val geocoder: Geocoder
 //    private val remotePlacesDataSource: KtorRemotePlacesDataSource
 ): HomeRepository {
     override suspend fun getRegions(): Result<List<Region>, Error> {
@@ -43,12 +55,46 @@ class DefaultHomeRepository(
         return Result.Success(testPosts)
     }
 
-    override fun observeCurrentLocation(): Flow<Pair<Region, District>> {
-        val region = regions.random()
-        val district = region.districts.random()
-        return flowOf(Pair(region, district)) //TODO
+    override suspend fun fetchCurrentLocation(): Result<String, DataError.LocationError> {
+        return suspendCancellableCoroutine { continuation ->
+            locationService.getCurrentLocation(
+                onPermissionRequired = {
+                    continuation.resume(Result.Error(DataError.LocationError.NO_PERMISSION))
+                },
+                onTurnOnGpsRequired = {
+                    continuation.resume(Result.Error(DataError.LocationError.NO_GPS))
+                },
+                onError = {
+                    continuation.resume(Result.Error(DataError.LocationError.UNKNOWN))
+                }
+            ){ location: Location ->
+                CoroutineScope(Dispatchers.IO).launch {
+//                    geocoder.reverse(location.latitude, location.longitude)
+                    geocoder.reverse(41.59450236761759, 64.31396280687841)
+                        .onSuccess { places ->
+                            val place = places.firstOrNull { it.toString().contains("tuman", ignoreCase = true) || it.toString().contains("shahar", ignoreCase = true) || it.toString().contains("viloyat", ignoreCase = true)}
+                                ?: places.firstOrNull { it.toString().contains("туман", ignoreCase = true) || it.toString().contains("шаҳар", ignoreCase = true) || it.toString().contains("вилоят", ignoreCase = true)}
+                                ?: places.firstOrNull()
+                            place?.let {
+                                val district = it.subLocality?:it.subAdministrativeArea ?: it.subThoroughfare ?: it.street ?:""
+                                val region = it.locality?:it.administrativeArea ?: it.thoroughfare ?: it.country ?:""
 
+                                val response = "${if (district.isNotBlank()) "$district, " else ""}$region"
+
+                                continuation.resume(
+                                    if (response.isNotBlank()) Result.Success(response) else Result.Error(DataError.LocationError.NO_GEOLOCATION)
+                                )
+                            }
+
+                        }
+                        .onFailed {
+                            continuation.resume(Result.Error(DataError.LocationError.NO_GEOLOCATION))
+                        }
+                }
+            }
+        }
     }
+
 
     override fun observeIsThereNewNotifications(): Flow<Boolean> {
         return flowOf(Random.nextBoolean()) //TODO

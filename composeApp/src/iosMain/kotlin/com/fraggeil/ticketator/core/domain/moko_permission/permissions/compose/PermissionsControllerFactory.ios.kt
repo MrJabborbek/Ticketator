@@ -16,9 +16,3 @@ actual fun rememberPermissionsControllerFactory(): PermissionsControllerFactory 
         }
     }
 }
-
-actual class PermissionsControllerFactoryClass {
-    actual fun create(): com.fraggeil.ticketator.core.domain.moko_permission.permissions.PermissionsController {
-        return PermissionsController()
-    }
-}

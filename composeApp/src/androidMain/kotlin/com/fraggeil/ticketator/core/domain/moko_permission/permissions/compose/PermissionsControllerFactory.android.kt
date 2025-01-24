@@ -20,9 +20,3 @@ actual fun rememberPermissionsControllerFactory(): PermissionsControllerFactory 
         }
     }
 }
-
-actual class PermissionsControllerFactoryClass(private val context: Context) {
-    actual fun create(): PermissionsController {
-        return PermissionsController(context)
-    }
-}

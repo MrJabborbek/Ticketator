@@ -21,4 +21,11 @@ sealed interface DataError: Error {
         PRODUCT_COUNT_EXCEEDED,
         USER_NOT_FOUND
     }
+
+    enum class LocationError: DataError {
+        NO_PERMISSION,
+        NO_GPS,
+        NO_GEOLOCATION,
+        UNKNOWN
+    }
 }

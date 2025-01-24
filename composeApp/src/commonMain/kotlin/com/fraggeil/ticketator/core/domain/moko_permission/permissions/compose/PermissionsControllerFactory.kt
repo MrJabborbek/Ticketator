@@ -15,7 +15,3 @@ fun interface PermissionsControllerFactory {
 
 @Composable
 expect fun rememberPermissionsControllerFactory(): PermissionsControllerFactory
-
-expect class PermissionsControllerFactoryClass {
-    fun create(): PermissionsController
-}

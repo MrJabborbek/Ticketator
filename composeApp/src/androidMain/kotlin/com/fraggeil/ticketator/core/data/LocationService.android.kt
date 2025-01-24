@@ -1,4 +1,4 @@
-package com.fraggeil.ticketator.core.domain
+package com.fraggeil.ticketator.core.data
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -8,13 +8,10 @@ import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 // Implement the LocationService in Android
 actual class LocationService(private val context: Context)  {
-
+    private var fusedLocationClient: FusedLocationProviderClient? = null
     // Initialize the FusedLocationProviderClient
 //    private val fusedLocationClient by lazy {
 //        LocationServices.getFusedLocationProviderClient(context)
@@ -22,7 +19,7 @@ actual class LocationService(private val context: Context)  {
 
 
     @SuppressLint("MissingPermission")
-    actual suspend fun getCurrentLocation(
+    actual fun getCurrentLocation(
         onPermissionRequired: () -> Unit,
         onTurnOnGpsRequired: () -> Unit,
         onError: (Throwable) -> Unit,
@@ -38,8 +35,10 @@ actual class LocationService(private val context: Context)  {
             return
         }
 
-//        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-        LocationServices.getFusedLocationProviderClient(context).lastLocation.addOnSuccessListener { location ->
+        if (fusedLocationClient == null){
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        }
+        fusedLocationClient!!.lastLocation.addOnSuccessListener { location ->
             location?.let {
                 onSuccessful(Location(it.latitude, it.longitude))
             } ?: run {

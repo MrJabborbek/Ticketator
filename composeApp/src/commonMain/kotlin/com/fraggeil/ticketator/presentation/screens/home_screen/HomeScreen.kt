@@ -47,7 +47,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fraggeil.ticketator.core.domain.DateTimeUtil
 import com.fraggeil.ticketator.core.domain.FormattedDateStyle
-import com.fraggeil.ticketator.core.domain.LocationService
 import com.fraggeil.ticketator.core.domain.NavigateToGpsSettings
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.PermissionState
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.compose.BindEffect
@@ -76,7 +75,6 @@ import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.model.FilterType
 import com.fraggeil.ticketator.domain.model.Post
 import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.koinInject
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.bell
 import ticketator.composeapp.generated.resources.finish

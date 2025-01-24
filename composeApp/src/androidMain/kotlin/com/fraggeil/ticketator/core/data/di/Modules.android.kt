@@ -1,7 +1,7 @@
 package com.fraggeil.ticketator.core.data.di
 
 import com.fraggeil.ticketator.core.domain.DialPhoneNumber
-import com.fraggeil.ticketator.core.domain.LocationService
+import com.fraggeil.ticketator.core.data.LocationService
 import com.fraggeil.ticketator.core.domain.OpenUrlInBrowser
 import com.fraggeil.ticketator.core.domain.imageLoader
 import com.fraggeil.ticketator.data.database.DatabaseFactory
