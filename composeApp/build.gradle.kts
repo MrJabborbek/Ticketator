@@ -52,6 +52,8 @@ kotlin {
 
             implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
 
+            implementation(libs.compass.geocoder.mobile)
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -86,6 +88,7 @@ kotlin {
 
 //            api("dev.icerock.moko:permissions:0.18.1")
 //            api("dev.icerock.moko:permissions-compose:0.18.1")
+            implementation(libs.compass.geocoder)
 
         }
         desktopMain.dependencies {
@@ -93,9 +96,13 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
 
             implementation(libs.ktor.client.okhttp)
+
+            implementation(libs.compass.geocoder.web.googlemaps)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
+
+            implementation(libs.compass.geocoder.mobile)
         }
         dependencies {
             ksp(libs.androidx.room.compiler)

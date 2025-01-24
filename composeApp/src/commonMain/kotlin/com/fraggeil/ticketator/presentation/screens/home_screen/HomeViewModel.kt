@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.Constants
 import com.fraggeil.ticketator.core.domain.LocationService
+import com.fraggeil.ticketator.core.domain.createGeocoder
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.DeniedAlwaysException
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.DeniedException
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.Permission
@@ -95,6 +96,15 @@ class HomeViewModel(
                 fetchAllPosts()
                 observeCurrentLocation()
                 observeIsThereNewNotifications()
+
+
+                viewModelScope.launch {
+                    val geocoder = createGeocoder()
+                    val places = geocoder.reverse(41.311081, 69.240515).getOrNull()
+                    println("Location permission: place: $places")
+
+                }
+
             }
         }
         .stateIn(

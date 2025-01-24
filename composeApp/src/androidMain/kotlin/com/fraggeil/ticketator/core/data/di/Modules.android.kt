@@ -5,6 +5,8 @@ import com.fraggeil.ticketator.core.domain.LocationService
 import com.fraggeil.ticketator.core.domain.OpenUrlInBrowser
 import com.fraggeil.ticketator.core.domain.imageLoader
 import com.fraggeil.ticketator.data.database.DatabaseFactory
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.engine.okhttp.OkHttp
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -17,5 +19,6 @@ actual val platformModule: Module
         single { imageLoader(get()) }
         single { DatabaseFactory(get()) }
         single { LocationService(get()) }
+        single<HttpClientEngine> { OkHttp.create() }
 
     }

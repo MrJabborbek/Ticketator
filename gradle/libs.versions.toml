@@ -16,12 +16,14 @@ coil3 = "3.0.4"
 libphonenumber = "0.1.1"
 navigationCompose = "2.8.0-alpha10"
 ktor = "3.0.1"
+ktor2 = "3.0.0-wasm2"
 kotlinxDatetime = "0.6.1"
 playServicesLocation = "21.3.0"
 qrKit = "1.0.8"
 ksp = "2.0.21-1.0.26"
 sqlite = "2.5.0-alpha11"
 room = "2.7.0-alpha11"
+compass = "1.2.4"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -59,7 +61,12 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
-
+compass-geocoder = { module = "dev.jordond.compass:geocoder", version.ref = "compass" }
+compass-geocoder-mobile = { module = "dev.jordond.compass:geocoder-mobile", version.ref = "compass" }
+compass-geocoder-web = { module = "dev.jordond.compass:geocoder-web", version.ref = "compass" }
+#compass-geocoder-web-googlemaps = { module = "dev.jordond.compass:geocoder-googlemaps", version.ref = "compass" }
+compass-geocoder-web-googlemaps = { module = "dev.jordond.compass:autocomplete-geocoder-googlemaps", version.ref = "compass" }
+compass-geocoder-web-mapbox = { module = "dev.jordond.compass:geocoder-mapbox", version.ref = "compass" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

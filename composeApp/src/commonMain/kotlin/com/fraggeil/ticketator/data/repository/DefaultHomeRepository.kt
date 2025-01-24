@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlin.random.Random
 
-class DefaultHomeRepository: HomeRepository {
+class DefaultHomeRepository(
+//    private val remotePlacesDataSource: KtorRemotePlacesDataSource
+): HomeRepository {
     override suspend fun getRegions(): Result<List<Region>, Error> {
         delay(Constants.FAKE_DELAY_TO_TEST)
         return Result.Success(regions)
@@ -30,6 +32,14 @@ class DefaultHomeRepository: HomeRepository {
 
     override suspend fun getAllPosts(): Result<List<Post>, Error> {
         delay(Constants.FAKE_DELAY_TO_TEST)
+//        val places = remotePlacesDataSource.searchPlacesData(
+//            latitude = 41.311081,
+//            longitude = 69.240515,
+//            apiKey = "AIzaSyBetCt0piP5xjqn9Hj3LBKI1MdYxR1ZjjE"
+//        )
+
+//        println("Placessss: $places")
+
         return Result.Success(testPosts)
     }
 

@@ -54,6 +54,8 @@ val sharedModule = module {
 //        get<ImageLoader>().create()
 //    }
 //    single { ::DefaultCategoriesRepository }
+
+
     single {
         get<DatabaseFactory>().create()
             .setDriver(BundledSQLiteDriver())
