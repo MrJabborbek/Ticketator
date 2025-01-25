@@ -2,6 +2,7 @@ package com.fraggeil.ticketator.core.data.di
 
 import com.fraggeil.ticketator.core.domain.DialPhoneNumber
 import com.fraggeil.ticketator.core.data.LocationService
+import com.fraggeil.ticketator.core.data.network.HttpClientFactory
 import com.fraggeil.ticketator.core.domain.OpenUrlInBrowser
 import com.fraggeil.ticketator.core.domain.imageLoader
 import com.fraggeil.ticketator.data.database.DatabaseFactory
@@ -20,5 +21,6 @@ actual val platformModule: Module
         single { DatabaseFactory(get()) }
         single { LocationService(get()) }
         single<HttpClientEngine> { OkHttp.create() }
+        single { HttpClientFactory.create(get()) }
 
     }

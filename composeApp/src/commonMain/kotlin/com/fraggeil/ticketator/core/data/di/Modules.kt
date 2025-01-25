@@ -2,6 +2,7 @@ package com.fraggeil.ticketator.core.data.di
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.fraggeil.ticketator.core.data.LocationFromIP
 import com.fraggeil.ticketator.core.data.createGeocoder
 import com.fraggeil.ticketator.core.domain.Platform
 import com.fraggeil.ticketator.data.database.Database
@@ -63,6 +64,7 @@ val sharedModule = module {
             .build()
     }
     single { createGeocoder() }
+    single { LocationFromIP(get()) }
     single { get<Database>().dao }
     single { Platform() }
     singleOf(::DefaultProfileRepository).bind<ProfileRepository>()

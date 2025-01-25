@@ -1,8 +1,11 @@
 package com.fraggeil.ticketator.core.domain.geocoder.network
 
 
+import com.fraggeil.ticketator.core.data.network.safeCall
 import com.fraggeil.ticketator.core.domain.geocoder.geocode_response.GeocodeResponse
 import com.fraggeil.ticketator.core.domain.geocoder.place.Places
+import com.fraggeil.ticketator.core.domain.result.DataError
+import com.fraggeil.ticketator.core.domain.result.Result
 import dev.jordond.compass.InternalCompassApi
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -19,7 +22,7 @@ class KtorRemotePlacesDataSource(
         longitude: Double,
         apiKey: String,
         resultLimit: Int?,
-    ): GeocodeResponse? {
+    ): Result<GeocodeResponse, DataError> {
         return safeCall<GeocodeResponse> {
             httpClient.get(
                 urlString = "$BASE_URL?latlng=$latitude,$longitude&key=$apiKey"

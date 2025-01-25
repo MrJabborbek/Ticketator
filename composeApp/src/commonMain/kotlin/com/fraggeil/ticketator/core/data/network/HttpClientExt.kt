@@ -1,5 +1,6 @@
-package com.fraggeil.ticketator.core.domain.geocoder.network
-
+package com.fraggeil.ticketator.core.data.network
+import com.fraggeil.ticketator.core.domain.result.DataError
+import com.fraggeil.ticketator.core.domain.result.Result
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.SocketTimeoutException
@@ -10,16 +11,16 @@ import kotlin.coroutines.coroutineContext
 
 suspend inline fun <reified T> safeCall(
     execute: () -> HttpResponse
-): T? {
+): Result<T, DataError.Remote> {
     val response = try {
         execute()
     } catch(e: SocketTimeoutException) {
-        return null
+        return Result.Error(DataError.Remote.REQUEST_TIMEOUT)
     } catch(e: UnresolvedAddressException) {
-        return null
+        return Result.Error(DataError.Remote.NO_INTERNET)
     } catch (e: Exception) {
         coroutineContext.ensureActive()
-        return null
+        return Result.Error(DataError.Remote.UNKNOWN)
     }
 
     return responseToResult(response)
@@ -27,18 +28,18 @@ suspend inline fun <reified T> safeCall(
 
 suspend inline fun <reified T> responseToResult(
     response: HttpResponse
-): T? {
+): Result<T, DataError.Remote> {
     return when(response.status.value) {
         in 200..299 -> {
             try {
-           response.body<T>()
+                Result.Success(response.body<T>())
             } catch(e: NoTransformationFoundException) {
-                null
+                Result.Error(DataError.Remote.SERIALIZATION)
             }
         }
-        408 -> null
-        429 -> null
-        in 500..599 -> null
-        else -> null
+        408 -> Result.Error(DataError.Remote.REQUEST_TIMEOUT)
+        429 -> Result.Error(DataError.Remote.TOO_MANY_REQUESTS)
+        in 500..599 -> Result.Error(DataError.Remote.SERVER)
+        else -> Result.Error(DataError.Remote.UNKNOWN)
     }
 }

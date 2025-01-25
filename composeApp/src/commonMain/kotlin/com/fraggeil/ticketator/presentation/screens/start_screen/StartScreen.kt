@@ -76,7 +76,7 @@ private fun StartScreen(
         }
 
         Text(
-            text = "Search For Flights To your Destination",
+            text = "Search For Tickets To your Destination",
             textAlign = TextAlign.Center,
             maxLines = 4,
             style = AppTypography().displayMedium.copy(

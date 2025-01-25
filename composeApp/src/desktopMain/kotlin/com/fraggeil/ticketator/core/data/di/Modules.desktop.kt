@@ -4,8 +4,8 @@ import coil3.PlatformContext
 import com.fraggeil.ticketator.core.data.CustomGeocoder
 import com.fraggeil.ticketator.core.domain.DialPhoneNumber
 import com.fraggeil.ticketator.core.data.LocationService
+import com.fraggeil.ticketator.core.data.network.HttpClientFactory
 import com.fraggeil.ticketator.core.domain.OpenUrlInBrowser
-import com.fraggeil.ticketator.core.domain.geocoder.network.HttpClientFactory
 import com.fraggeil.ticketator.core.domain.geocoder.network.KtorRemotePlacesDataSource
 import com.fraggeil.ticketator.core.domain.geocoder.network.RemotePlacesDataSource
 import com.fraggeil.ticketator.core.domain.imageLoader
@@ -27,6 +27,7 @@ actual val platformModule: Module
         single { LocationService() }
         single<HttpClientEngine> { OkHttp.create() }
         single { HttpClientFactory.create(get()) }
+
         singleOf(::KtorRemotePlacesDataSource).bind<RemotePlacesDataSource>()
         single { CustomGeocoder(
             apiKey = "AIzaSyBetCt0piP5xjqn9Hj3LBKI1MdYxR1ZjjE",

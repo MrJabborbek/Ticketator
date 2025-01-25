@@ -59,7 +59,7 @@ class HomeViewModel(
                 isInitialized = true
                 fetchAllRegions()
                 fetchAllPosts()
-                fetchCurrentLocation()
+                fetchCurrentLocation(false)
                 observeIsThereNewNotifications()
 //
 //
@@ -156,7 +156,7 @@ class HomeViewModel(
 
             HomeAction.OnLocationClicked -> {
                 if (controller == null) return
-                fetchCurrentLocation()
+                fetchCurrentLocation(true)
             }
         }
     }
@@ -229,7 +229,7 @@ class HomeViewModel(
         }
     }
 
-    private fun fetchCurrentLocation() {
+    private fun fetchCurrentLocation(isActionsAllowed: Boolean) {
         fetchCurrentLocationJob?.cancel()
         _state.update { it.copy(isLoadingCurrentLocation = true, location = "Loading...") }
         fetchCurrentLocationJob = viewModelScope.launch {
@@ -244,27 +244,27 @@ class HomeViewModel(
                 }
                 .onError { error ->
                     when (error) {
-                        DataError.LocationError.NO_PERMISSION -> {
-                            provideOrRequestLocationPermission()
+                        is DataError.LocationError.NO_PERMISSION -> {
+                            if (isActionsAllowed) provideOrRequestLocationPermission()
                             _state.update {
-                                it.copy(error = "No permission")
+                                it.copy(location = error.placeHolder ?:"No permission")
                             }
                         }
-                        DataError.LocationError.NO_GPS ->{
-                            _oneTimeState.send(HomeOneTimeState.NavigateToGpsSettings)
+                        is DataError.LocationError.NO_GPS ->{
+                            if (isActionsAllowed) _oneTimeState.send(HomeOneTimeState.NavigateToGpsSettings)
                             _state.update {
-                                it.copy(error = "Turn on GPS")
+                                it.copy(location = error.placeHolder ?:"Turn on GPS")
                             }
                         }
-                        DataError.LocationError.UNKNOWN -> {
+                        is DataError.LocationError.UNKNOWN -> {
                             _state.update {
-                                it.copy(error = "Error fetching location")
+                                it.copy(location = error.placeHolder ?: "Error fetching location")
                             }
                         }
 
-                        DataError.LocationError.NO_GEOLOCATION -> {
+                        is DataError.LocationError.NO_GEOLOCATION -> {
                             _state.update {
-                                it.copy(error = "Error fetching location")
+                                it.copy(location = error.placeHolder ?:"Error fetching location")
                             }
                         }
                     }

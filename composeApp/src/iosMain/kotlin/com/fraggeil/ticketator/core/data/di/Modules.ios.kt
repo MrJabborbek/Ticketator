@@ -3,6 +3,7 @@ package com.fraggeil.ticketator.core.data.di
 import coil3.PlatformContext
 import com.fraggeil.ticketator.core.domain.DialPhoneNumber
 import com.fraggeil.ticketator.core.data.LocationService
+import com.fraggeil.ticketator.core.data.network.HttpClientFactory
 import com.fraggeil.ticketator.core.domain.OpenUrlInBrowser
 import com.fraggeil.ticketator.core.domain.imageLoader
 import com.fraggeil.ticketator.data.database.DatabaseFactory
@@ -20,6 +21,6 @@ actual val platformModule: Module
         single { DatabaseFactory() }
         single { LocationService() }
         single<HttpClientEngine> { Darwin.create() }
-
+        single { HttpClientFactory.create(get()) }
 
     }

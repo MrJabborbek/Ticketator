@@ -172,22 +172,22 @@ fun App() {
                                 )
                                 MyNavigationBarItem(
                                     text = Strings.Tickets.value(),
-                                    selectedPainter = painterResource(Res.drawable.ticket_filled), //TODO
+                                    selectedPainter = painterResource(Res.drawable.ticket_filled),
                                     unselectedPainter = painterResource(Res.drawable.ticket),
                                     onClick = {
                                         if (navBackStackEntry?.destination?.route != Route.Tickets.route){
-                                            navigate(Route.Tickets,true)
+                                            navigate(Route.Tickets,false)
                                         }
                                     },
                                     isSelected = navBackStackEntry?.destination?.route == Route.Tickets.route
                                 )
                                 MyNavigationBarItem(
                                     text = Strings.Profile.value(),
-                                    selectedPainter = painterResource(Res.drawable.person_filled), //TODO
+                                    selectedPainter = painterResource(Res.drawable.person_filled),
                                     unselectedPainter = painterResource(Res.drawable.person),
                                     onClick = {
                                         if (navBackStackEntry?.destination?.route != Route.Profile.route){
-                                            navigate(Route.Profile,true)
+                                            navigate(Route.Profile,false)
                                         }
                                     },
                                     isSelected = navBackStackEntry?.destination?.route == Route.Profile.route
@@ -346,7 +346,7 @@ fun App() {
                                 },
                                 navigateToCardInfo = {
                                     selectedJourneyViewModel.onSelectItem(it)
-                                    navigate(Route.CardInfo, true)
+                                    navigate(Route.CardInfo, false)
                                 }
                             )
                         }
@@ -421,7 +421,7 @@ fun App() {
                                     navController.navigateUp()
                                 },
                                 navigateToHome = {
-                                    navigate(Route.Home, true)
+                                    navigate(Route.Home, false)
                                 }
                             )
                         }

@@ -22,10 +22,10 @@ sealed interface DataError: Error {
         USER_NOT_FOUND
     }
 
-    enum class LocationError: DataError {
-        NO_PERMISSION,
-        NO_GPS,
-        NO_GEOLOCATION,
-        UNKNOWN
+    sealed class LocationError: DataError {
+        data class NO_PERMISSION(val message: String? = null, val placeHolder: String? = null): LocationError()
+        data class NO_GPS(val message: String? = null, val placeHolder: String? = null): LocationError()
+        data class NO_GEOLOCATION(val message: String? = null, val placeHolder: String? = null): LocationError()
+        data class UNKNOWN(val message: String? = null, val placeHolder: String? = null): LocationError()
     }
 }

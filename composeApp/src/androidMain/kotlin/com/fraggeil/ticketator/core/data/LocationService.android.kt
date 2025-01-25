@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 
 // Implement the LocationService in Android
@@ -18,13 +19,32 @@ actual class LocationService(private val context: Context)  {
 //    }
 
 
+
     @SuppressLint("MissingPermission")
     actual fun getCurrentLocation(
+        locationSource: LocationSource,
         onPermissionRequired: () -> Unit,
         onTurnOnGpsRequired: () -> Unit,
         onError: (Throwable) -> Unit,
         onSuccessful: (Location) -> Unit,
     ) {
+
+
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+
+        val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+        if (isNetworkEnabled && locationSource != LocationSource.GPS_ONLY){
+            val location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER,)
+            if (location != null){
+                onSuccessful(Location(location.latitude, location.longitude))
+                return
+            }
+        }
+
+
             if (!isPermissionGranted(context)){
                 onPermissionRequired()
                 return
@@ -56,6 +76,11 @@ private fun isGPSEnabled(context: Context): Boolean {
     return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 }
 
+private fun isNetworkEnabled(context: Context): Boolean {
+    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+}
+
 private fun isPermissionGranted(context: Context): Boolean{
     return ActivityCompat.checkSelfPermission(context,
         Manifest.permission.ACCESS_FINE_LOCATION
@@ -75,3 +100,4 @@ fun getCurrentLocation(
         onLocationFound(location)
     }
 }
+

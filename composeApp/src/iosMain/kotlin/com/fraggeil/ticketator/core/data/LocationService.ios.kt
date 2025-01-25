@@ -45,6 +45,7 @@ actual class LocationService  {
 
     // Implement the getCurrentLocation() method
     actual fun getCurrentLocation(
+        locationSource: LocationSource,
         onPermissionRequired: () -> Unit,
         onTurnOnGpsRequired: () -> Unit,
         onError: (Throwable) -> Unit,
