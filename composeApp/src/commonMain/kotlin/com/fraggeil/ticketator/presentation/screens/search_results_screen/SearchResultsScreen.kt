@@ -51,6 +51,7 @@ import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
+import com.fraggeil.ticketator.core.presentation.StatusBarColors
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyCalendarDateSelector
 import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
@@ -127,15 +128,16 @@ fun SearchResultsScreen(
 //                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            TopBar2(
+                text = "Journey Results",
+                isLeadingButtonVisible = true,
+                isTrailingButtonVisible = true,
+                trailingButtonIcon = painterResource(Res.drawable.filter),
+                onLeadingButtonClick = { onAction(SearchResultsAction.OnBackClicked) },
+                onTrailingButtonClick = { onAction(SearchResultsAction.OnFilterClicked) }
+            )
             state.filter?.let {
-                TopBar2(
-                    text = "Journey Results",
-                    isLeadingButtonVisible = true,
-                    isTrailingButtonVisible = true,
-                    trailingButtonIcon = painterResource(Res.drawable.filter),
-                    onLeadingButtonClick = { onAction(SearchResultsAction.OnBackClicked) },
-                    onTrailingButtonClick = { onAction(SearchResultsAction.OnFilterClicked) }
-                )
+
                 Row(
                     modifier = Modifier
                         .padding(horizontal = Sizes.horizontal_out_padding)

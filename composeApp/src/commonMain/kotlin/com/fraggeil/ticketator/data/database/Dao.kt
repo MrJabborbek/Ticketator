@@ -33,4 +33,11 @@ interface Dao {
 
     @Query("DELETE FROM carddataentity")
     suspend fun deleteAllCardData()
+
+    @Upsert
+    suspend fun insertAppSettings(appSettingsEntity: AppSettingsEntity)
+
+    @Query("SELECT * FROM appsettingsentity")
+    fun getAppSettings(): Flow<AppSettingsEntity?>
+
 }

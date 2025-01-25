@@ -36,6 +36,7 @@ import com.fraggeil.ticketator.domain.model.Journey
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.seat
+import ticketator.composeapp.generated.resources.seat_3
 
 @Composable
 fun JourneyListItem(
@@ -165,7 +166,7 @@ fun JourneyListItem(
                 ){
                     if(!isLoading){
                         Icon(
-                            painter = painterResource(Res.drawable.seat),
+                            painter = painterResource(Res.drawable.seat_3),
                             contentDescription = null,
                             tint = TextColorLight,
                             modifier = Modifier.height(24.dp)

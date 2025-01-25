@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +50,7 @@ import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByM
 import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
 import com.fraggeil.ticketator.core.domain.DialPhoneNumber
 import com.fraggeil.ticketator.core.domain.OpenUrlInBrowser
+import com.fraggeil.ticketator.core.presentation.StatusBarColors
 import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding_double
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
@@ -64,8 +66,6 @@ import ticketator.composeapp.generated.resources.ic_feedback
 import ticketator.composeapp.generated.resources.ic_how_to_use
 import ticketator.composeapp.generated.resources.ic_lang
 import ticketator.composeapp.generated.resources.ic_offer
-import ticketator.composeapp.generated.resources.ic_order
-import ticketator.composeapp.generated.resources.ic_work
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 
@@ -79,6 +79,8 @@ fun ProfileScreenRoot(
     navigateToAboutApp: () -> Unit,
     navigateToTermsAndConditions: () -> Unit,
 ){
+    StatusBarColors(isDarkText = true)
+
     val dialPhoneNumber = koinInject<DialPhoneNumber>()
     val openUrlInBrowser = koinInject<OpenUrlInBrowser>()
 
@@ -199,7 +201,6 @@ fun ProfileScreen(
             onClick = {onAction(ProfileAction.OnLanguageClicked)},
 //            icon = Icons.Outlined.Done,
             iconPainter = painterResource(Res.drawable.ic_lang)
-
         )
         ButtonWithIconAndArrow(
             isLoading = state.isLoadingProfile,

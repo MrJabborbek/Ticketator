@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [TicketEntity::class, ProfileEntity::class, CardDataEntity::class],
+    entities = [TicketEntity::class, ProfileEntity::class, CardDataEntity::class, AppSettingsEntity::class],
     version = 1
 )
 abstract class Database: RoomDatabase() {

@@ -31,20 +31,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.rememberAsyncImagePainter
-
 import com.fraggeil.ticketator.core.domain.Constants
-import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
-import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
+import com.fraggeil.ticketator.core.presentation.StatusBarColors
 import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
-import com.fraggeil.ticketator.core.presentation.components.TopBar
 import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
 import com.fraggeil.ticketator.core.theme.LightGray
 import com.fraggeil.ticketator.core.theme.TextColor
-import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
 import org.koin.compose.koinInject
 
 @Composable
@@ -52,6 +48,7 @@ fun PostScreenRoot(
     viewModel: PostViewModel,
     onBackClicked: () -> Unit
 ){
+    StatusBarColors(isDarkText = true)
     val state by viewModel.state.collectAsStateWithLifecycle()
     PostScreen(
         state = state,

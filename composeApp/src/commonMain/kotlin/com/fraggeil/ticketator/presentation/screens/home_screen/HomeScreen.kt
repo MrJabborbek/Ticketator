@@ -41,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -52,6 +53,7 @@ import com.fraggeil.ticketator.core.domain.moko_permission.permissions.Permissio
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.compose.BindEffect
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.compose.rememberPermissionsControllerFactory
 import com.fraggeil.ticketator.core.domain.toFormattedDate
+import com.fraggeil.ticketator.core.presentation.StatusBarColors
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
@@ -88,6 +90,8 @@ fun HomeScreenRoot(
     navigateToPost: (Post) -> Unit,
     navigateToSearchResults: (Filter) -> Unit
 ) {
+    StatusBarColors(isDarkText = false)
+
     val factory = rememberPermissionsControllerFactory()
     val controller = remember (factory){
         factory.createPermissionsController()
@@ -134,6 +138,7 @@ fun HomeScreen(
     onAction: (HomeAction) -> Unit,
     isNavigateToLocationRequired: MutableState<Boolean>
 ) {
+
     val isSelectFromVisible = remember { mutableStateOf(false) }
     val isSelectToVisible = remember { mutableStateOf(false) }
     val fromDatePickerState = remember { mutableStateOf(false) }

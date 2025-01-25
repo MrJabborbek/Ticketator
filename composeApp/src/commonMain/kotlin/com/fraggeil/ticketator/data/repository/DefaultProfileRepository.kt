@@ -7,6 +7,7 @@ import com.fraggeil.ticketator.core.domain.Constants
 import com.fraggeil.ticketator.core.domain.DateTimeUtil
 import com.fraggeil.ticketator.core.presentation.Language
 import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.data.database.AppSettingsEntity
 import com.fraggeil.ticketator.data.database.Dao
 import com.fraggeil.ticketator.data.mappers.toProfile
 import com.fraggeil.ticketator.data.mappers.toProfileEntity
@@ -74,10 +75,13 @@ class DefaultProfileRepository(
     }
 
     override suspend fun changeAppLanguage(language: Language) {
-        Strings.selectedLanguage.value = language
+        val appSettings = dao.getAppSettings().firstOrNull() ?: AppSettingsEntity()
+        dao.insertAppSettings(appSettings.copy(languageCode = language.langCode))
+//        Strings.selectedLanguage.value = language
     }
 
     override fun getCurrentAppLanguage(): Flow<Language> {
-        return Strings.selectedLanguage
+//        return Strings.selectedLanguage
+        return dao.getAppSettings().map {e-> e?.let { Language.getLanguageByLangCode(it.languageCode)} ?: Language.Uzbek }
     }
 }

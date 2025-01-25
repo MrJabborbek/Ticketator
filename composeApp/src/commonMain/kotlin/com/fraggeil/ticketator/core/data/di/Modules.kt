@@ -2,11 +2,13 @@ package com.fraggeil.ticketator.core.data.di
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.fraggeil.ticketator.AppViewModel
 import com.fraggeil.ticketator.core.data.LocationFromIP
 import com.fraggeil.ticketator.core.data.createGeocoder
 import com.fraggeil.ticketator.core.domain.Platform
 import com.fraggeil.ticketator.data.database.Database
 import com.fraggeil.ticketator.data.database.DatabaseFactory
+import com.fraggeil.ticketator.data.repository.DefaultAppSettingsRepository
 import com.fraggeil.ticketator.data.repository.DefaultCurrentUserInfoRepository
 import com.fraggeil.ticketator.data.repository.DefaultHomeRepository
 import com.fraggeil.ticketator.data.repository.DefaultLoginRepository
@@ -16,6 +18,7 @@ import com.fraggeil.ticketator.data.repository.DefaultSearchResultsRepository
 import com.fraggeil.ticketator.data.repository.DefaultSelectSeatRepository
 import com.fraggeil.ticketator.data.repository.DefaultSendDataToCheckRepository
 import com.fraggeil.ticketator.data.repository.DefaultTicketsRepository
+import com.fraggeil.ticketator.domain.repository.AppSettingsRepository
 import com.fraggeil.ticketator.domain.repository.CurrentUserInfoRepository
 import com.fraggeil.ticketator.domain.repository.HomeRepository
 import com.fraggeil.ticketator.domain.repository.LoginRepository
@@ -76,9 +79,11 @@ val sharedModule = module {
     singleOf(::DefaultOtpPaymentRepository).bind<OtpPaymentRepository>()
     singleOf(::DefaultTicketsRepository).bind<TicketsRepository>()
     singleOf(::DefaultCurrentUserInfoRepository).bind<CurrentUserInfoRepository>()
+    singleOf(::DefaultAppSettingsRepository).bind<AppSettingsRepository>()
 
     single { SnackbarHostState() }
 
+    viewModelOf(::AppViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::PostViewModel)
     viewModelOf(::StartViewModel)

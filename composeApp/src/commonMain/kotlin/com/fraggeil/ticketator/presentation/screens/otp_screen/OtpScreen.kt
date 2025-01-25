@@ -1,26 +1,13 @@
 package com.fraggeil.ticketator.presentation.screens.otp_screen
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -33,38 +20,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
-import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
+import com.fraggeil.ticketator.core.presentation.StatusBarColors
 import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
-import com.fraggeil.ticketator.core.presentation.components.FlashingCursorIndicator
-import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.presentation.components.MyOtpTextField
 import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.theme.BlueDark
-import com.fraggeil.ticketator.core.theme.ErrorColor
-import com.fraggeil.ticketator.core.theme.LightGray
-import com.fraggeil.ticketator.core.theme.TextColor
 import com.fraggeil.ticketator.core.theme.TextColorLight
 import com.fraggeil.ticketator.core.theme.White
-import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
-import org.jetbrains.compose.resources.painterResource
-import ticketator.composeapp.generated.resources.Res
-import ticketator.composeapp.generated.resources.ic_close
-import kotlin.math.sin
 
 @Composable
 fun OtpScreenRoot(
@@ -72,6 +46,8 @@ fun OtpScreenRoot(
     navigateBack: () -> Unit,
     navigateToHome: () -> Unit
 ){
+    StatusBarColors(isDarkText = false)
+
     LaunchedEffect(Unit){
         viewModel.oneTimeState.collect{oneTimeState ->
             when(oneTimeState){

@@ -37,6 +37,7 @@ import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding_do
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_out_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
+import com.fraggeil.ticketator.core.presentation.StatusBarColors
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.theme.AppTypography
@@ -52,6 +53,7 @@ fun TicketsScreenRoot(
     viewModel: TicketsViewModel,
     navigateBack: () -> Unit,
 ) {
+    StatusBarColors(isDarkText = false)
     val state by viewModel.state.collectAsStateWithLifecycle()
     TicketsScreen(
         state = state,

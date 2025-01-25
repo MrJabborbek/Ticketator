@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "367c9d490d329c1fa04ff95d01ffd5cd",
+    "identityHash": "ec11d7cfe0040b6c2127bebf4f72579d",
     "entities": [
       {
         "tableName": "TicketEntity",
@@ -182,11 +182,35 @@
             "cardNumber"
           ]
         }
+      },
+      {
+        "tableName": "AppSettingsEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`isLaunched` INTEGER NOT NULL, `languageCode` TEXT NOT NULL, PRIMARY KEY(`isLaunched`))",
+        "fields": [
+          {
+            "fieldPath": "isLaunched",
+            "columnName": "isLaunched",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "languageCode",
+            "columnName": "languageCode",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "isLaunched"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '367c9d490d329c1fa04ff95d01ffd5cd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ec11d7cfe0040b6c2127bebf4f72579d')"
     ]
   }
 }

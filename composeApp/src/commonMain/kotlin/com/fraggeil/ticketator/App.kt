@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -99,7 +100,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import ticketator.composeapp.generated.resources.Res
-import ticketator.composeapp.generated.resources.compose_multiplatform
 import ticketator.composeapp.generated.resources.ic_main_selected
 import ticketator.composeapp.generated.resources.ic_main_unselected
 import ticketator.composeapp.generated.resources.person
@@ -109,400 +109,409 @@ import ticketator.composeapp.generated.resources.ticket_filled
 
 @Composable
 @Preview
-fun App() {
-    AppTheme {
-        val navController = rememberNavController()
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
+fun App(
+    appViewModel: AppViewModel = koinViewModel<AppViewModel>()
+) {
+    val appState by appViewModel.state.collectAsStateWithLifecycle()
+    if (appState.isLoading){
 
-        fun navigate(route: Route, shouldSaveState: Boolean, restore: Boolean = false){
-            if (shouldSaveState) {
-                navController.navigate(route.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
+    }else{
+        AppTheme {
+            val navController = rememberNavController()
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+            fun navigate(route: Route, shouldSaveState: Boolean, restore: Boolean = false){
+                if (shouldSaveState) {
+                    navController.navigate(route.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
 //                    inclusive = false
-                        saveState = true
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }else{
-                navController.navigate(route.route){
-                    if (restore){
-                        popUpTo(navController.graph.findStartDestination().id)
-                    }
-                }
-            }
-        }
-
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize(),
-//                .statusBarsPadding(),
-            containerColor = BG_White,
-            snackbarHost = {
-                SnackbarHost(koinInject())
-            },
-            bottomBar = {
-                if ( navBackStackEntry?.destination?.route in listOf(Route.Home.route, Route.Tickets.route, Route.Profile.route)){
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-                        colors = CardDefaults.cardColors().copy(containerColor = White),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
-                    ){
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ){
-                            NavigationBar(
-                                modifier = Modifier.widthIn(max = 480.dp),
-                                containerColor = Color.Transparent,
-                                contentColor = BlueDark,
-                                tonalElevation = 50.dp
-                            ) {
-                                MyNavigationBarItem(
-                                    text = Strings.Home.value(),
-                                    selectedPainter = painterResource(Res.drawable.ic_main_selected), //TODO
-                                    unselectedPainter = painterResource(Res.drawable.ic_main_unselected),
-                                    onClick = {
-                                        if (navBackStackEntry?.destination?.route != Route.Home.route){
-                                            navigate(Route.Home,true)
-                                        }
-                                    },
-                                    isSelected = navBackStackEntry?.destination?.route == Route.Home.route
-                                )
-                                MyNavigationBarItem(
-                                    text = Strings.Tickets.value(),
-                                    selectedPainter = painterResource(Res.drawable.ticket_filled),
-                                    unselectedPainter = painterResource(Res.drawable.ticket),
-                                    onClick = {
-                                        if (navBackStackEntry?.destination?.route != Route.Tickets.route){
-                                            navigate(Route.Tickets,false)
-                                        }
-                                    },
-                                    isSelected = navBackStackEntry?.destination?.route == Route.Tickets.route
-                                )
-                                MyNavigationBarItem(
-                                    text = Strings.Profile.value(),
-                                    selectedPainter = painterResource(Res.drawable.person_filled),
-                                    unselectedPainter = painterResource(Res.drawable.person),
-                                    onClick = {
-                                        if (navBackStackEntry?.destination?.route != Route.Profile.route){
-                                            navigate(Route.Profile,false)
-                                        }
-                                    },
-                                    isSelected = navBackStackEntry?.destination?.route == Route.Profile.route
-                                )
-                            }
+                }else{
+                    navController.navigate(route.route){
+                        if (restore){
+                            popUpTo(navController.graph.findStartDestination().id)
                         }
                     }
                 }
             }
-        ) { paddings ->
-            Box(
+
+            Scaffold(
                 modifier = Modifier
+                    .fillMaxSize().imePadding(),
+//                .statusBarsPadding(),
+                containerColor = BG_White,
+                snackbarHost = {
+                    SnackbarHost(koinInject())
+                },
+                bottomBar = {
+                    if ( navBackStackEntry?.destination?.route in listOf(Route.Home.route, Route.Tickets.route, Route.Profile.route)){
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                            colors = CardDefaults.cardColors().copy(containerColor = White),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
+                        ){
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ){
+                                NavigationBar(
+                                    modifier = Modifier.widthIn(max = 480.dp),
+                                    containerColor = Color.Transparent,
+                                    contentColor = BlueDark,
+                                    tonalElevation = 50.dp
+                                ) {
+                                    MyNavigationBarItem(
+                                        text = Strings.Home.value(),
+                                        selectedPainter = painterResource(Res.drawable.ic_main_selected), //TODO
+                                        unselectedPainter = painterResource(Res.drawable.ic_main_unselected),
+                                        onClick = {
+                                            if (navBackStackEntry?.destination?.route != Route.Home.route){
+                                                navigate(Route.Home,true)
+                                            }
+                                        },
+                                        isSelected = navBackStackEntry?.destination?.route == Route.Home.route
+                                    )
+                                    MyNavigationBarItem(
+                                        text = Strings.Tickets.value(),
+                                        selectedPainter = painterResource(Res.drawable.ticket_filled),
+                                        unselectedPainter = painterResource(Res.drawable.ticket),
+                                        onClick = {
+                                            if (navBackStackEntry?.destination?.route != Route.Tickets.route){
+                                                navigate(Route.Tickets,false)
+                                            }
+                                        },
+                                        isSelected = navBackStackEntry?.destination?.route == Route.Tickets.route
+                                    )
+                                    MyNavigationBarItem(
+                                        text = Strings.Profile.value(),
+                                        selectedPainter = painterResource(Res.drawable.person_filled),
+                                        unselectedPainter = painterResource(Res.drawable.person),
+                                        onClick = {
+                                            if (navBackStackEntry?.destination?.route != Route.Profile.route){
+                                                navigate(Route.Profile,false)
+                                            }
+                                        },
+                                        isSelected = navBackStackEntry?.destination?.route == Route.Profile.route
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            ) { paddings ->
+                Box(
+                    modifier = Modifier
 //                    .padding(paddings)
 //                    .padding(bottom = 56.dp)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                NavHost(
-                    modifier = Modifier
-                        .widthIn(max = Constants.MAX_ITEM_WIDTH_IN_DP)
-                        .fillMaxSize(),
-                    navController = navController,
-                    startDestination = Route.TicketatorGraph.route,
-                    enterTransition = { EnterTransition.None },
-                    exitTransition  = { ExitTransition.None },
-                    popEnterTransition   = { EnterTransition.None },
-                    popExitTransition    = { ExitTransition.None },
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    navigation(
-                        route = Route.TicketatorGraph.route,
-                        startDestination = Route.Start.route,
-//                        startDestination = Route.SelectSeat.route,
+                    NavHost(
+                        modifier = Modifier
+                            .widthIn(max = Constants.MAX_ITEM_WIDTH_IN_DP)
+                            .fillMaxSize(),
+                        navController = navController,
+                        startDestination = Route.TicketatorGraph.route,
+                        enterTransition = { EnterTransition.None },
+                        exitTransition  = { ExitTransition.None },
+                        popEnterTransition   = { EnterTransition.None },
+                        popExitTransition    = { ExitTransition.None },
                     ) {
+                        navigation(
+                            route = Route.TicketatorGraph.route,
+                            startDestination = (if (appState.appSettings.isLaunched) Route.Home.route else Route.Start.route).also {
+                                println("start destination: $it // ${appState.appSettings}")
+                            },
+//                        startDestination = Route.SelectSeat.route,
+                        ) {
 
-                        composable(
-                            route = Route.Home.route,
+                            composable(
+                                route = Route.Home.route,
 //                        exitTransition = { slideOutHorizontally() },
 //                        popEnterTransition = { slideInHorizontally() }
-                        ) {
-                            val viewModel = koinViewModel<HomeViewModel>()
-                            val selectedPostViewModel = it.sharedKoinViewModel<SelectedPostViewModel>(navController)
-                            val selectedFilterViewModel = it.sharedKoinViewModel<SelectedFilterViewModel>(navController)
-                            LaunchedEffect(true) {
-                                selectedPostViewModel.onSelectItem(null)
-                                selectedFilterViewModel.onSelectItem(null)
+                            ) {
+                                val viewModel = koinViewModel<HomeViewModel>()
+                                val selectedPostViewModel = it.sharedKoinViewModel<SelectedPostViewModel>(navController)
+                                val selectedFilterViewModel = it.sharedKoinViewModel<SelectedFilterViewModel>(navController)
+                                LaunchedEffect(true) {
+                                    selectedPostViewModel.onSelectItem(null)
+                                    selectedFilterViewModel.onSelectItem(null)
+                                }
+
+                                HomeScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateToPost = { post ->
+                                        selectedPostViewModel.onSelectItem(post)
+                                        navigate(Route.Post, false)
+                                    },
+                                    navigateToSearchResults = {filter ->
+                                        selectedFilterViewModel.onSelectItem(filter)
+                                        navigate(Route.SearchResults, false)
+                                    }
+                                )
+                            }
+                            composable(
+                                route = Route.Post.route
+                            ){
+
+                                val viewModel = koinViewModel<PostViewModel>()
+                                val selectedPostViewModel = it.sharedKoinViewModel<SelectedPostViewModel>(navController)
+
+                                val selectedPost by selectedPostViewModel.state.collectAsStateWithLifecycle()
+                                LaunchedEffect(selectedPost){
+                                    selectedPost?.let { post ->
+                                        viewModel.onAction(PostAction.OnSelectedPostChange(post))
+                                    }
+                                }
+
+                                PostScreenRoot(
+                                    viewModel = viewModel,
+                                    onBackClicked = {
+                                        navController.navigateUp()
+                                    }
+                                )
+                            }
+                            composable(
+                                route = Route.Start.route
+                            ){
+                                val viewModel = koinViewModel<StartViewModel>()
+                                StartScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateToHome = {
+                                        navigate(Route.Home, true)
+                                    }
+                                )
+                            }
+                            composable(
+                                route = Route.SearchResults.route
+                            ) {
+                                val viewModel = koinViewModel<SearchResultsViewModel>()
+                                val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
+                                val selectedFilterViewModel = it.sharedKoinViewModel<SelectedFilterViewModel>(navController)
+                                val filterState by selectedFilterViewModel.state.collectAsStateWithLifecycle()
+
+                                LaunchedEffect(filterState){
+                                    filterState?.let {
+                                        viewModel.onAction(SearchResultsAction.OnFilterSelected(it))
+                                    }
+                                }
+                                LaunchedEffect(true) {
+                                    selectedJourneyViewModel.onSelectItem(null)
+                                }
+                                SearchResultsScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateBack = {
+                                        navController.navigateUp()
+                                    },
+                                    navigateToJourneyDetails = { journey ->
+                                        selectedJourneyViewModel.onSelectItem(journey)
+                                        navigate(Route.SelectSeat, false)
+                                    }
+                                )
+                            }
+                            composable(
+                                route = Route.SelectSeat.route
+                            ) {
+                                val viewModel = koinViewModel<SelectSeatViewModel>()
+                                val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
+                                val selectedJourney by selectedJourneyViewModel.state.collectAsState()
+                                LaunchedEffect(selectedJourney){
+                                    selectedJourney?.let {
+                                        viewModel.onAction(SelectSeatAction.OnJourneySelected(selectedJourney!!))
+                                    }
+                                }
+                                SelectSeatScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateBack = {
+                                        navController.navigateUp()
+                                    },
+                                    navigateToPassengersInfo = { journey ->
+                                        selectedJourneyViewModel.onSelectItem(journey)
+                                        navigate(Route.PassengersInfo, false)
+                                    }
+                                )
+                            }
+                            composable(
+                                route = Route.PassengersInfo.route
+                            ) {
+                                val viewModel = koinViewModel<PassengersInfoViewModel>()
+                                val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
+                                val selectedJourney by selectedJourneyViewModel.state.collectAsState()
+                                LaunchedEffect(selectedJourney){
+                                    selectedJourney?.let {
+                                        viewModel.onAction(PassengersInfoAction.OnJourneySelected(selectedJourney!!))
+                                    }
+                                }
+                                PassengersInfoScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateBack = {
+                                        navController.navigateUp()
+                                    },
+                                    navigateToCardInfo = {
+                                        selectedJourneyViewModel.onSelectItem(it)
+                                        navigate(Route.CardInfo, false)
+                                    }
+                                )
+                            }
+                            composable(
+                                route = Route.CardInfo.route
+                            ) {
+                                val viewModel = koinViewModel<CardInfoViewModel>()
+                                val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
+                                val selectedPhoneNumberAndTokenViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
+                                val selectedJourney by selectedJourneyViewModel.state.collectAsState()
+                                LaunchedEffect(selectedJourney){
+                                    selectedJourney?.let {
+                                        viewModel.onAction(CardInfoAction.OnJourneySelected(selectedJourney!!))
+                                    }
+                                }
+                                LaunchedEffect(true){
+                                    selectedPhoneNumberAndTokenViewModel.onSelectItem(null)
+                                }
+
+                                CardInfoScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateBack = {
+                                        navController.navigateUp()
+                                    },
+                                    navigateToEnterCode = { token, phoneNumber ->
+                                        selectedPhoneNumberAndTokenViewModel.onSelectItem(Pair(token, phoneNumber))
+                                        navigate(Route.OtpPayment, false)
+                                    }
+                                )
                             }
 
-                            HomeScreenRoot(
-                                viewModel = viewModel,
-                                navigateToPost = { post ->
-                                    selectedPostViewModel.onSelectItem(post)
-                                    navigate(Route.Post, false)
-                                },
-                                navigateToSearchResults = {filter ->
-                                    selectedFilterViewModel.onSelectItem(filter)
-                                    navigate(Route.SearchResults, false)
+                            composable(
+                                route = Route.OtpPayment.route
+                            ) {
+                                val viewModel = koinViewModel<OtpPaymentViewModel>()
+                                val selectedPhoneNumberAndTokenViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
+                                val selectedTicketsViewModel = it.sharedKoinViewModel<SelectedTicketsViewModel>(navController)
+                                val selectedPhoneNumberAndToken by selectedPhoneNumberAndTokenViewModel.state.collectAsState()
+                                LaunchedEffect(selectedPhoneNumberAndToken){
+                                    selectedPhoneNumberAndToken?.let {
+                                        viewModel.onAction(OtpPaymentAction.OnPhoneNumberChanged(token = selectedPhoneNumberAndToken!!.first, number = selectedPhoneNumberAndToken!!.second))
+                                    }
                                 }
-                            )
-                        }
-                        composable(
-                            route = Route.Post.route
-                        ){
-
-                            val viewModel = koinViewModel<PostViewModel>()
-                            val selectedPostViewModel = it.sharedKoinViewModel<SelectedPostViewModel>(navController)
-
-                            val selectedPost by selectedPostViewModel.state.collectAsStateWithLifecycle()
-                            LaunchedEffect(selectedPost){
-                                selectedPost?.let { post ->
-                                    viewModel.onAction(PostAction.OnSelectedPostChange(post))
+                                LaunchedEffect(true){
+                                    selectedTicketsViewModel.onSelectItem(null)
                                 }
+                                OtpPaymentScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateBack = {
+                                        navController.navigateUp()
+                                    },
+                                    navigateToTickets = { tickets ->
+                                        selectedTicketsViewModel.onSelectItem(tickets)
+                                        navigate(Route.Tickets, true)
+                                    }
+                                )
                             }
-
-                            PostScreenRoot(
-                                viewModel = viewModel,
-                                onBackClicked = {
-                                    navController.navigateUp()
+                            composable(
+                                route = Route.Otp.route
+                            ) {
+                                val viewModel = koinViewModel<OtpViewModel>()
+                                val selectedPhoneNumberAndTokenViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
+                                val selectedPhoneNumberAndToken by selectedPhoneNumberAndTokenViewModel.state.collectAsState()
+                                LaunchedEffect(selectedPhoneNumberAndToken){
+                                    selectedPhoneNumberAndToken?.let {
+                                        viewModel.onAction(OtpAction.OnPhoneNumberChanged(number = selectedPhoneNumberAndToken!!.second, token = selectedPhoneNumberAndToken!!.first))
+                                    }
                                 }
-                            )
-                        }
-                        composable(
-                            route = Route.Start.route
-                        ){
-                            val viewModel = koinViewModel<StartViewModel>()
-                            StartScreenRoot(
-                                viewModel = viewModel,
-                                navigateToHome = {
-                                    navigate(Route.Home, true)
-                                }
-                            )
-                        }
-                        composable(
-                            route = Route.SearchResults.route
-                        ) {
-                            val viewModel = koinViewModel<SearchResultsViewModel>()
-                            val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
-                            val selectedFilterViewModel = it.sharedKoinViewModel<SelectedFilterViewModel>(navController)
-                            val filterState by selectedFilterViewModel.state.collectAsStateWithLifecycle()
-
-                            LaunchedEffect(filterState){
-                                filterState?.let {
-                                    viewModel.onAction(SearchResultsAction.OnFilterSelected(it))
-                                }
+                                OtpScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateBack = {
+                                        navController.navigateUp()
+                                    },
+                                    navigateToHome = {
+                                        navigate(Route.Home, false)
+                                    }
+                                )
                             }
-                            LaunchedEffect(true) {
-                                selectedJourneyViewModel.onSelectItem(null)
+                            composable(
+                                route = Route.Tickets.route
+                            ) {
+                                val viewModel = koinViewModel<TicketsViewModel>()
+                                val selectedTicketsViewModel = it.sharedKoinViewModel<SelectedTicketsViewModel>(navController)
+                                val selectedTickets by selectedTicketsViewModel.state.collectAsState()
+                                LaunchedEffect(selectedTickets){
+                                    selectedTickets?.let {
+                                        viewModel.onAction(TicketsAction.OnInitialTicketsSelected(selectedTickets!!))
+                                    }
+                                }
+                                TicketsScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateBack = {
+                                        navController.navigateUp()
+                                    },
+                                )
                             }
-                            SearchResultsScreenRoot(
-                                viewModel = viewModel,
-                                navigateBack = {
-                                    navController.navigateUp()
-                                },
-                                navigateToJourneyDetails = { journey ->
-                                    selectedJourneyViewModel.onSelectItem(journey)
-                                    navigate(Route.SelectSeat, false)
-                                }
-                            )
-                        }
-                        composable(
-                            route = Route.SelectSeat.route
-                        ) {
-                            val viewModel = koinViewModel<SelectSeatViewModel>()
-                            val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
-                            val selectedJourney by selectedJourneyViewModel.state.collectAsState()
-                            LaunchedEffect(selectedJourney){
-                                selectedJourney?.let {
-                                    viewModel.onAction(SelectSeatAction.OnJourneySelected(selectedJourney!!))
-                                }
-                            }
-                            SelectSeatScreenRoot(
-                                viewModel = viewModel,
-                                navigateBack = {
-                                    navController.navigateUp()
-                                },
-                                navigateToPassengersInfo = { journey ->
-                                    selectedJourneyViewModel.onSelectItem(journey)
-                                    navigate(Route.PassengersInfo, false)
-                                }
-                            )
-                        }
-                        composable(
-                            route = Route.PassengersInfo.route
-                        ) {
-                            val viewModel = koinViewModel<PassengersInfoViewModel>()
-                            val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
-                            val selectedJourney by selectedJourneyViewModel.state.collectAsState()
-                            LaunchedEffect(selectedJourney){
-                                selectedJourney?.let {
-                                    viewModel.onAction(PassengersInfoAction.OnJourneySelected(selectedJourney!!))
-                                }
-                            }
-                            PassengersInfoScreenRoot(
-                                viewModel = viewModel,
-                                navigateBack = {
-                                    navController.navigateUp()
-                                },
-                                navigateToCardInfo = {
-                                    selectedJourneyViewModel.onSelectItem(it)
-                                    navigate(Route.CardInfo, false)
-                                }
-                            )
-                        }
-                        composable(
-                            route = Route.CardInfo.route
-                        ) {
-                            val viewModel = koinViewModel<CardInfoViewModel>()
-                            val selectedJourneyViewModel = it.sharedKoinViewModel<SelectedJourneyViewModel>(navController)
-                            val selectedPhoneNumberAndTokenViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
-                            val selectedJourney by selectedJourneyViewModel.state.collectAsState()
-                            LaunchedEffect(selectedJourney){
-                                selectedJourney?.let {
-                                    viewModel.onAction(CardInfoAction.OnJourneySelected(selectedJourney!!))
-                                }
-                            }
-                            LaunchedEffect(true){
-                                selectedPhoneNumberAndTokenViewModel.onSelectItem(null)
-                            }
-
-                            CardInfoScreenRoot(
-                                viewModel = viewModel,
-                                navigateBack = {
-                                    navController.navigateUp()
-                                },
-                                navigateToEnterCode = { token, phoneNumber ->
-                                    selectedPhoneNumberAndTokenViewModel.onSelectItem(Pair(token, phoneNumber))
-                                    navigate(Route.OtpPayment, false)
-                                }
-                            )
-                        }
-
-                        composable(
-                            route = Route.OtpPayment.route
-                        ) {
-                            val viewModel = koinViewModel<OtpPaymentViewModel>()
-                            val selectedPhoneNumberAndTokenViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
-                            val selectedTicketsViewModel = it.sharedKoinViewModel<SelectedTicketsViewModel>(navController)
-                            val selectedPhoneNumberAndToken by selectedPhoneNumberAndTokenViewModel.state.collectAsState()
-                            LaunchedEffect(selectedPhoneNumberAndToken){
-                                selectedPhoneNumberAndToken?.let {
-                                    viewModel.onAction(OtpPaymentAction.OnPhoneNumberChanged(token = selectedPhoneNumberAndToken!!.first, number = selectedPhoneNumberAndToken!!.second))
-                                }
-                            }
-                            LaunchedEffect(true){
-                                selectedTicketsViewModel.onSelectItem(null)
-                            }
-                            OtpPaymentScreenRoot(
-                                viewModel = viewModel,
-                                navigateBack = {
-                                    navController.navigateUp()
-                                },
-                                navigateToTickets = { tickets ->
-                                    selectedTicketsViewModel.onSelectItem(tickets)
-                                    navigate(Route.Tickets, true)
-                                }
-                            )
-                        }
-                        composable(
-                            route = Route.Otp.route
-                        ) {
-                            val viewModel = koinViewModel<OtpViewModel>()
-                            val selectedPhoneNumberAndTokenViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
-                            val selectedPhoneNumberAndToken by selectedPhoneNumberAndTokenViewModel.state.collectAsState()
-                            LaunchedEffect(selectedPhoneNumberAndToken){
-                                selectedPhoneNumberAndToken?.let {
-                                    viewModel.onAction(OtpAction.OnPhoneNumberChanged(number = selectedPhoneNumberAndToken!!.second, token = selectedPhoneNumberAndToken!!.first))
-                                }
-                            }
-                            OtpScreenRoot(
-                                viewModel = viewModel,
-                                navigateBack = {
-                                    navController.navigateUp()
-                                },
-                                navigateToHome = {
-                                    navigate(Route.Home, false)
-                                }
-                            )
-                        }
-                        composable(
-                            route = Route.Tickets.route
-                        ) {
-                            val viewModel = koinViewModel<TicketsViewModel>()
-                            val selectedTicketsViewModel = it.sharedKoinViewModel<SelectedTicketsViewModel>(navController)
-                            val selectedTickets by selectedTicketsViewModel.state.collectAsState()
-                            LaunchedEffect(selectedTickets){
-                                selectedTickets?.let {
-                                    viewModel.onAction(TicketsAction.OnInitialTicketsSelected(selectedTickets!!))
-                                }
-                            }
-                            TicketsScreenRoot(
-                                viewModel = viewModel,
-                                navigateBack = {
-                                    navController.navigateUp()
-                                },
-                            )
-                        }
-                        composable(route = Route.Profile.route){
-                            val viewModel = koinViewModel<ProfileViewModel>()
-                            ProfileScreenRoot(
-                                viewModel = viewModel,
-                                navigateBack = {
-                                    navController.navigateUp()
-                                },
-                                navigateToLogin = {
-                                    navigate(Route.Login, false)
-                                },
-                                navigateToMain = {
-                                    navigate(route = Route.Home, true)
-                                },
-                                navigateToEditProfile = {
-                                    navigate(Route.ProfileEdit, false)
-                                },
-                                navigateToAboutApp = {
+                            composable(route = Route.Profile.route){
+                                val viewModel = koinViewModel<ProfileViewModel>()
+                                ProfileScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateBack = {
+                                        navController.navigateUp()
+                                    },
+                                    navigateToLogin = {
+                                        navigate(Route.Login, false)
+                                    },
+                                    navigateToMain = {
+                                        navigate(route = Route.Home, true)
+                                    },
+                                    navigateToEditProfile = {
+                                        navigate(Route.ProfileEdit, false)
+                                    },
+                                    navigateToAboutApp = {
 //                                    navigate(Route.AboutApp.routeName, false)
-                                },
-                                navigateToTermsAndConditions = {
+                                    },
+                                    navigateToTermsAndConditions = {
 //                                    navigate(Route.TermsAndConditions.routeName, false)
-                                }
-                            )
-                        }
-                        composable(
-                            route = Route.Login.route
-                        ){
-
-                            val viewModel = koinViewModel<LoginViewModel>()
-                            val selectedPhoneNumberViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
-                            LaunchedEffect(true){
-                                selectedPhoneNumberViewModel.onSelectItem(null)
+                                    }
+                                )
                             }
-                            LoginScreenRoot(
-                                viewModel = viewModel,
-                                navigateBack = {
-                                    navController.navigateUp()
-                                },
-                                navigateToOtp = {phoneNumber, token ->
-                                    selectedPhoneNumberViewModel.onSelectItem(Pair(token, phoneNumber))
-                                    navigate(Route.Otp, false)
-                                },
-                                navigateToTermsAndConditions = {
+                            composable(
+                                route = Route.Login.route
+                            ){
+
+                                val viewModel = koinViewModel<LoginViewModel>()
+                                val selectedPhoneNumberViewModel = it.sharedKoinViewModel<SelectedPhoneNumberAndTokenViewModel>(navController)
+                                LaunchedEffect(true){
+                                    selectedPhoneNumberViewModel.onSelectItem(null)
+                                }
+                                LoginScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateBack = {
+                                        navController.navigateUp()
+                                    },
+                                    navigateToOtp = {phoneNumber, token ->
+                                        selectedPhoneNumberViewModel.onSelectItem(Pair(token, phoneNumber))
+                                        navigate(Route.Otp, false)
+                                    },
+                                    navigateToTermsAndConditions = {
 //                                    navigate(Route.TermsAndConditions.routeName, false)
-                                }
-                            )
-                        }
-                        composable(
-                            route = Route.ProfileEdit.route
-                        ){
-                            val viewModel = koinViewModel<ProfileEditViewModel>()
-                            ProfileEditScreenRoot(
-                                viewModel = viewModel,
-                                navigateBack = {
-                                    navController.navigateUp()
-                                },
-                                navigateToMain = {
-                                    navigate(Route.Home, true)
-                                }
-                            )
+                                    }
+                                )
+                            }
+                            composable(
+                                route = Route.ProfileEdit.route
+                            ){
+                                val viewModel = koinViewModel<ProfileEditViewModel>()
+                                ProfileEditScreenRoot(
+                                    viewModel = viewModel,
+                                    navigateBack = {
+                                        navController.navigateUp()
+                                    },
+                                    navigateToMain = {
+                                        navigate(Route.Home, true)
+                                    }
+                                )
+                            }
                         }
                     }
                 }
