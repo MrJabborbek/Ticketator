@@ -24,8 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fraggeil.ticketator.core.presentation.Sizes
@@ -33,7 +31,6 @@ import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
 import com.fraggeil.ticketator.core.presentation.components.InputStyle
 import com.fraggeil.ticketator.core.presentation.components.MyButton
-import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.presentation.components.MyTextField
 import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
@@ -44,12 +41,9 @@ import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.BlueDarkSecondary
 import com.fraggeil.ticketator.core.theme.LightGray
 import com.fraggeil.ticketator.core.theme.TextColor
-import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.domain.model.Journey
-import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
-import ticketator.composeapp.generated.resources.ic_close
 import ticketator.composeapp.generated.resources.uzbekistan
 
 @Composable

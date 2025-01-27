@@ -34,10 +34,8 @@ import com.fraggeil.ticketator.core.domain.millisecondsToFormattedString
 import com.fraggeil.ticketator.core.domain.rememberScreenSizeInfo
 import com.fraggeil.ticketator.core.domain.toFormattedDate
 import com.fraggeil.ticketator.core.presentation.Sizes
-import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
 import com.fraggeil.ticketator.core.presentation.components.MyButton
-import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.presentation.components.MyScrollableContentInvisibleBoundsBox
 import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
 import com.fraggeil.ticketator.core.presentation.components.TopBar2
@@ -49,12 +47,10 @@ import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.BlueDarkSecondary
 import com.fraggeil.ticketator.core.theme.White
 import com.fraggeil.ticketator.domain.model.Journey
-import com.fraggeil.ticketator.presentation.screens.search_results_screen.SearchResultsAction
 import com.fraggeil.ticketator.presentation.screens.search_results_screen.components.Dots
 import com.fraggeil.ticketator.presentation.screens.select_seat_screen.components.Seats
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
-import ticketator.composeapp.generated.resources.ic_close
 import ticketator.composeapp.generated.resources.uzbekistan
 
 

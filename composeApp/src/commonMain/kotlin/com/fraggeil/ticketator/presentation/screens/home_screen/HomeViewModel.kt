@@ -87,7 +87,9 @@ class HomeViewModel(
             is HomeAction.OnDistrictToSelected -> {
                 _state.update { it.copy(filter = it.filter.copy(toDistrict = action.district)) }
             }
-            HomeAction.OnNotificationClicked -> {}
+            HomeAction.OnNotificationClicked -> viewModelScope.launch{
+                showSnackbar("This feature will be available soon")
+            }
             HomeAction.OnOneWayClicked -> {
                 _state.update { it.copy(filter = it.filter.copy(type = FilterType.ONE_WAY)) }
             }
@@ -112,19 +114,19 @@ class HomeViewModel(
             HomeAction.OnSearchClicked -> viewModelScope.launch{
                 _state.value.filter.let { filter ->
                     if (filter.fromDistrict == null){
-                        showSnackbar()
+                        showSnackbar("Fill all the fields")
                         return@let
                     }
                     if (filter.toDistrict == null){
-                        showSnackbar()
+                        showSnackbar("Fill all the fields")
                         return@let
                     }
                     if (filter.dateGo == null){
-                        showSnackbar()
+                        showSnackbar("Fill all the fields")
                         return@let
                     }
                     if (filter.type == FilterType.ROUND_TRIP && filter.dateBack == null){
-                        showSnackbar()
+                        showSnackbar("Fill all the fields")
                         return@let
                     }
                     search(filter)
@@ -285,9 +287,9 @@ class HomeViewModel(
             .launchIn(viewModelScope)
     }
 
-    private suspend fun showSnackbar(){
+    private suspend fun showSnackbar(message: String){
 //        _state.value.snackbarHostState.showSnackbar("Fill all the fields")
-        snackbarHostState.showSnackbar("Fill all the fields")
+        snackbarHostState.showSnackbar(message)
     }
 
     private suspend fun search(filter: Filter){

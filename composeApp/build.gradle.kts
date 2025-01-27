@@ -144,12 +144,44 @@ dependencies {
 
 compose.desktop {
     application {
+        buildTypes.release.proguard {
+            configurationFiles.from(project.file("compose-desktop.pro"))
+            isEnabled = false // TODO TODO
+            optimize.set(true)
+            obfuscate.set(false)
+        }
+
         mainClass = "com.fraggeil.ticketator.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
-            packageName = "com.fraggeil.ticketator"
+            includeAllModules = true
+//            outputBaseDir.set(project.buildDir.resolve("customOutputDir"))
+
+            targetFormats(TargetFormat.Exe, TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "Ticketator"
             packageVersion = "1.0.0"
+            description = "Ticketator: Bus ticket booking app "
+            vendor = "Fraggeil"
+            copyright = "© 2024 Sergio Belda. Licensed under the Apache License." // todo change
+//            licenseFile.set(project.file("../LICENSE")) //todo change
+            licenseFile.set(project.file("./launcher_icons/LICENSE")) //todo change
+            macOS{
+                bundleID = "com.fraggeil.ticketator"
+                iconFile.set(project.file("./launcher_icons/macos_icon.icns"))
+                dockName = "Ticketator"
+            }
+            windows{
+                iconFile.set(project.file("./launcher_icons/windows_icon.ico"))
+                menuGroup = "Ticketator"
+                shortcut = true // create shortcut on desktop
+                dirChooser = true // choose installation folder
+                console = false // run app as console app // if true can see logs in terminal
+                perUserInstall = true // if true it will be installed in the local user else programFiles
+                upgradeUuid = "3af5f6a6-3fbe-465b-af40-549cd7a9c08d"
+            }
+            linux {
+                iconFile.set(project.file("./launcher_icons/linux_icon.png"))
+            }
         }
     }
 }

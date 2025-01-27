@@ -39,8 +39,8 @@ import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.TextColor
 import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
 import ticketator.composeapp.generated.resources.Res
-import ticketator.composeapp.generated.resources.ic_logo
 import org.jetbrains.compose.resources.painterResource
+import ticketator.composeapp.generated.resources.ticketator_logo
 
 @Composable
 fun LoginScreenRoot(
@@ -99,7 +99,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(32.dp))
                 Image(
 //                    imageVector = Icons.Default.Home,
-                    painter = painterResource(Res.drawable.ic_logo),
+                    painter = painterResource(Res.drawable.ticketator_logo),
                     contentDescription = null,
                     modifier = Modifier.sizeIn(maxHeight = 80.dp, maxWidth = 80.dp).fillMaxSize()
                 )

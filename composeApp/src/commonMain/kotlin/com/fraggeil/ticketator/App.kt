@@ -118,24 +118,44 @@ fun App(
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-            fun navigate(route: Route, shouldSaveState: Boolean, restore: Boolean = false){
-                if (shouldSaveState) {
-                    navController.navigate(route.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-//                    inclusive = false
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }else{
-                    navController.navigate(route.route){
-                        if (restore){
-                            popUpTo(navController.graph.findStartDestination().id)
-                        }
-                    }
+//            fun navigate(route: Route, shouldSaveState: Boolean, restore: Boolean = false){
+//                if (shouldSaveState) {
+//                    navController.navigate(route.route) {
+//                        popUpTo(navController.graph.findStartDestination().id) {
+////                    inclusive = false
+//                            saveState = true
+//                        }
+//                        launchSingleTop = true
+//                        restoreState = true
+//                    }
+//                }else{
+//                    navController.navigate(route.route){
+//                        if (restore){
+//                            popUpTo(navController.graph.findStartDestination().id)
+//                        }
+//                    }
+//                }
+//            }
+fun navigate(route: Route, shouldSaveState: Boolean = true, restore: Boolean = false){
+
+    if (shouldSaveState) {
+        val bool = navController.popBackStack(route.route, false)
+        println("bool: $bool // ${route.route}")
+        if (!bool){
+            navController.navigate(route.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
                 }
+                launchSingleTop = true
+                restoreState = restore  // Ensure this is being passed correctly
             }
+        }
+    } else {
+        navController.navigate(route.route) {
+            if (restore) { popUpTo(navController.graph.findStartDestination().id) }
+        }
+    }
+}
 
             Scaffold(
                 modifier = Modifier
@@ -169,7 +189,7 @@ fun App(
                                         unselectedPainter = painterResource(Res.drawable.ic_main_unselected),
                                         onClick = {
                                             if (navBackStackEntry?.destination?.route != Route.Home.route){
-                                                navigate(Route.Home,true)
+                                                navigate(Route.Home, shouldSaveState = true, restore = true)
                                             }
                                         },
                                         isSelected = navBackStackEntry?.destination?.route == Route.Home.route
@@ -180,7 +200,7 @@ fun App(
                                         unselectedPainter = painterResource(Res.drawable.ticket),
                                         onClick = {
                                             if (navBackStackEntry?.destination?.route != Route.Tickets.route){
-                                                navigate(Route.Tickets,false)
+                                                navigate(Route.Tickets, shouldSaveState = true, restore = true)
                                             }
                                         },
                                         isSelected = navBackStackEntry?.destination?.route == Route.Tickets.route
@@ -191,7 +211,7 @@ fun App(
                                         unselectedPainter = painterResource(Res.drawable.person),
                                         onClick = {
                                             if (navBackStackEntry?.destination?.route != Route.Profile.route){
-                                                navigate(Route.Profile,false)
+                                                navigate(Route.Profile, shouldSaveState = true, restore = true)
                                             }
                                         },
                                         isSelected = navBackStackEntry?.destination?.route == Route.Profile.route

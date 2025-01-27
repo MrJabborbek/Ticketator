@@ -33,12 +33,14 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.fraggeil.ticketator.core.data.di.initKoin
 import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
+import com.fraggeil.ticketator.core.theme.BG_White
 import com.fraggeil.ticketator.core.theme.Blue
+import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.White
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import ticketator.composeapp.generated.resources.Res
-import ticketator.composeapp.generated.resources.ic_logo
+import ticketator.composeapp.generated.resources.ticketator_logo
 import java.awt.Toolkit
 
 
@@ -72,7 +74,7 @@ fun main() {
                             (screenSize.height.dp - windowHeight) / 2 // Center Y
                         )
                     ),
-                    icon = painterResource(Res.drawable.ic_logo)
+                    icon = painterResource(Res.drawable.ticketator_logo)
                 ) {
                     App(
                         appViewModel = viewModel
@@ -103,16 +105,16 @@ fun SplashScreen() {
         alwaysOnTop = true
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().background(Blue),
+            modifier = Modifier.fillMaxSize().background(BG_White),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Image(
                     modifier = Modifier.size(100.dp),
-                    painter = painterResource(Res.drawable.ic_logo),
+                    painter = painterResource(Res.drawable.ticketator_logo),
                     contentDescription = "Splash Logo")
-                Text("Loading...", fontSize = 16.sp, color = White, fontWeight = FontWeight.SemiBold)
+                Text("Loading...", fontSize = 16.sp, color = BlueDark, fontWeight = FontWeight.SemiBold)
             }
         }
     }
