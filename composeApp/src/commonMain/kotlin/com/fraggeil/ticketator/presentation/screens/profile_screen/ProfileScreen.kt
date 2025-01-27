@@ -54,8 +54,10 @@ import com.fraggeil.ticketator.core.presentation.StatusBarColors
 import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding_double
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
+import com.fraggeil.ticketator.core.presentation.components.AutoResizedText
 import com.fraggeil.ticketator.core.presentation.components.ButtonWithIconAndArrow
 import com.fraggeil.ticketator.core.presentation.components.YouAreNotLoggedInMessage
+import com.fraggeil.ticketator.core.presentation.components.autosizetext.AutoSizeText
 import com.fraggeil.ticketator.core.theme.BG_White
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.ErrorColor
@@ -147,14 +149,15 @@ fun ProfileScreen(
                     tint = BlueDark,
                     modifier = Modifier.size(64.dp).background(color = BG_White, shape = CircleShape).padding(12.dp)
                 )
-                Text(
+                AutoSizeText(
                     text = user.phoneNumber.formatPhoneNumber(),
                     color = TextColor,
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.sp
                     ),
-                    maxLines = 2,
+                    maxTextSize = MaterialTheme.typography.headlineMedium.fontSize,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
                 )

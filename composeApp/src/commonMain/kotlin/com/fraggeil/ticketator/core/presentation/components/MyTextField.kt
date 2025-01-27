@@ -271,7 +271,7 @@ fun MyTextField(
                 else -> VisualTransformation.None
             }
         )
-            suggestions?.filter {it.contains(value, true)}?.takeIf { it.isNotEmpty() }?.take(maxSuggestions)?.let { items ->
+            suggestions?.filter {it.contains(value, true) && it.isNotBlank()}?.takeIf { it.isNotEmpty() }?.take(maxSuggestions)?.let { items ->
                 val scrollState = rememberScrollState()
                 ExposedDropdownMenu(
                     modifier = Modifier.changeScrollStateByMouse(
