@@ -50,9 +50,10 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.play.services.location)
 
-            implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
+//            implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
 
             implementation(libs.compass.geocoder.mobile)
+            implementation(libs.core.splashscreen)
 
         }
         commonMain.dependencies {
