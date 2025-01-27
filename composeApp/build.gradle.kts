@@ -91,8 +91,6 @@ kotlin {
 //            api("dev.icerock.moko:permissions-compose:0.18.1")
             implementation(libs.compass.geocoder)
 
-            implementation("com.google.accompanist:accompanist-systemuicontroller:0.36.0")
-
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

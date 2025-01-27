@@ -113,9 +113,7 @@ fun App(
     appViewModel: AppViewModel = koinViewModel<AppViewModel>()
 ) {
     val appState by appViewModel.state.collectAsStateWithLifecycle()
-    if (appState.isLoading){
-
-    }else{
+    if (!appState.isLoading){ // implementing splash screen for each platform individually
         AppTheme {
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
