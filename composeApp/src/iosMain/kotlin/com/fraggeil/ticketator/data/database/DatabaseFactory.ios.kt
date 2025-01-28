@@ -1,6 +1,6 @@
 package com.fraggeil.ticketator.data.database
 
-@file:OptIn(ExperimentalForeignApi::class)
+//@file:OptIn(ExperimentalForeignApi::class)
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -17,6 +17,7 @@ actual class DatabaseFactory {
         )
     }
 
+    @OptIn(ExperimentalForeignApi::class)
     private fun documentDirectory(): String {
         val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
             directory = NSDocumentDirectory,
