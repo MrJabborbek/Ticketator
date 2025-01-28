@@ -36,8 +36,9 @@ import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding_double
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_out_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
-import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
 import com.fraggeil.ticketator.core.presentation.StatusBarColors
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.theme.AppTypography
@@ -102,7 +103,7 @@ fun TicketsScreen(
             if (state.initialTickets.isNotEmpty()) {
                 item(span = { GridItemSpan(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 3) }) {
                     Text(
-                        text = "Your tickets",
+                        text = Strings.YourTickets.value(),
                         style = AppTypography().titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = White
                     )
@@ -118,7 +119,7 @@ fun TicketsScreen(
                                 it.imageBitmapToByteArray().let { bytes ->
                                     shareManager.shareFile(
                                         ShareFileModel(
-                                            fileName = "ticket-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}.png",
+                                            fileName = "${Strings.Ticket.value()}-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}.png",
                                             bytes = bytes
                                         )
                                     )
@@ -129,7 +130,7 @@ fun TicketsScreen(
                             coroutineScope.launch {
                                 it.imageBitmapToByteArray().let { bytes ->
                                     saveFileToStorageLauncher.launch(
-                                        baseName = "ticket-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}",
+                                        baseName = "${Strings.Ticket.value()}-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}",
                                         extension = "png",
                                         bytes = bytes
                                     )
@@ -142,7 +143,7 @@ fun TicketsScreen(
                     Box {
                         MyButton(
                             modifier = Modifier.align(Alignment.Center).widthIn(max = 400.dp).fillMaxWidth(),
-                            text = "Show old tickets",
+                            text = Strings.ShowOldTickets.value(),
                             onClick = { onAction(TicketsAction.OnShowAllTicketsClicked) }
                         )
                     }
@@ -161,7 +162,7 @@ fun TicketsScreen(
             } else  {
                 item(span = { GridItemSpan(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 3) }) {
                     Text(
-                        text = "Waiting for journey",
+                        text = Strings.WaitingForJourney.value(),
                         style = AppTypography().titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = White
                     )
@@ -174,14 +175,14 @@ fun TicketsScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Text(
-                                text = "There are no ticket found that are waiting for journey :(",
+                                text = Strings.NoTicketsFoundWaiting.value(),
                                 style = AppTypography().bodyMedium,
                                 textAlign = TextAlign.Center,
                                 color = White
 
                             )
                             MyButton(
-                                text = "Buy a ticket",
+                                text = Strings.BuyTicket.value(),
                                 onClick = { onAction(TicketsAction.OnBuyTicketButtonClicked) }
                             )
                         }
@@ -197,7 +198,7 @@ fun TicketsScreen(
                                     it.imageBitmapToByteArray().let { bytes ->
                                         shareManager.shareFile(
                                             ShareFileModel(
-                                                fileName = "ticket-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}.png",
+                                                fileName = "${Strings.Ticket.value()}-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}.png",
                                                 bytes = bytes
                                             )
                                         )
@@ -208,7 +209,7 @@ fun TicketsScreen(
                                 coroutineScope.launch {
                                     it.imageBitmapToByteArray().let { bytes ->
                                         saveFileToStorageLauncher.launch(
-                                            baseName = "ticket-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}",
+                                            baseName = "${Strings.Ticket.value()}-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}",
                                             extension = "png",
                                             bytes = bytes
                                         )
@@ -220,7 +221,7 @@ fun TicketsScreen(
                 }
                 item(span = { GridItemSpan(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 3) }) {
                     Text(
-                        text = "Old journeys",
+                        text = Strings.OldJourneys.value(),
                         style = AppTypography().titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         modifier = Modifier.padding(top = Sizes.vertical_inner_padding),
                         color = White
@@ -230,7 +231,7 @@ fun TicketsScreen(
                 if (state.pastTickets.isEmpty()) {
                     item(span = { GridItemSpan(if (uiType == UiType.COMPACT) 1 else if (uiType == UiType.MEDIUM) 2 else 3) }) {
                         Text(
-                            text = "You have not any old journeys yet.",
+                            text = Strings.NoOldJourneys.value(),
                             style = AppTypography().bodyMedium,
                             modifier = Modifier.padding(16.dp),
                             textAlign = TextAlign.Center,
@@ -248,7 +249,7 @@ fun TicketsScreen(
                                     it.imageBitmapToByteArray().let { bytes ->
                                         shareManager.shareFile(
                                             ShareFileModel(
-                                                fileName = "ticket-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}.png",
+                                                fileName = "${Strings.Ticket.value()}-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}.png",
                                                 bytes = bytes
                                             )
                                         )
@@ -259,7 +260,7 @@ fun TicketsScreen(
                                 coroutineScope.launch {
                                     it.imageBitmapToByteArray().let { bytes ->
                                         saveFileToStorageLauncher.launch(
-                                            baseName = "ticket-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}",
+                                            baseName = "${Strings.Ticket.value()}-${ticket.passenger.seat}-${ticket.journey.timeStart.toFormattedDate()}",
                                             extension = "png",
                                             bytes = bytes
                                         )

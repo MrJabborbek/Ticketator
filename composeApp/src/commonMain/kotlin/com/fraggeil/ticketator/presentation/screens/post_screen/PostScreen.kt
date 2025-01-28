@@ -35,6 +35,8 @@ import com.fraggeil.ticketator.core.domain.Constants
 import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
 import com.fraggeil.ticketator.core.presentation.StatusBarColors
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
 import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
@@ -77,7 +79,7 @@ fun PostScreen(
             imageState = if (size.height > 1 && size.width > 1){
                 Result.success(it.painter)
             } else {
-                Result.failure(Exception("Invalid image size"))
+                Result.failure(Exception(Strings.InvalidImageSize.value()))
             }
         },
         onError = {

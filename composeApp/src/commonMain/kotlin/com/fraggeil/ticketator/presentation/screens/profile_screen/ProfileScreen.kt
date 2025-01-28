@@ -30,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -39,37 +38,38 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.fraggeil.ticketator.presentation.screens.profile_screen.components.ContactWithUsBottomSheet
-import com.fraggeil.ticketator.presentation.screens.profile_screen.components.LanguageBottomSheet
-import com.fraggeil.ticketator.core.domain.phoneNumberFormatting.formatPhoneNumber
-import com.fraggeil.ticketator.core.presentation.Language
-import com.fraggeil.ticketator.core.presentation.Strings
-import com.fraggeil.ticketator.core.presentation.Strings.value
-import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
-import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
-import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
+import com.fraggeil.ticketator.core.domain.Constants.CALL_CENTER_PHONE_NUMBER
+import com.fraggeil.ticketator.core.domain.Constants.CONTACT_WITH_US_PHONE
 import com.fraggeil.ticketator.core.domain.DialPhoneNumber
 import com.fraggeil.ticketator.core.domain.OpenUrlInBrowser
-import com.fraggeil.ticketator.core.presentation.StatusBarColors
+import com.fraggeil.ticketator.core.domain.phoneNumberFormatting.formatPhoneNumber
+import com.fraggeil.ticketator.core.presentation.Language
 import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding_double
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
-import com.fraggeil.ticketator.core.presentation.components.AutoResizedText
+import com.fraggeil.ticketator.core.presentation.StatusBarColors
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.ButtonWithIconAndArrow
+import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
 import com.fraggeil.ticketator.core.presentation.components.YouAreNotLoggedInMessage
 import com.fraggeil.ticketator.core.presentation.components.autosizetext.AutoSizeText
+import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
+import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
 import com.fraggeil.ticketator.core.theme.BG_White
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.ErrorColor
 import com.fraggeil.ticketator.core.theme.TextColor
+import com.fraggeil.ticketator.presentation.screens.profile_screen.components.ContactWithUsBottomSheet
+import com.fraggeil.ticketator.presentation.screens.profile_screen.components.LanguageBottomSheet
+import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.ic_default_profile
 import ticketator.composeapp.generated.resources.ic_feedback
 import ticketator.composeapp.generated.resources.ic_how_to_use
 import ticketator.composeapp.generated.resources.ic_lang
 import ticketator.composeapp.generated.resources.ic_offer
-import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.koinInject
 
 @Composable
 fun ProfileScreenRoot(
@@ -104,8 +104,8 @@ fun ProfileScreenRoot(
                 ProfileAction.OnProfileClicked -> navigateToEditProfile()
                 ProfileAction.OnAboutAppClicked -> navigateToAboutApp()
                 ProfileAction.OnTermsAndConditionsClicked -> navigateToTermsAndConditions()
-                ProfileAction.OnCallClicked -> dialPhoneNumber.dialPhoneNumber("+99812345678")
-                ProfileAction.OnTelegramClicked -> openUrlInBrowser.open("https://t.me/fraggeil")
+                ProfileAction.OnCallClicked -> dialPhoneNumber.dialPhoneNumber(CALL_CENTER_PHONE_NUMBER)
+                ProfileAction.OnTelegramClicked -> openUrlInBrowser.open(CONTACT_WITH_US_PHONE)
                 else -> Unit
             }
             viewModel.onAction(it)

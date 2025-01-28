@@ -17,9 +17,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -46,6 +43,8 @@ import com.fraggeil.ticketator.core.domain.getHours
 import com.fraggeil.ticketator.core.domain.millisecondsToFormattedString
 import com.fraggeil.ticketator.core.domain.toFormattedDate
 import com.fraggeil.ticketator.core.presentation.Sizes
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
 import com.fraggeil.ticketator.core.presentation.components.TicketShape
 import com.fraggeil.ticketator.core.presentation.components.TwoTextRowItem
@@ -142,7 +141,7 @@ fun TicketItem(
                                 dotsColor = LightGray,
                                 pinColor = LightGray,
                                 topText = (ticket.journey.timeArrival - ticket.journey.timeStart).millisecondsToFormattedString(),
-                                bottomText = if (ticket.journey.stopAt.isEmpty()) "Non-stop" else "Stop at: ${ticket.journey.stopAt.joinToString(", ")}"
+                                bottomText = if (ticket.journey.stopAt.isEmpty()) Strings.NonStop.value() else "${Strings.StopAt.value()}: ${ticket.journey.stopAt.joinToString(", ")}"
                             )
                         }
                         Column(
@@ -199,32 +198,32 @@ fun TicketItem(
                     ){
                         TwoTextRowItem(
                             modifier = Modifier.fillMaxWidth(),
-                            text1 = "Jo'nash vaqti:",
+                            text1 = "${Strings.DepartureTime.value()}:",
                             text2 = ticket.journey.timeStart.toFormattedDate(hoursEnabled = true),
                             isLoading = isLoading
                         )
                         TwoTextRowItem(
                             modifier = Modifier.fillMaxWidth(),
-                            text1 = "O'rin:",
+                            text1 = "${Strings.Seat.value()}:",
                             text2 = ticket.passenger.seat.toString(),
                             isLoading = isLoading
                         )
                         TwoTextRowItem(
                             modifier = Modifier.fillMaxWidth(),
-                            text1 = "Yo'lovchi:",
+                            text1 = "${Strings.Passenger.value()}:",
                             text2 = ticket.passenger.name,
                             isLoading = isLoading
                         )
                         TwoTextRowItem(
                             modifier = Modifier.fillMaxWidth(),
-                            text1 = "Sotib olingan vaqt:",
+                            text1 = "${Strings.PurchaseTime.value()}:",
                             text2 = ticket.buyTime.toFormattedDate(hoursEnabled = true),
                             isLoading = isLoading
                         )
                         TwoTextRowItem(
                             modifier = Modifier.fillMaxWidth(),
-                            text1 = "Chipta narxi:",
-                            text2 = ticket.journey.price.toString().formatWithSpacesNumber() + " so‘m",
+                            text1 = "${Strings.TicketPrice.value()}:",
+                            text2 = ticket.journey.price.toString().formatWithSpacesNumber() + " ${Strings.Sum.value()}",
                             isLoading = isLoading
                         )
                     }
@@ -379,7 +378,7 @@ fun TicketItem(
                                     dotsColor = LightGray,
                                     pinColor = LightGray,
                                     topText = (ticket.journey.timeArrival - ticket.journey.timeStart).millisecondsToFormattedString(),
-                                    bottomText = if (ticket.journey.stopAt.also { println("stopAt: $it // ${it.size}") }.isEmpty()) "Non-stop" else "Stop at: ${ticket.journey.stopAt.joinToString(", ")}"
+                                    bottomText = if (ticket.journey.stopAt.isEmpty()) Strings.NonStop.value() else "${Strings.StopAt.value()}: ${ticket.journey.stopAt.joinToString(", ")}"
                                 )
                             }
                             Column(
@@ -436,32 +435,32 @@ fun TicketItem(
                         ){
                             TwoTextRowItem(
                                 modifier = Modifier.fillMaxWidth(),
-                                text1 = "Jo'nash vaqti:",
+                                text1 = "${Strings.DepartureTime.value()}:",
                                 text2 = ticket.journey.timeStart.toFormattedDate(hoursEnabled = true),
                                 isLoading = isLoading
                             )
                             TwoTextRowItem(
                                 modifier = Modifier.fillMaxWidth(),
-                                text1 = "O'rin:",
+                                text1 = "${Strings.Seat.value()}:",
                                 text2 = ticket.passenger.seat.toString(),
                                 isLoading = isLoading
                             )
                             TwoTextRowItem(
                                 modifier = Modifier.fillMaxWidth(),
-                                text1 = "Yo'lovchi:",
+                                text1 = "${Strings.Passenger.value()}:",
                                 text2 = ticket.passenger.name,
                                 isLoading = isLoading
                             )
                             TwoTextRowItem(
                                 modifier = Modifier.fillMaxWidth(),
-                                text1 = "Sotib olingan vaqt:",
+                                text1 = "${Strings.PurchaseTime.value()}:",
                                 text2 = ticket.buyTime.toFormattedDate(hoursEnabled = true),
                                 isLoading = isLoading
                             )
                             TwoTextRowItem(
                                 modifier = Modifier.fillMaxWidth(),
-                                text1 = "Chipta narxi:",
-                                text2 = ticket.journey.price.toString().formatWithSpacesNumber() + " so‘m",
+                                text1 = "${Strings.TicketPrice.value()}:",
+                                text2 = ticket.journey.price.toString().formatWithSpacesNumber() + " ${Strings.Sum.value()}",
                                 isLoading = isLoading
                             )
                         }

@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.phoneNumberFormatting.formatPhoneNumber
 import com.fraggeil.ticketator.core.domain.result.onError
 import com.fraggeil.ticketator.core.domain.result.onSuccess
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.domain.repository.LoginRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -90,7 +92,7 @@ class OtpViewModel(
                     _oneTimeState.send(OtpOneTimeState.NavigateToHome)
                 }
                 .onError {
-                    _state.update { it.copy(isLoading = false, error = "Invalid OTP", isErrorMode = true) }
+                    _state.update { it.copy(isLoading = false, error = Strings.InvalidOTP.value(), isErrorMode = true) }
                 }
         }
     }

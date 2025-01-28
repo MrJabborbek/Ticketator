@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.result.onError
 import com.fraggeil.ticketator.core.domain.result.onSuccess
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.domain.model.Profile
 import com.fraggeil.ticketator.domain.repository.ProfileRepository
 import kotlinx.coroutines.Job
@@ -76,7 +78,6 @@ class ProfileEditViewModel(
         observeCurrentUserJob = viewModelScope.launch {
             profileRepository.getCurrentProfile()
                 .onSuccess { user ->
-                    println("USERRR SUCCESS")
                     profile = user
                     _state.update { it.copy(
                         firstName = user.firstName,
@@ -87,10 +88,8 @@ class ProfileEditViewModel(
                     ) }
                 }
                 .onError {
-                    println("USERRR Errorr")
-
-                    _state.update { it.copy(isLoadingProfile = false, error = "Error") }
-                    snackbarHostState.showSnackbar("Error while loading profile")
+                    _state.update { it.copy(isLoadingProfile = false, error = Strings.ErrorLoadingProfile.value()) }
+                    snackbarHostState.showSnackbar(Strings.ErrorLoadingProfile.value())
                 }
         }
     }
@@ -104,7 +103,8 @@ class ProfileEditViewModel(
                     _oneTimeState.send(ProfileEditOneTimeState.NavigateBack)
                 }
                 .onError {
-                    _state.update { it.copy(isLoadingDeleteOrUpdate = false, error = "Error") }
+                    _state.update { it.copy(isLoadingDeleteOrUpdate = false, error = Strings.UnknownErrorOccurred.value()) }
+                    snackbarHostState.showSnackbar(Strings.UnknownErrorOccurred.value())
                 }
         }
     }
@@ -119,7 +119,8 @@ class ProfileEditViewModel(
                     _oneTimeState.send(ProfileEditOneTimeState.NavigateToMain)
                 }
                 .onError {
-                    _state.update { it.copy(isLoadingDeleteOrUpdate = false, error = "Error") }
+                    _state.update { it.copy(isLoadingDeleteOrUpdate = false, error = Strings.UnknownErrorOccurred.value()) }
+                    snackbarHostState.showSnackbar(Strings.UnknownErrorOccurred.value())
                 }
         }
     }

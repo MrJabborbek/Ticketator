@@ -10,4 +10,6 @@ object Constants {
 
     const val MONEY_TYPE = "so'm"
     const val FAKE_DELAY_TO_TEST = 0L//1000L//1000L
+    const val CALL_CENTER_PHONE_NUMBER = "+99812345678"
+    const val CONTACT_WITH_US_PHONE = "https://t.me/fraggeil"
 }

@@ -26,9 +26,12 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fraggeil.ticketator.core.presentation.Language
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.InputStyle
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyTextField
@@ -103,8 +106,7 @@ fun PassengersInfoScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TopBar2(
-
-                    text = "Passenger Info",
+                    text = Strings.PassengerInfo.value(),
                     isLeadingButtonVisible = true,
                     onLeadingButtonClick = { onAction(PassengersInfoAction.OnBackClicked) },
                 )
@@ -139,20 +141,20 @@ fun PassengersInfoScreen(
                             passengers.forEachIndexed { index, passenger ->
                                 Row(modifier = Modifier.fillMaxWidth()) {
                                     Text(
-                                        text = "${index + 1}-yo'lovchi, ",
+                                        text = if (Strings.selectedLanguage.value in listOf(Language.Uzbek, Language.UzbekCyr)) "${index + 1}-${Strings.Passenger.value().lowercase()}, " else "${Strings.Passenger.value().lowercase()} ${index + 1}, ",
                                         style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                                         color = TextColor
 //                                text = "Seat ${passenger.seat}"
                                     )
                                     Text(
-                                        text = "${passenger.seat}-o'rindiq",
+                                        text =  if (Strings.selectedLanguage.value in listOf(Language.Uzbek, Language.UzbekCyr)) "${passenger.seat}-${Strings.Seat.value()}" else "${Strings.Seat.value()} ${passenger.seat}",
                                         style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                                         color = Blue
                                     )
                                 }
                                 MyTextField(
                                     modifier = Modifier.padding(top = 12.dp).fillMaxWidth(),
-                                    label = "To‘liq ism-sharifi",
+                                    label = Strings.FullName.value(),
                                     value = passenger.name,
                                     onValueChange = {
                                         onAction(
@@ -166,7 +168,7 @@ fun PassengersInfoScreen(
                                 )
                                 MyTextField(
                                     modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
-                                    label = "Telefon raqam",
+                                    label = Strings.PhoneNumber.value(),
                                     value = passenger.phone,
                                     onValueChange = {
                                         onAction(
@@ -204,7 +206,7 @@ fun PassengersInfoScreen(
             ) {
                 MyButton(
                     modifier = Modifier.widthIn(max = 400.dp).fillMaxWidth(),
-                    text = "Payment",
+                    text = Strings.Payment.value(),
                     onClick = { onAction(PassengersInfoAction.OnPaymentClicked) },
                     enabled = state.isAllDataValid,
 //                        icon = Icons.Outlined.ShoppingCart

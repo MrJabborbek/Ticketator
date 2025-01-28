@@ -140,7 +140,6 @@ fun navigate(route: Route, shouldSaveState: Boolean = true, restore: Boolean = f
 
     if (shouldSaveState) {
         val bool = navController.popBackStack(route.route, false)
-        println("bool: $bool // ${route.route}")
         if (!bool){
             navController.navigate(route.route) {
                 popUpTo(navController.graph.findStartDestination().id) {
@@ -185,7 +184,7 @@ fun navigate(route: Route, shouldSaveState: Boolean = true, restore: Boolean = f
                                 ) {
                                     MyNavigationBarItem(
                                         text = Strings.Home.value(),
-                                        selectedPainter = painterResource(Res.drawable.ic_main_selected), //TODO
+                                        selectedPainter = painterResource(Res.drawable.ic_main_selected),
                                         unselectedPainter = painterResource(Res.drawable.ic_main_unselected),
                                         onClick = {
                                             if (navBackStackEntry?.destination?.route != Route.Home.route){
@@ -242,9 +241,7 @@ fun navigate(route: Route, shouldSaveState: Boolean = true, restore: Boolean = f
                     ) {
                         navigation(
                             route = Route.TicketatorGraph.route,
-                            startDestination = (if (appState.appSettings.isLaunched) Route.Home.route else Route.Start.route).also {
-                                println("start destination: $it // ${appState.appSettings}")
-                            },
+                            startDestination = (if (appState.appSettings.isLaunched) Route.Home.route else Route.Start.route),
 //                        startDestination = Route.SelectSeat.route,
                         ) {
 

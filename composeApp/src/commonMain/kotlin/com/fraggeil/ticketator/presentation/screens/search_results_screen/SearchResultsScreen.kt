@@ -2,7 +2,6 @@ package com.fraggeil.ticketator.presentation.screens.search_results_screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -32,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,10 +48,10 @@ import com.fraggeil.ticketator.core.presentation.Sizes.default_bottom_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
-import com.fraggeil.ticketator.core.presentation.StatusBarColors
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyCalendarDateSelector
-import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.presentation.components.MyScrollableContentInvisibleBoundsBox
 import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
@@ -70,7 +67,6 @@ import com.fraggeil.ticketator.presentation.screens.search_results_screen.compon
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.filter
-import ticketator.composeapp.generated.resources.ic_close
 import ticketator.composeapp.generated.resources.uzbekistan
 
 @Composable
@@ -129,7 +125,7 @@ fun SearchResultsScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TopBar2(
-                text = "Journey Results",
+                text = Strings.JourneyResults.value(),
                 isLeadingButtonVisible = true,
                 isTrailingButtonVisible = true,
                 trailingButtonIcon = painterResource(Res.drawable.filter),
@@ -198,7 +194,7 @@ fun SearchResultsScreen(
                 }
                 Text(
                     modifier = Modifier.padding(top = vertical_out_padding),
-                    text = "${state.journeys.size} Results Found".takeIf { !state.isLoadingJourneys } ?: "Loading Results...",
+                    text = "${state.journeys.size} ${Strings.JourneysFound.value()}".takeIf { !state.isLoadingJourneys } ?: Strings.Loading.value(),
                     color = White,
                     style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.Normal),
                     textAlign = TextAlign.Center,
@@ -257,7 +253,7 @@ fun SearchResultsScreen(
                     ){
                         Text(
                             modifier = Modifier.padding(horizontal = default_bottom_padding),
-                            text = "No Results Found :( Maybe you can try another date?",
+                            text = Strings.NoResultsFound.value(),
                             color = White,
                             style = AppTypography().titleMedium.copy(fontWeight = FontWeight.SemiBold),
                             textAlign = TextAlign.Center,
@@ -265,7 +261,7 @@ fun SearchResultsScreen(
                         )
                         MyButton(
                             modifier = Modifier.padding(top = vertical_out_padding),
-                            text = "Select Another Date",
+                            text = Strings.SelectAnotherDate.value(),
                             onClick = {
                                 calendarDateVisibility.value = true
                             }

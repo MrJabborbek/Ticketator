@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
-import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.InputStyle
@@ -41,7 +40,6 @@ import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyButtonStyle
 import com.fraggeil.ticketator.core.presentation.components.MyTextField
 import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
-import com.fraggeil.ticketator.core.presentation.components.TopBar
 import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
@@ -49,10 +47,9 @@ import com.fraggeil.ticketator.core.theme.Blue
 import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.BlueDarkSecondary
 import com.fraggeil.ticketator.core.theme.ErrorColor
-import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
+import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
 import ticketator.composeapp.generated.resources.ic_default_profile
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun ProfileEditScreenRoot(

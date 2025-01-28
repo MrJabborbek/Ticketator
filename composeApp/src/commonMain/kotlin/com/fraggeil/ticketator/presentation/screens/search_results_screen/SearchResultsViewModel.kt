@@ -2,15 +2,11 @@ package com.fraggeil.ticketator.presentation.screens.search_results_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fraggeil.ticketator.core.domain.Constants
 import com.fraggeil.ticketator.core.domain.result.onError
 import com.fraggeil.ticketator.core.domain.result.onSuccess
-import com.fraggeil.ticketator.core.domain.setFromTimeToBeginningOfTheDay
-import com.fraggeil.ticketator.domain.FakeData
 import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.repository.SearchResultsRepository
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart

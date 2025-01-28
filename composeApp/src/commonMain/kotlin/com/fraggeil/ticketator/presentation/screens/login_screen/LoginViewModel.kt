@@ -6,6 +6,8 @@ import com.fraggeil.ticketator.core.domain.result.onError
 import com.fraggeil.ticketator.core.domain.result.onSuccess
 import com.fraggeil.ticketator.domain.repository.LoginRepository
 import com.fraggeil.ticketator.core.domain.isValidPhoneNumber
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,10 +36,10 @@ class LoginViewModel(
                             _state.update { it.copy(isLoading = false) }
                         }
                         .onError {
-                            _state.update { it.copy(error = "Error while sending otp") }//TODO
+                            _state.update { it.copy(error = Strings.ErrorSendingOTP.value()) }//TODO
                         }
                 }else{
-                    _state.update { it.copy(error = "Invalid phone number") }//TODO
+                    _state.update { it.copy(error = Strings.InvalidPhoneNumber.value()) }//TODO
                 }
             }
             LoginAction.OnTermsAndConditionsClicked -> {}

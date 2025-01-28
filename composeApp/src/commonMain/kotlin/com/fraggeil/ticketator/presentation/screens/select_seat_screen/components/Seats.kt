@@ -2,22 +2,16 @@ package com.fraggeil.ticketator.presentation.screens.select_seat_screen.componen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
@@ -26,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -43,12 +35,11 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.isUnspecified
-import androidx.compose.ui.unit.sp
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
 import com.fraggeil.ticketator.core.theme.AppTypography
 import org.jetbrains.compose.resources.painterResource
@@ -84,7 +75,7 @@ fun Seats(
             if (available.isEmpty()){
                 item(span = { GridItemSpan(5) }) {
                     Text(
-                        text = "No seats available",
+                        text = Strings.NoSeatsAvailable.value(),
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFF818e98),
@@ -115,12 +106,12 @@ fun Seats(
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     TextWithCount(
-                        text = "Available",
+                        text = Strings.Available.value(),
                         count = available.size,
                         color = Color(0xFF72c16f)
                     )
                     TextWithCount(
-                        text = "Selected",
+                        text = Strings.Selected.value(),
                         count = selected.size,
                         color = Color(0xFF6ba3ed)
                     )
@@ -133,12 +124,12 @@ fun Seats(
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     TextWithCount(
-                        text = "Reserved",
+                        text = Strings.Reserve.value(),
                         count = reserved.size,
                         color = Color(0xFFe9b770)
                     )
                     TextWithCount(
-                        text = "Unavailable",
+                        text = Strings.Unavailable.value(),
                         count = 51 - available.size - reserved.size,
                         color = Color(0xFF818e98)
                     )
@@ -152,7 +143,7 @@ fun Seats(
         ){
             if (available.isEmpty()){
                 Text(
-                    text = "No seats available",
+                    text = Strings.NoSeatsAvailable.value(),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF818e98),
@@ -198,22 +189,22 @@ fun Seats(
                 verticalAlignment = Alignment.CenterVertically
             ){
                 TextWithCount(
-                    text = "Reserved",
+                    text = Strings.Reserve.value(),
                     count = reserved.size,
                     color = Color(0xFFe9b770)
                 )
                 TextWithCount(
-                    text = "Unavailable",
+                    text = Strings.Unavailable.value(),
                     count = 51 - available.size - reserved.size,
                     color = Color(0xFF818e98)
                 )
                 TextWithCount(
-                    text = "Available",
+                    text = Strings.Available.value(),
                     count = available.size,
                     color = Color(0xFF72c16f)
                 )
                 TextWithCount(
-                    text = "Selected",
+                    text = Strings.Selected.value(),
                     count = selected.size,
                     color = Color(0xFF6ba3ed)
                 )

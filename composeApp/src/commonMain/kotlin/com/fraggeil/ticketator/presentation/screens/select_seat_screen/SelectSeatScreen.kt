@@ -35,6 +35,8 @@ import com.fraggeil.ticketator.core.domain.rememberScreenSizeInfo
 import com.fraggeil.ticketator.core.domain.toFormattedDate
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.presentation.components.MyScrollableContentInvisibleBoundsBox
 import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
@@ -110,7 +112,7 @@ fun SelectSeatScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TopBar2(
-                text = "Select Seats",
+                text = Strings.SelectSeats.value(),
                 isLeadingButtonVisible = true,
                 onLeadingButtonClick = { onAction(SelectSeatAction.OnBackClicked) },
             )
@@ -177,11 +179,7 @@ fun SelectSeatScreen(
                         dotsColor = White,
                         pinColor = Blue,
                         topText = ((state.selectedJourney?.timeArrival?:0) - (state.selectedJourney?.timeStart ?: 0)).millisecondsToFormattedString(),
-                        bottomText = if (state.selectedJourney?.stopAt.isNullOrEmpty()) "Non-stop" else "Stop at: ${
-                            state.selectedJourney!!.stopAt.joinToString(
-                                ", "
-                            )
-                        }"
+                        bottomText = if (state.selectedJourney?.stopAt.isNullOrEmpty()) Strings.NonStop.value() else "${Strings.StopAt.value()}: ${state.selectedJourney!!.stopAt.joinToString(", ")}"
                     )
                     Column(
 //                        modifier = Modifier.weight(1f),
@@ -252,7 +250,7 @@ fun SelectSeatScreen(
                     ){
                         if (!state.isLoading) {
                             Text(
-                                text = "1 ticket: ${state.selectedJourney?.price.toString().formatWithSpacesNumber()} so‘m".takeIf { !state.isLoading } ?: "",
+                                text = "1 ${Strings.Ticket.value()}: ${state.selectedJourney?.price.toString().formatWithSpacesNumber()} ${Strings.Sum.value()}".takeIf { !state.isLoading } ?: "",
                                 color = White,
                                 style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                                 textAlign = TextAlign.Start,
@@ -260,7 +258,7 @@ fun SelectSeatScreen(
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
-                                text = "Additional: 0 so‘m".takeIf { !state.isLoading } ?: "".takeIf { !state.isLoading } ?: "",
+                                text = "${Strings.Additional.value()}: 0 ${Strings.Sum.value()}".takeIf { !state.isLoading } ?: "".takeIf { !state.isLoading } ?: "",
                                 color = White,
                                 style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                                 textAlign = TextAlign.Start,
@@ -268,10 +266,10 @@ fun SelectSeatScreen(
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
-                                text = "Total: ${
+                                text = "${Strings.Total.value()}: ${
                                     (state.selectedJourney?.price?.times(state.selectedJourney.selectedSeats.size) ?: 0).toString()
                                         .formatWithSpacesNumber()
-                                } so‘m".takeIf { !state.isLoading } ?: "",
+                                } ${Strings.Sum.value()}".takeIf { !state.isLoading } ?: "",
                                 color = White,
                                 style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                                 textAlign = TextAlign.Start,
@@ -284,7 +282,7 @@ fun SelectSeatScreen(
                         isLoading = state.isLoading,
                         modifier = Modifier.width(160.dp),
 //                        modifier = Modifier.padding(top = vertical_out_padding, start = Sizes.horizontal_out_padding, end = Sizes.horizontal_out_padding).widthIn(max = 600.dp).fillMaxWidth(),
-                        text = "Next",
+                        text = Strings.Continue.value(),
                         onClick = { onAction(SelectSeatAction.OnNextClicked) },
                         enabled = !state.selectedJourney?.selectedSeats.isNullOrEmpty()
                     )

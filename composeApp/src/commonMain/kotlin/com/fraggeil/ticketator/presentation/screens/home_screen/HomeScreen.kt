@@ -41,7 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import com.fraggeil.ticketator.core.domain.DateTimeUtil
 import com.fraggeil.ticketator.core.domain.FormattedDateStyle
 import com.fraggeil.ticketator.core.domain.NavigateToGpsSettings
-import com.fraggeil.ticketator.core.domain.moko_permission.permissions.PermissionState
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.compose.BindEffect
 import com.fraggeil.ticketator.core.domain.moko_permission.permissions.compose.rememberPermissionsControllerFactory
 import com.fraggeil.ticketator.core.domain.toFormattedDate
@@ -117,7 +115,6 @@ fun HomeScreenRoot(
 
     HomeScreen(
         state = state,
-        permissionState = viewModel.permissionState,
         onAction = {
             when (it){
                 is HomeAction.OnPostClicked -> {
@@ -134,7 +131,6 @@ fun HomeScreenRoot(
 @Composable
 fun HomeScreen(
     state: HomeState,
-    permissionState: PermissionState,
     onAction: (HomeAction) -> Unit,
     isNavigateToLocationRequired: MutableState<Boolean>
 ) {
@@ -231,13 +227,13 @@ fun HomeScreen(
                     ){
                         MyButton(
                             style = MyButtonStyle.SMALL,
-                            text = "One-way",
+                            text = Strings.OneWay.value(),
                             onClick = { onAction(HomeAction.OnOneWayClicked) },
                             isSelected = state.filter.type == FilterType.ONE_WAY
                         )
                         MyButton(
                             style = MyButtonStyle.SMALL,
-                            text = "Round trip",
+                            text = Strings.RoundTrip.value(),
                             onClick = { onAction(HomeAction.OnRoundTripClicked) },
                             isSelected = state.filter.type == FilterType.ROUND_TRIP
                         )
@@ -292,7 +288,7 @@ fun HomeScreen(
                     }
                     MyInfoButton(
                         modifier = Modifier.padding(top = Sizes.vertical_inner_padding).fillMaxWidth(),
-                        label = "Departure",
+                        label = Strings.Departure.value(),
                         text = state.filter.dateGo?.toFormattedDate(style = FormattedDateStyle.Words) ?: Strings.Select.value(),
                         onClick = {
                             fromDatePickerState.value = true
@@ -307,7 +303,7 @@ fun HomeScreen(
                         if (state.filter.type == FilterType.ROUND_TRIP){
                             MyInfoButton(
                                 modifier = Modifier.padding(top = Sizes.vertical_inner_padding).fillMaxWidth(),
-                                label = "Return",
+                                label = Strings.Return.value(),
                                 text = state.filter.dateBack?.toFormattedDate(style = FormattedDateStyle.Words) ?: Strings.Select.value(),
                                 onClick = {
                                     toDatePickerState.value = true
@@ -317,7 +313,7 @@ fun HomeScreen(
                     }
                     MyButton(
                         modifier = Modifier.padding(top = Sizes.vertical_inner_padding).align(Alignment.CenterHorizontally).widthIn(max = 400.dp).fillMaxWidth(),
-                        text = "Search journeys",
+                        text = Strings.SearchJourneys.value(),
                         onClick = {onAction(HomeAction.OnSearchClicked)},
                         style = MyButtonStyle.FILLED
                     )
@@ -347,7 +343,7 @@ fun HomeScreen(
 
 
     SelectItemAndSubItemDialog(
-        title = "From",
+        title = Strings.From.value(),
         items = state.fromRegions,
         selectedItem = state.filter.fromRegion,
         selectedSubItem = state.filter.fromDistrict,
@@ -364,7 +360,7 @@ fun HomeScreen(
         isVisible = isSelectFromVisible
     )
     SelectItemAndSubItemDialog(
-        title = "To",
+        title = Strings.To.value(),
         items = state.toRegions,
         selectedItem = state.filter.toRegion,
         selectedSubItem = state.filter.toDistrict,

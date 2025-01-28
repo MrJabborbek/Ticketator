@@ -16,6 +16,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.MyButton
 import com.fraggeil.ticketator.core.theme.AppTypography
 import com.fraggeil.ticketator.core.theme.BlueDark
@@ -35,7 +37,6 @@ fun StartScreenRoot(
         onAction = {
             when(it){
                 StartAction.OnStartClick -> navigateToHome()
-                else -> {}
             }
             viewModel.onAction(it)
         }
@@ -63,7 +64,7 @@ private fun StartScreen(
         ){
             MyButton(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Start",
+                text = Strings.Start.value(),
                 onClick = {
                     onAction(StartAction.OnStartClick)
                 }
@@ -76,7 +77,7 @@ private fun StartScreen(
         }
 
         Text(
-            text = "Search For Tickets To your Destination",
+            text =  Strings.SearchForTicketsToDestination.value(),
             textAlign = TextAlign.Center,
             maxLines = 4,
             style = AppTypography().displayMedium.copy(

@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.fraggeil.ticketator.core.domain.phoneNumberFormatting.formatPhoneNumber
 import com.fraggeil.ticketator.core.domain.result.onError
 import com.fraggeil.ticketator.core.domain.result.onSuccess
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.domain.repository.OtpPaymentRepository
 import com.fraggeil.ticketator.presentation.screens.otp_screen.OtpOneTimeState
 import kotlinx.coroutines.Job
@@ -58,7 +60,7 @@ class OtpPaymentViewModel(
                         startTimer(240)
                     }
                     .onError {
-                        _state.update { it.copy(error = "Error while sending otp") }//TODO
+                        _state.update { it.copy(error = Strings.ErrorSendingOTP.toString()) }//TODO
                     }
             }
 
@@ -89,7 +91,7 @@ class OtpPaymentViewModel(
                     _oneTimeState.send(OtpPaymentOneTimeState.NavigateToTickets(tickets))
                 }
                 .onError {
-                    _state.update { it.copy(isLoading = false, error = "Invalid OTP", isErrorMode = true) }
+                    _state.update { it.copy(isLoading = false, error = Strings.InvalidOTP.value(), isErrorMode = true) }
                 }
         }
     }

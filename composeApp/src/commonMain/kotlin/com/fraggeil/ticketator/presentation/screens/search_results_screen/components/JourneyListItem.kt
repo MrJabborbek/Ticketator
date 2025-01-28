@@ -1,8 +1,5 @@
 package com.fraggeil.ticketator.presentation.screens.search_results_screen.components
 
-import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +20,8 @@ import com.fraggeil.ticketator.core.domain.formatWithSpacesNumber
 import com.fraggeil.ticketator.core.domain.getHours
 import com.fraggeil.ticketator.core.domain.millisecondsToFormattedString
 import com.fraggeil.ticketator.core.presentation.Sizes
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.ShimmerStyle
 import com.fraggeil.ticketator.core.presentation.components.TicketShape
 import com.fraggeil.ticketator.core.presentation.components.shimmerLoadingAnimation
@@ -35,7 +33,6 @@ import com.fraggeil.ticketator.core.theme.TextColorLight
 import com.fraggeil.ticketator.domain.model.Journey
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
-import ticketator.composeapp.generated.resources.seat
 import ticketator.composeapp.generated.resources.seat_3
 
 @Composable
@@ -109,7 +106,7 @@ fun JourneyListItem(
                             dotsColor = LightGray,
                             pinColor = LightGray,
                             topText = (journey.timeArrival - journey.timeStart).millisecondsToFormattedString(),
-                            bottomText = if (journey.stopAt.isEmpty()) "Non-stop" else "Stop at: ${journey.stopAt.joinToString(", ")}"
+                            bottomText = if (journey.stopAt.isEmpty()) Strings.NonStop.value() else "${Strings.StopAt.value()}: ${journey.stopAt.joinToString(", ")}"
                         )
                     }
                     Column(
@@ -180,12 +177,12 @@ fun JourneyListItem(
                                 shimmerStyle = ShimmerStyle.TextBody
                             )
                         ,
-                        text = "${journey.seatsAvailable.size} Remaining".takeIf { !isLoading }?:"",
+                        text = "${journey.seatsAvailable.size} ${Strings.Remaining.value()}".takeIf { !isLoading }?:"",
                         style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.Normal),
                         color = TextColorLight
                     )
                     Text(
-                        text = "${journey.price.toString().formatWithSpacesNumber()} sum".takeIf { !isLoading }?:"",
+                        text = "${journey.price.toString().formatWithSpacesNumber()} ${Strings.Sum.value()}".takeIf { !isLoading }?:"",
                         style = AppTypography().titleLarge.copy(fontWeight = FontWeight.SemiBold),
                         color = Blue,
                         modifier = Modifier.shimmerLoadingAnimation(

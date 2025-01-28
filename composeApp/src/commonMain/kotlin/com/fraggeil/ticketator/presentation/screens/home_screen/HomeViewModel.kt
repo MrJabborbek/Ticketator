@@ -16,6 +16,8 @@ import com.fraggeil.ticketator.core.domain.moko_permission.permissions.RequestCa
 import com.fraggeil.ticketator.core.domain.result.DataError
 import com.fraggeil.ticketator.core.domain.result.onError
 import com.fraggeil.ticketator.core.domain.result.onSuccess
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.domain.model.Filter
 import com.fraggeil.ticketator.domain.model.FilterType
 import com.fraggeil.ticketator.domain.model.uzbekistan.Region
@@ -88,7 +90,7 @@ class HomeViewModel(
                 _state.update { it.copy(filter = it.filter.copy(toDistrict = action.district)) }
             }
             HomeAction.OnNotificationClicked -> viewModelScope.launch{
-                showSnackbar("This feature will be available soon")
+                showSnackbar(Strings.FeatureComingSoon.value())
             }
             HomeAction.OnOneWayClicked -> {
                 _state.update { it.copy(filter = it.filter.copy(type = FilterType.ONE_WAY)) }
@@ -114,19 +116,19 @@ class HomeViewModel(
             HomeAction.OnSearchClicked -> viewModelScope.launch{
                 _state.value.filter.let { filter ->
                     if (filter.fromDistrict == null){
-                        showSnackbar("Fill all the fields")
+                        showSnackbar(Strings.FillAllFields.value())
                         return@let
                     }
                     if (filter.toDistrict == null){
-                        showSnackbar("Fill all the fields")
+                        showSnackbar(Strings.FillAllFields.value())
                         return@let
                     }
                     if (filter.dateGo == null){
-                        showSnackbar("Fill all the fields")
+                        showSnackbar(Strings.FillAllFields.value())
                         return@let
                     }
                     if (filter.type == FilterType.ROUND_TRIP && filter.dateBack == null){
-                        showSnackbar("Fill all the fields")
+                        showSnackbar(Strings.FillAllFields.value())
                         return@let
                     }
                     search(filter)
@@ -195,7 +197,9 @@ class HomeViewModel(
                 .onSuccess { regions ->
                     _state.update { it.copy(fromRegions = regions, isLoadingFromRegions = false) }
                 }
-                .onError { _state.update { it.copy(error = "Error fetching regions") } }
+                .onError {
+                    _state.update { it.copy(error = Strings.ErrorFetchingRegions.value()) }
+                }
         }
     }
     private fun fetchToRegions(fromRegion: Region) {
@@ -215,7 +219,7 @@ class HomeViewModel(
                         )
                     }
                 }
-                .onError { _state.update { it.copy(error = "Error fetching regions") } }
+                .onError { _state.update { it.copy(error = Strings.ErrorFetchingRegions.value()) } }
         }
     }
 
@@ -227,13 +231,13 @@ class HomeViewModel(
                 .onSuccess { posts ->
                     _state.update { it.copy(isLoadingPosts = false, posts = posts) }
                 }
-                .onError { _state.update { it.copy(error = "Error fetching posts") } }
+                .onError { _state.update { it.copy(error = Strings.ErrorFetchingPosts.value()) } }
         }
     }
 
     private fun fetchCurrentLocation(isActionsAllowed: Boolean) {
         fetchCurrentLocationJob?.cancel()
-        _state.update { it.copy(isLoadingCurrentLocation = true, location = "Loading...") }
+        _state.update { it.copy(isLoadingCurrentLocation = true, location = Strings.Loading.value()) }
         fetchCurrentLocationJob = viewModelScope.launch {
             homeRepository.fetchCurrentLocation()
                 .onSuccess { data ->
@@ -249,24 +253,24 @@ class HomeViewModel(
                         is DataError.LocationError.NO_PERMISSION -> {
                             if (isActionsAllowed) provideOrRequestLocationPermission()
                             _state.update {
-                                it.copy(location = error.placeHolder ?:"No permission")
+                                it.copy(location = error.placeHolder ?:Strings.NoPermission.value())
                             }
                         }
                         is DataError.LocationError.NO_GPS ->{
                             if (isActionsAllowed) _oneTimeState.send(HomeOneTimeState.NavigateToGpsSettings)
                             _state.update {
-                                it.copy(location = error.placeHolder ?:"Turn on GPS")
+                                it.copy(location = error.placeHolder ?:Strings.TurnOnGPS.value())
                             }
                         }
                         is DataError.LocationError.UNKNOWN -> {
                             _state.update {
-                                it.copy(location = error.placeHolder ?: "Error fetching location")
+                                it.copy(location = error.placeHolder ?: Strings.ErrorFetchingLocation.value())
                             }
                         }
 
                         is DataError.LocationError.NO_GEOLOCATION -> {
                             _state.update {
-                                it.copy(location = error.placeHolder ?:"Error fetching location")
+                                it.copy(location = error.placeHolder ?:Strings.ErrorFetchingLocation.value())
                             }
                         }
                     }
@@ -288,7 +292,7 @@ class HomeViewModel(
     }
 
     private suspend fun showSnackbar(message: String){
-//        _state.value.snackbarHostState.showSnackbar("Fill all the fields")
+//        _state.value.snackbarHostState.showSnackbar(Strings.FillAllFields.value())
         snackbarHostState.showSnackbar(message)
     }
 

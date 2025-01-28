@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -38,9 +37,10 @@ import com.fraggeil.ticketator.core.domain.formatWithSpacesNumber
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_out_padding
+import com.fraggeil.ticketator.core.presentation.Strings
+import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.presentation.components.InputStyle
 import com.fraggeil.ticketator.core.presentation.components.MyButton
-import com.fraggeil.ticketator.core.presentation.components.MyCircularButton
 import com.fraggeil.ticketator.core.presentation.components.MyTextField
 import com.fraggeil.ticketator.core.presentation.components.TopBar2
 import com.fraggeil.ticketator.core.presentation.components.changeScrollStateByMouse
@@ -51,10 +51,8 @@ import com.fraggeil.ticketator.core.theme.BlueDark
 import com.fraggeil.ticketator.core.theme.BlueDarkSecondary
 import com.fraggeil.ticketator.core.theme.ErrorColor
 import com.fraggeil.ticketator.core.theme.White
-import com.fraggeil.ticketator.presentation.screens.select_seat_screen.SelectSeatAction
 import org.jetbrains.compose.resources.painterResource
 import ticketator.composeapp.generated.resources.Res
-import ticketator.composeapp.generated.resources.ic_close
 import ticketator.composeapp.generated.resources.uzbekistan
 
 @Composable
@@ -120,7 +118,7 @@ fun CardInfoScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TopBar2(
-                    text = "Card Info",
+                    text = Strings.CardInfo.value(),
                     isLeadingButtonVisible = true,
                     onLeadingButtonClick = { onAction(CardInfoAction.OnBackClicked) },
                 )
@@ -138,10 +136,10 @@ fun CardInfoScreen(
                         .padding(horizontal = Sizes.horizontal_inner_padding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Spacer(modifier = Modifier.height(Sizes.vertical_inner_padding))
+                    Spacer(modifier = Modifier.height(vertical_inner_padding))
                     MyTextField(
                         modifier = Modifier.padding(top = 12.dp).fillMaxWidth(),
-                        label = "Card number",
+                        label = Strings.CardNumber.value(),
                         hint = "0000 0000 0000 0000",
                         value = state.cardData.cardNumber,
                         onValueChange = {
@@ -157,8 +155,8 @@ fun CardInfoScreen(
                     ){
                         MyTextField(
                             modifier = Modifier.weight(1f),
-                            label = "Valid date",
-                            hint = "MM/YY",
+                            label = Strings.ValidDate.value(),
+                            hint = Strings.MMYY.value(),
                             value = state.cardData.cardValidUntil,
                             onValueChange = {
                                 onAction(CardInfoAction.OnCardValidUntilChanged(it))
@@ -178,11 +176,11 @@ fun CardInfoScreen(
                         Text(
                             modifier = Modifier.padding(top = vertical_inner_padding).fillMaxWidth(),
                             textAlign = TextAlign.Center,
-                            text = "Timer ended. Please try again from beginning",
+                            text = Strings.TimerEndedPleaseTry.value(),
                             style = AppTypography().bodyMedium.copy(color = ErrorColor, fontWeight = FontWeight.Medium),
                         )
                     }
-                    Spacer(modifier = Modifier.height(Sizes.vertical_inner_padding))
+                    Spacer(modifier = Modifier.height(vertical_inner_padding))
 
                 }
                 Row(
@@ -208,7 +206,7 @@ fun CardInfoScreen(
                         )
                     )
                     Text(
-                        text = "Save card info to later use",
+                        text = Strings.SaveCardInfoToLaterUse.value(),
                         color = White,
                         style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                     )
@@ -231,7 +229,7 @@ fun CardInfoScreen(
                         horizontalAlignment = Alignment.Start
                     ){
                         Text(
-                            text = "1 ticket: ${selectedJourney.price.toString().formatWithSpacesNumber()} so‘m",
+                            text = "1 ${Strings.Ticket.value()}: ${selectedJourney.price.toString().formatWithSpacesNumber()} ${Strings.Sum.value()}",
                             color = White,
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Start,
@@ -239,7 +237,7 @@ fun CardInfoScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "Additional: 0 so‘m",
+                            text = "${Strings.Additional.value()}: 0 ${Strings.Additional.value()}", //TODO
                             color = White,
                             style = AppTypography().bodyMedium.copy(fontWeight = FontWeight.Normal),
                             textAlign = TextAlign.Start,
@@ -247,7 +245,7 @@ fun CardInfoScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "Total: ${(selectedJourney.price*state.selectedJourney.selectedSeats.size).toString().formatWithSpacesNumber()} so‘m",
+                            text = "${Strings.Total.value()}: ${(selectedJourney.price*state.selectedJourney.selectedSeats.size).toString().formatWithSpacesNumber()} ${Strings.Sum.value()}",
                             color = White,
                             style = AppTypography().bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                             textAlign = TextAlign.Start,
@@ -258,7 +256,7 @@ fun CardInfoScreen(
                     MyButton(
                         modifier = Modifier.width(160.dp),
 //                        modifier = Modifier.padding(top = vertical_out_padding, start = Sizes.horizontal_out_padding, end = Sizes.horizontal_out_padding).widthIn(max = 600.dp).fillMaxWidth(),
-                        text = "Send SMS",
+                        text = Strings.SendSMS.value(),
                         onClick = { onAction(CardInfoAction.OnNextClicked) },
                         enabled = state.isAllDataValid,
                         isLoading = state.isSendingData
