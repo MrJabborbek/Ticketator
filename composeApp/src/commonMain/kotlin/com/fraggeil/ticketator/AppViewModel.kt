@@ -36,7 +36,6 @@ class AppViewModel(
         _state.update { it.copy(isLoading = true) }
         observeAppSettingsJob = repository.getAppSettings()
             .onEach { appSettings ->
-                println("appSettings: $appSettings")
                 _state.update { it.copy(
                     appSettings = appSettings,
                     isLoading = false

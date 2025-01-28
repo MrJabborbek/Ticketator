@@ -24,8 +24,6 @@ class DefaultOtpPaymentRepository(
             return Result.Error(DataError.Remote.INVALID_OTP)
         }
 
-        println("TOKEN: $token")
-
         val index = _testSendDataToCheck.value.indexOfFirst { it.third == token }
         if (index == -1){
             return Result.Error(DataError.Remote.INVALID_TOKEN)
