@@ -27,6 +27,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
+            export("io.github.mirzemehdi:kmpnotifier:1.4.0")
             baseName = "ComposeApp"
             isStatic = true
         }
@@ -55,6 +56,9 @@ kotlin {
             implementation(libs.compass.geocoder.mobile)
             implementation(libs.core.splashscreen)
 
+//            implementation(libs.firebase.messaging)
+            implementation("com.google.firebase:firebase-analytics") // for notifiactions
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:33.8.0")) // for notifiactions
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -90,6 +94,8 @@ kotlin {
 //            api("dev.icerock.moko:permissions:0.18.1")
 //            api("dev.icerock.moko:permissions-compose:0.18.1")
             implementation(libs.compass.geocoder)
+
+            api("io.github.mirzemehdi:kmpnotifier:1.4.0")
 
         }
         desktopMain.dependencies {

@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.3"
-android-compileSdk = "34"
+android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "34"
 androidx-activityCompose = "1.9.3"
@@ -25,6 +25,7 @@ sqlite = "2.5.0-alpha11"
 room = "2.7.0-alpha11"
 compass = "1.2.4"
 core-splashscreen = "1.0.1"
+firebaseMessaging = "24.1.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -70,6 +71,7 @@ compass-geocoder-web-googlemaps = { module = "dev.jordond.compass:autocomplete-g
 compass-geocoder-web-mapbox = { module = "dev.jordond.compass:geocoder-mapbox", version.ref = "compass" }
 
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

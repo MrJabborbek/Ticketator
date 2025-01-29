@@ -95,6 +95,12 @@ import com.fraggeil.ticketator.presentation.screens.start_screen.StartViewModel
 import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsAction
 import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsScreenRoot
 import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsViewModel
+import com.mmk.kmpnotifier.notification.NotifierManager
+import com.mmk.kmpnotifier.notification.PayloadData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
@@ -112,6 +118,49 @@ import ticketator.composeapp.generated.resources.ticket_filled
 fun App(
     appViewModel: AppViewModel = koinViewModel<AppViewModel>()
 ) {
+//    LaunchedEffect(true){
+//
+//        // scope:
+//        CoroutineScope(Dispatchers.IO).launch{
+//            val notifier = NotifierManager.getPushNotifier()
+//            println("PushNotificationServicee: getToken: ${notifier.getToken()}")
+////            notifier.subscribeToTopic("osch")
+//
+//        }
+//
+//        NotifierManager.addListener(object : NotifierManager.Listener {
+//            override fun onNewToken(token: String) {
+//                super.onNewToken(token)
+//                println("PushNotificationServicee onNewToken: $token")
+//            }
+//
+//            override fun onPushNotification(titlee: String?, bodyy: String?) {
+//                super.onPushNotification(titlee, bodyy) // if you want custom disable this
+//                println("PushNotificationServicee onPushNotification: $titlee, $bodyy")
+////                NotifierManager.getLocalNotifier().notify {
+////                    id= Random.nextInt(0, Int.MAX_VALUE)
+////                    title = titlee ?: "Title message from KMPNotifier"
+////                    body = bodyy ?: "Body message from KMPNotifier"
+////                    payloadData = mapOf(
+////                        Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
+////                        "extraKey" to "randomValue"
+////                    )
+////                    image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+////                }
+//            }
+//
+//            override fun onPayloadData(data: PayloadData) {
+//                super.onPayloadData(data)
+//                println("PushNotificationServicee onPayloadData: $data")
+//            }
+//
+//            override fun onNotificationClicked(data: PayloadData) {
+//                super.onNotificationClicked(data)
+//                println("PushNotificationServicee onNotificationClicked: $data")
+//            }
+//
+//        })
+//    }
     val appState by appViewModel.state.collectAsStateWithLifecycle()
     if (!appState.isLoading){ // implementing splash screen for each platform individually
         AppTheme {
