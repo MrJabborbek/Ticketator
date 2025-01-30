@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val result = intent?.getIntExtra("result", -1) ?: -1
             val activity = context as? MainActivity
-            println("BROADCASTTT: Received Resulttt: $result")
+            println("BROADCASTTT: Received Result: $result")
         }
     }
 }
