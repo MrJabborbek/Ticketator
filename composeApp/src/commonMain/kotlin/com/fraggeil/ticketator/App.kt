@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -95,11 +96,14 @@ import com.fraggeil.ticketator.presentation.screens.start_screen.StartViewModel
 import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsAction
 import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsScreenRoot
 import com.fraggeil.ticketator.presentation.screens.tickets_screen.TicketsViewModel
+import com.mmk.kmpnotifier.notification.NotificationImage
+import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.PayloadData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -112,18 +116,30 @@ import ticketator.composeapp.generated.resources.person
 import ticketator.composeapp.generated.resources.person_filled
 import ticketator.composeapp.generated.resources.ticket
 import ticketator.composeapp.generated.resources.ticket_filled
+import kotlin.random.Random
 
 @Composable
 @Preview
 fun App(
     appViewModel: AppViewModel = koinViewModel<AppViewModel>()
 ) {
+    val scope = rememberCoroutineScope()
     LaunchedEffect(true){
+        NotifierManager.getLocalNotifier().notify {
+            id= Random.nextInt(0, Int.MAX_VALUE)
+            title =  "Title message from KMPNotifier"
+            body = "Body message from KMPNotifier"
+            payloadData = mapOf(
+                Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
+                "extraKey" to "randomValue"
+            )
+            image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+        }
 
         // scope:
-        CoroutineScope(Dispatchers.IO).launch{
+        scope.launch{
             val notifier = NotifierManager.getPushNotifier()
-            println("PushNotificationServicee: getToken: ${notifier.getToken()}")
+            println("PushNotificationServicee: getTokenn: ${notifier.getToken()}")
 //            notifier.subscribeToTopic("osch")
 
         }
