@@ -3,59 +3,43 @@ import ComposeApp
 import FirebaseCore
 import FirebaseMessaging
 
+
+// @UIApplicationMain
 // class AppDelegate: NSObject, UIApplicationDelegate {
-    
-//     func application(_ app: UIApplication,
-//                      open url: URL,
-//                      options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+//     var window: UIWindow?
+//     let rinku = RinkuIos.init(deepLinkFilter: nil, deepLinkMapper: nil)
 //
-//         if url.scheme == "ticketatorapp" {
-//             let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
-//             let sum = queryItems?.first(where: { $0.name == "sum" })?.value ?? "0"
+//     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+//         self.window = UIWindow(frame: UIScreen.main.bounds)
+//         let mainViewController = UIHostingController(rootView: ContentView())
+//         self.window!.rootViewController = mainViewController
+//         self.window!.makeKeyAndVisible()
 //
-//             print("BROADCASTTT: Received Result from Ecommerce App: \(sum)")
-//         }
 //         return true
 //     }
 //
+//     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+//         rinku.onDeepLinkReceived(url: url.absoluteString)
+//         return true
+//     }
 //
-
-  //func application(_ application: UIApplication,
-    //               didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-
- //     FirebaseApp.configure() //important
-      
-      //By default showPushNotification value is true.
-      //When set showPushNotification to false foreground push  notification will not be shown.
-      //You can still get notification content using #onPushNotification listener method.
- //     NotifierManager.shared.initialize(configuration: NotificationPlatformConfigurationIos(
-  //          showPushNotification: true,
- //           askNotificationPermissionOnStart: true,
- //           notificationSoundName: "")
- //     )
- //
- //   return true
- // }
-
-//  func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-//        Messaging.messaging().apnsToken = deviceToken
-//      print("Device token: \(deviceToken)")
-//  }
-
+//     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+//         rinku.onDeepLinkReceived(userActivity: userActivity)
+//         return true
+//     }
 // }
 
 @main
 struct iOSApp: App {
-//     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     var body: some Scene {
+            let rinku = RinkuIos.init(deepLinkFilter: nil, deepLinkMapper: nil)
         WindowGroup {
-            
-            ContentView()           .onOpenURL{ url in
+            ContentView().onOpenURL{ url in
                 print("URL 1: \(url)")
-       
+                rinku.onDeepLinkReceived(url: url.absoluteString)
             }
+        }
     }
-}
 }
 
 func checkDeepLink(url: URL) -> Int? {

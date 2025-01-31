@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mmk.kmpnotifier.permission.permissionUtil
+import dev.theolm.rinku.compose.ext.Rinku
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -47,23 +48,25 @@ class MainActivity : ComponentActivity() {
             val viewModel: AppViewModel = koinViewModel()
             val state by viewModel.state.collectAsStateWithLifecycle()
             isLoading = state.isLoading
-            Box(modifier = Modifier.fillMaxSize()){
-
-                Button(
-                    modifier = Modifier.align(Alignment.Center),
-                    onClick = {
-                        val intent = Intent()
-                        intent.action = "com.fraggeil.ecommerce.PROCESS_REQUEST"
-                        intent.putExtra("number1", 2)
-                        intent.putExtra("number2", 2)
-                        intent.setPackage("com.fraggeil.ecommerce") // Specify the target app package
-                        sendBroadcast(intent).also { println("BROADCASTTT: sent from A") }
-                    }
-                ) { }
+//            Box(modifier = Modifier.fillMaxSize()){
+//
+//                Button(
+//                    modifier = Modifier.align(Alignment.Center),
+//                    onClick = {
+//                        val intent = Intent()
+//                        intent.action = "com.fraggeil.ecommerce.PROCESS_REQUEST"
+//                        intent.putExtra("number1", 2)
+//                        intent.putExtra("number2", 2)
+//                        intent.setPackage("com.fraggeil.ecommerce") // Specify the target app package
+//                        sendBroadcast(intent).also { println("BROADCASTTT: sent from A") }
+//                    }
+//                ) { }
+//            }
+            Rinku {
+                App(
+                    appViewModel = viewModel
+                )
             }
-//            App(
-//                appViewModel= viewModel
-//            )
         }
     }
 

@@ -28,6 +28,7 @@ kotlin {
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             export("io.github.mirzemehdi:kmpnotifier:1.4.0")
+            export("dev.theolm:rinku:1.3.2")
             baseName = "ComposeApp"
             isStatic = true
         }
@@ -96,6 +97,10 @@ kotlin {
             implementation(libs.compass.geocoder)
 
             api("io.github.mirzemehdi:kmpnotifier:1.4.0")
+
+            api("dev.theolm:rinku:1.3.2")  //deep linking for ios and mobile
+            implementation("dev.theolm:rinku:1.3.2")
+            implementation("dev.theolm:rinku-compose-ext:1.3.2")
 
         }
         desktopMain.dependencies {

@@ -26,8 +26,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -101,6 +103,9 @@ import com.mmk.kmpnotifier.notification.NotificationImage
 import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.PayloadData
+import dev.theolm.rinku.DeepLink
+import dev.theolm.rinku.Rinku
+import dev.theolm.rinku.compose.ext.DeepLinkListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -126,6 +131,15 @@ fun App(
 ) {
     val scope = rememberCoroutineScope()
     val openUrl = koinInject<OpenUrlInBrowser>()
+    var deepLink by remember { mutableStateOf<DeepLink?>(null) }
+    DeepLinkListener {
+        deepLink = it
+        println("Deep link: $it")
+    }
+
+    LaunchedEffect(true){
+
+    }
 
 //    LaunchedEffect(true){
 //        NotifierManager.getLocalNotifier().notify {
@@ -333,7 +347,7 @@ fun navigate(route: Route, shouldSaveState: Boolean = true, restore: Boolean = f
                                         navigate(Route.Post, false)
                                     },
                                     navigateToSearchResults = {filter ->
-                                        openUrl.open("ecommerce://process?num1=2&num2=3")
+                                        openUrl.open("ticketator://process?num1=2&num2=3")
 
 //                                        selectedFilterViewModel.onSelectItem(filter)
 //                                        navigate(Route.SearchResults, false)
