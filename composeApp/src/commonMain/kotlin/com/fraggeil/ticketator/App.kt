@@ -49,6 +49,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.fraggeil.ticketator.core.domain.Constants
+import com.fraggeil.ticketator.core.domain.OpenUrlInBrowser
 import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.theme.AppTheme
@@ -124,59 +125,61 @@ fun App(
     appViewModel: AppViewModel = koinViewModel<AppViewModel>()
 ) {
     val scope = rememberCoroutineScope()
-    LaunchedEffect(true){
-        NotifierManager.getLocalNotifier().notify {
-            id= Random.nextInt(0, Int.MAX_VALUE)
-            title =  "Title message from KMPNotifier"
-            body = "Body message from KMPNotifier"
-            payloadData = mapOf(
-                Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
-                "extraKey" to "randomValue"
-            )
-            image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
-        }
+    val openUrl = koinInject<OpenUrlInBrowser>()
 
-        // scope:
-        scope.launch{
-            val notifier = NotifierManager.getPushNotifier()
-            println("PushNotificationServicee: getTokenn: ${notifier.getToken()}")
-//            notifier.subscribeToTopic("osch")
-
-        }
-
-        NotifierManager.addListener(object : NotifierManager.Listener {
-            override fun onNewToken(token: String) {
-                super.onNewToken(token)
-                println("PushNotificationServicee onNewToken: $token")
-            }
-
-            override fun onPushNotification(titlee: String?, bodyy: String?) {
-                super.onPushNotification(titlee, bodyy) // if you want custom disable this
-                println("PushNotificationServicee onPushNotification: $titlee, $bodyy")
-//                NotifierManager.getLocalNotifier().notify {
-//                    id= Random.nextInt(0, Int.MAX_VALUE)
-//                    title = titlee ?: "Title message from KMPNotifier"
-//                    body = bodyy ?: "Body message from KMPNotifier"
-//                    payloadData = mapOf(
-//                        Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
-//                        "extraKey" to "randomValue"
-//                    )
-//                    image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
-//                }
-            }
-
-            override fun onPayloadData(data: PayloadData) {
-                super.onPayloadData(data)
-                println("PushNotificationServicee onPayloadData: $data")
-            }
-
-            override fun onNotificationClicked(data: PayloadData) {
-                super.onNotificationClicked(data)
-                println("PushNotificationServicee onNotificationClicked: $data")
-            }
-
-        })
-    }
+//    LaunchedEffect(true){
+//        NotifierManager.getLocalNotifier().notify {
+//            id= Random.nextInt(0, Int.MAX_VALUE)
+//            title =  "Title message from KMPNotifier"
+//            body = "Body message from KMPNotifier"
+//            payloadData = mapOf(
+//                Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
+//                "extraKey" to "randomValue"
+//            )
+//            image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+//        }
+//
+//        // scope:
+//        scope.launch{
+//            val notifier = NotifierManager.getPushNotifier()
+//            println("PushNotificationServicee: getTokenn: ${notifier.getToken()}")
+////            notifier.subscribeToTopic("osch")
+//
+//        }
+//
+//        NotifierManager.addListener(object : NotifierManager.Listener {
+//            override fun onNewToken(token: String) {
+//                super.onNewToken(token)
+//                println("PushNotificationServicee onNewToken: $token")
+//            }
+//
+//            override fun onPushNotification(titlee: String?, bodyy: String?) {
+//                super.onPushNotification(titlee, bodyy) // if you want custom disable this
+//                println("PushNotificationServicee onPushNotification: $titlee, $bodyy")
+////                NotifierManager.getLocalNotifier().notify {
+////                    id= Random.nextInt(0, Int.MAX_VALUE)
+////                    title = titlee ?: "Title message from KMPNotifier"
+////                    body = bodyy ?: "Body message from KMPNotifier"
+////                    payloadData = mapOf(
+////                        Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
+////                        "extraKey" to "randomValue"
+////                    )
+////                    image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+////                }
+//            }
+//
+//            override fun onPayloadData(data: PayloadData) {
+//                super.onPayloadData(data)
+//                println("PushNotificationServicee onPayloadData: $data")
+//            }
+//
+//            override fun onNotificationClicked(data: PayloadData) {
+//                super.onNotificationClicked(data)
+//                println("PushNotificationServicee onNotificationClicked: $data")
+//            }
+//
+//        })
+//    }
     val appState by appViewModel.state.collectAsStateWithLifecycle()
     if (!appState.isLoading){ // implementing splash screen for each platform individually
         AppTheme {
@@ -330,8 +333,10 @@ fun navigate(route: Route, shouldSaveState: Boolean = true, restore: Boolean = f
                                         navigate(Route.Post, false)
                                     },
                                     navigateToSearchResults = {filter ->
-                                        selectedFilterViewModel.onSelectItem(filter)
-                                        navigate(Route.SearchResults, false)
+                                        openUrl.open("ecommerce://process?num1=2&num2=3")
+
+//                                        selectedFilterViewModel.onSelectItem(filter)
+//                                        navigate(Route.SearchResults, false)
                                     }
                                 )
                             }
