@@ -15,6 +15,7 @@ import platform.Foundation.dataWithBytes
 import platform.Foundation.writeToFile
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
+import platform.UIKit.popoverPresentationController
 
 actual class ShareManager {
     actual fun shareText(text: String) {
@@ -23,18 +24,37 @@ actual class ShareManager {
             activityViewController, animated = true, completion = null
         )
     }
-
+    @OptIn(ExperimentalForeignApi::class)
     actual suspend fun shareFile(file: ShareFileModel): Result<Unit> {
         return runCatching {
             val url = withContext(Dispatchers.IO) {
                 saveFile(file.bytes, file.fileName)
             }
+
             val activityViewController = UIActivityViewController(listOf(url), null)
-            UIApplication.sharedApplication.keyWindow?.rootViewController?.presentViewController(
-                activityViewController, animated = true, completion = null
-            )
+            val rootViewController = UIApplication.sharedApplication.keyWindow?.rootViewController
+
+            rootViewController?.let { rootVC ->
+                val popover = activityViewController.popoverPresentationController
+                popover?.sourceView = rootVC.view
+                popover?.sourceRect = platform.CoreGraphics.CGRectMake(0.0, 0.0, 1.0, 1.0)
+
+                rootVC.presentViewController(activityViewController, animated = true, completion = null)
+            }
         }
     }
+
+//    actual suspend fun shareFile(file: ShareFileModel): Result<Unit> {
+//        return runCatching {
+//            val url = withContext(Dispatchers.IO) {
+//                saveFile(file.bytes, file.fileName)
+//            }
+//            val activityViewController = UIActivityViewController(listOf(url), null)
+//            UIApplication.sharedApplication.keyWindow?.rootViewController?.presentViewController(
+//                activityViewController, animated = true, completion = null
+//            )
+//        }
+//    }
 
     @OptIn(ExperimentalForeignApi::class)
     private fun saveFile(bytes: ByteArray, name: String): NSURL? {

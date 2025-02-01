@@ -2,6 +2,7 @@ package com.fraggeil.ticketator
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,6 +53,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.fraggeil.ticketator.core.domain.Constants
 import com.fraggeil.ticketator.core.domain.OpenUrlInBrowser
+import com.fraggeil.ticketator.core.domain.PlatformType
 import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
 import com.fraggeil.ticketator.core.theme.AppTheme
@@ -132,6 +134,7 @@ fun App(
 ) {
     val scope = rememberCoroutineScope()
     val openUrl = koinInject<OpenUrlInBrowser>()
+    val platform = koinInject<PlatformType> ()
     var deepLink by remember { mutableStateOf<DeepLink?>(null) }
     DeepLinkListener {
         deepLink = it
@@ -249,7 +252,7 @@ fun navigate(route: Route, shouldSaveState: Boolean = true, restore: Boolean = f
                 modifier = Modifier
                     .fillMaxSize().imePadding(),
 //                .statusBarsPadding(),
-                containerColor = Blue,
+                containerColor = BlueDark,
                 snackbarHost = {
                     SnackbarHost(koinInject())
                 },
@@ -319,8 +322,11 @@ fun navigate(route: Route, shouldSaveState: Boolean = true, restore: Boolean = f
                 ) {
                     NavHost(
                         modifier = Modifier
-                            .widthIn(max = Constants.MAX_ITEM_WIDTH_IN_DP)
-                            .fillMaxSize(),
+                            .then(
+                                if (platform == PlatformType.DESKTOP) Modifier.widthIn(max = Constants.MAX_ITEM_WIDTH_IN_DP) else Modifier
+                            )
+                            .fillMaxSize()
+                            .background(BG_White),
                         navController = navController,
                         startDestination = Route.TicketatorGraph.route,
                         enterTransition = { EnterTransition.None },

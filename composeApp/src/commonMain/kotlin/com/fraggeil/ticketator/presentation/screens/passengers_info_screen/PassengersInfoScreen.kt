@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fraggeil.ticketator.core.domain.Constants.MAX_BUTTON_SIZE
 import com.fraggeil.ticketator.core.presentation.Language
 import com.fraggeil.ticketator.core.presentation.Sizes
 import com.fraggeil.ticketator.core.presentation.Sizes.vertical_inner_padding
@@ -205,7 +206,7 @@ fun PassengersInfoScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
             ) {
                 MyButton(
-                    modifier = Modifier.widthIn(max = 400.dp).fillMaxWidth(),
+                    modifier = Modifier.widthIn(max = MAX_BUTTON_SIZE).fillMaxWidth(),
                     text = Strings.Payment.value(),
                     onClick = { onAction(PassengersInfoAction.OnPaymentClicked) },
                     enabled = state.isAllDataValid,

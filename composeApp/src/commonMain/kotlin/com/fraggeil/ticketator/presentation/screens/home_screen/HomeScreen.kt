@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.fraggeil.ticketator.core.domain.Constants.MAX_BUTTON_SIZE
 import com.fraggeil.ticketator.core.domain.DateTimeUtil
 import com.fraggeil.ticketator.core.domain.FormattedDateStyle
 import com.fraggeil.ticketator.core.domain.NavigateToGpsSettings
@@ -312,7 +313,7 @@ fun HomeScreen(
                         }
                     }
                     MyButton(
-                        modifier = Modifier.padding(top = Sizes.vertical_inner_padding).align(Alignment.CenterHorizontally).widthIn(max = 400.dp).fillMaxWidth(),
+                        modifier = Modifier.padding(top = Sizes.vertical_inner_padding).align(Alignment.CenterHorizontally).widthIn(max = MAX_BUTTON_SIZE).fillMaxWidth(),
                         text = Strings.SearchJourneys.value(),
                         onClick = {onAction(HomeAction.OnSearchClicked)},
                         style = MyButtonStyle.FILLED

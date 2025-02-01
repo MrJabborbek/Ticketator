@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.dp
 object Constants {
 //    const val MAX_ITEM_WIDTH_IN_DP = 700
     val MAX_ITEM_WIDTH_IN_DP = 1080.dp
+    val MAX_BUTTON_SIZE = 400.dp
 //    val MAX_ITEM_WIDTH_IN_DP = Dp.Companion.Unspecified //1080.dp
 
     const val MONEY_TYPE = "so'm"

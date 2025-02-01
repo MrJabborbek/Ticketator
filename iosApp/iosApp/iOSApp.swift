@@ -30,7 +30,7 @@ import FirebaseMessaging
 // }
 
 @main
-struct iOSApp: App {
+    struct iOSApp: App {
     var body: some Scene {
             let rinku = RinkuIos.init(deepLinkFilter: nil, deepLinkMapper: nil)
         WindowGroup {

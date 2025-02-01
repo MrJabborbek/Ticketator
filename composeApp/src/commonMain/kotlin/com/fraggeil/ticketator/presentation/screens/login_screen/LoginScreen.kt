@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fraggeil.ticketator.core.domain.Constants.MAX_BUTTON_SIZE
 import com.fraggeil.ticketator.core.presentation.Sizes.horizontal_inner_padding
 import com.fraggeil.ticketator.core.presentation.Strings
 import com.fraggeil.ticketator.core.presentation.Strings.value
@@ -81,7 +83,7 @@ fun LoginScreen(
             onLeadingButtonClick = { onAction(LoginAction.OnBackClicked) },
         )
         Box(modifier = Modifier.weight(1f).fillMaxWidth().padding(horizontal = horizontal_inner_padding)) {
-            val scrollState = rememberScrollState()
+            val scrollState = rememberScrollState(10000)
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -123,7 +125,7 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 MyTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.widthIn(max = MAX_BUTTON_SIZE).fillMaxWidth(),
                     label = Strings.PhoneNumber.value(),
                     value = state.phoneNumber,
                     onValueChange = { onAction(LoginAction.OnPhoneNumberChanged(it)) },
@@ -133,7 +135,7 @@ fun LoginScreen(
                 )
                 MyButton(
                     isLoading = state.isLoading,
-                    modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+                    modifier = Modifier.padding(top = 16.dp).widthIn(max = MAX_BUTTON_SIZE).fillMaxWidth(),
                     text = Strings.Login.value(),
                     onClick = { onAction(LoginAction.OnLoginClicked) }
                 )
