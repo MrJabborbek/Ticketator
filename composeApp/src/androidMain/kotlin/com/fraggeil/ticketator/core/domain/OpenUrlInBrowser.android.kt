@@ -8,7 +8,7 @@ actual class OpenUrlInBrowser(private val context: Context){
     actual fun open(url: String){
         val webpage: Uri = Uri.parse(url)
             val intent = Intent(Intent.ACTION_VIEW, webpage).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) uncomment for deeplinks
             }
 
         context.startActivity(intent)

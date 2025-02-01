@@ -34,10 +34,12 @@ struct iOSApp: App {
     var body: some Scene {
             let rinku = RinkuIos.init(deepLinkFilter: nil, deepLinkMapper: nil)
         WindowGroup {
-            ContentView().onOpenURL{ url in
-                print("URL 1: \(url)")
-                rinku.onDeepLinkReceived(url: url.absoluteString)
-            }
+            ContentView()
+                .onOpenURL{ url in
+                    print("URL 1: \(url)")
+                    rinku.onDeepLinkReceived(url: url.absoluteString)
+                }
+    
         }
     }
 }

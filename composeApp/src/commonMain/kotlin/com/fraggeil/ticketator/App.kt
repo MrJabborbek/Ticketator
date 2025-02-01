@@ -127,6 +127,7 @@ import kotlin.random.Random
 @Composable
 @Preview
 fun App(
+    isDarkStatusBar: (Boolean) -> Unit = {},
     appViewModel: AppViewModel = koinViewModel<AppViewModel>()
 ) {
     val scope = rememberCoroutineScope()
@@ -136,10 +137,16 @@ fun App(
         deepLink = it
         println("Deep link: $it")
     }
-
-    LaunchedEffect(true){
-
-    }
+//    var isDark by remember { mutableStateOf(true) }
+//    LaunchedEffect(true){
+//        scope.launch {
+//            repeat(5){
+//                delay(3000)
+//                isDarkStatusBar( isDark)
+//                isDark = !isDark
+//            }
+//        }
+//    }
 
 //    LaunchedEffect(true){
 //        NotifierManager.getLocalNotifier().notify {
@@ -242,7 +249,7 @@ fun navigate(route: Route, shouldSaveState: Boolean = true, restore: Boolean = f
                 modifier = Modifier
                     .fillMaxSize().imePadding(),
 //                .statusBarsPadding(),
-                containerColor = BG_White,
+                containerColor = Blue,
                 snackbarHost = {
                     SnackbarHost(koinInject())
                 },
@@ -349,8 +356,8 @@ fun navigate(route: Route, shouldSaveState: Boolean = true, restore: Boolean = f
                                     navigateToSearchResults = {filter ->
                                         openUrl.open("ticketator://process?num1=2&num2=3")
 
-//                                        selectedFilterViewModel.onSelectItem(filter)
-//                                        navigate(Route.SearchResults, false)
+                                        selectedFilterViewModel.onSelectItem(filter)
+                                        navigate(Route.SearchResults, false)
                                     }
                                 )
                             }
