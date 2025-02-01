@@ -189,9 +189,9 @@ fun ProfileEditScreen(
         if (!state.isLoadingProfile && !state.isLoadingDeleteOrUpdate){
             HorizontalDivider()
             Row(
-                modifier = Modifier.widthIn(max = 800.dp).fillMaxWidth().padding(12.dp),
+                modifier = Modifier.align(Alignment.CenterHorizontally).widthIn(max = 800.dp).fillMaxWidth().padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
             ){
                 MyButton(
                     modifier = Modifier.weight(1f),
